@@ -34,21 +34,37 @@ python data/split_tests.py \
 Create a train/test split of the data by running:
 ```bash
 python data/split_tasks.py \
-    --json_path datasets/biology.json \
-    --output_dir datasets/sciknoweval/biology
+    --json_path datasets/sciknoweval/biology/biology.json \
+    --output_dir datasets/sciknoweval/biology \
+    --test_ratio 0.5 \
+    --seed 42
 
 python data/split_tasks.py \
-    --json_path datasets/chemistry.json \
-    --output_dir datasets/sciknoweval/chemistry
+    --json_path datasets/sciknoweval/chemistry/chemistry.json \
+    --output_dir datasets/sciknoweval/chemistry \
+    --test_ratio 0.5 \
+    --seed 42
 
 python data/split_tasks.py \
-    --json_path datasets/material.json \
-    --output_dir datasets/sciknoweval/material
+    --json_path datasets/sciknoweval/material/material.json \
+    --output_dir datasets/sciknoweval/material \
+    --test_ratio 0.5 \
+    --seed 42
 
 python data/split_tasks.py \
-    --json_path datasets/physics.json \
-    --output_dir datasets/sciknoweval/physics
+    --json_path datasets/sciknoweval/physics/physics.json \
+    --output_dir datasets/sciknoweval/physics \
+    --test_ratio 0.5 \
+    --seed 42
 ```
+
+Merge all SciKnowEval partitions into a single train/test split:
+```bash
+python data/merge_sciknoweval_partitions.py \
+    --input_dir datasets/sciknoweval \
+    --output_dir datasets/sciknoweval/all
+```
+Each example's `dataset` field is set to `sciknoweval_{partition}` (e.g. `sciknoweval_biology`).
 
 ## Prepocessing
 Our implementation uses the `parquet` format for the data. To preprocess the data, run the following command:

@@ -30,13 +30,30 @@ def _format_math(ex, dataset_name: str) -> dict:
     }
 
 
-def load_math(dataset_name: str) -> Dataset:
+def load_math(dataset_name: str, split: str = "auto") -> Dataset:
     assert dataset_name in ["math-ai/aime24", "math-ai/aime25", "math-ai/math500", "math-ai/amc23", "openai/gsm8k"]
+    assert split in ["auto", "train", "test"]
+
+    # Explicit split mode: always try requested split.
+    # Auto mode: prefer train, then fall back to test when train is unavailable.
+    split_to_load = "train" if split == "auto" else split
 
     if dataset_name == "openai/gsm8k":
-        ds = load_dataset("openai/gsm8k", "main", split="test")
+        try:
+            ds = load_dataset("openai/gsm8k", "main", split=split_to_load)
+        except Exception:
+            if split == "auto":
+                ds = load_dataset("openai/gsm8k", "main", split="test")
+            else:
+                raise
     else:
-        ds = load_dataset(dataset_name, split="test")
+        try:
+            ds = load_dataset(dataset_name, split=split_to_load)
+        except Exception:
+            if split == "auto":
+                ds = load_dataset(dataset_name, split="test")
+            else:
+                raise
 
     if dataset_name == "math-ai/aime24":  # remove \boxed{}
         ds = ds.map(lambda ex: {ANSWER_KEY[dataset_name]: ex[ANSWER_KEY[dataset_name]][7:-1]}, desc="AIME24 answer extraction")

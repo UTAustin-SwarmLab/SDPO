@@ -137,16 +137,58 @@ pip install -r requirements.txt
 pip install -e .
 
 # Install Flash Attention 2 (compiled from source)
+conda install -c nvidia cuda-nvcc -y
+# Point builds to this env's CUDA
+export CUDA_HOME="$CONDA_PREFIX"
+export PATH="$CUDA_HOME/bin:$PATH"
+export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$LD_LIBRARY_PATH"
 pip install flash-attn --no-build-isolation
 ```
 
 3. **Optional: Install SGLang/vLLM for high-throughput inference:**
 ```bash
 pip install -r requirements_sglang.txt
+pip install -r requirements_vllm.txt
 ```
 
 ---
 
+#### Option 3: Local Installation Conda
+
+1. **Install PyTorch:**
+
+    ```bash
+    conda create -n sdql python==3.11 -y
+    conda activate sdql
+    pip install torch==2.10 torchvision torchaudio
+    ```
+
+2. **Install SDPO and Dependencies:**
+```bash
+# Install core dependencies (pinned versions)
+pip install -r requirements2.txt
+
+# Install SDPO (verl) in editable mode
+pip install -e .
+
+conda install -c nvidia cuda-nvcc=12.8 -y
+export CUDA_HOME="$CONDA_PREFIX"
+export PATH="$CUDA_HOME/bin:$PATH"
+export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:$LD_LIBRARY_PATH"
+
+
+MAX_JOBS=4 FLASH_ATTENTION_FORCE_BUILD=TRUE \
+  pip install flash-attn==2.8.3 torch==2.10 --no-build-isolation --no-cache-dir --force-reinstall
+
+```
+
+3. **Optional: Install SGLang/vLLM for high-throughput inference:**
+```bash
+pip install -r requirements_sglang.txt
+pip install -r requirements_vllm.txt
+```
+
+---
 ### Requirement Files
 
 | File | Description |

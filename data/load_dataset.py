@@ -24,6 +24,7 @@ def _add_embeddings(ds, embeddings_file = None):
 def load_dataset_hf(
     dataset_name: str,
     output_path: str | None,
+    split: str = "auto",
     start_idx: int = 0,
     num_el: int = None,
     category: str | None = None,
@@ -42,7 +43,7 @@ def load_dataset_hf(
     elif dataset_name == "TIGER-Lab/MMLU-Pro":
         ds = load_mmlu_pro(category, implementation="evalchemy")
     elif dataset_name in ["math-ai/aime24", "math-ai/aime25", "math-ai/math500", "math-ai/amc23", "openai/gsm8k"]:
-        ds = load_math(dataset_name)
+        ds = load_math(dataset_name, split=split)
     elif dataset_name in ["open-r1/codeforces", "Qwen/CodeElo", "livecodebench/code_generation_lite-v6", "evalplus/humanevalplus", "evalplus/mbppplus"]:
         ds = load_code(dataset_name)
     elif dataset_name == "tooluse":
@@ -121,6 +122,10 @@ if __name__ == "__main__":
         help="File where the dataset will be saved."
     )
     parser.add_argument(
+        "--split", type=str, default="auto", choices=["auto", "train", "test"],
+        help="Dataset split to load for math datasets. 'auto' prefers train then falls back to test."
+    )
+    parser.add_argument(
         "--start_idx", type=int, default=0,
         help="Start index used from the final dataset."
     )
@@ -148,6 +153,7 @@ if __name__ == "__main__":
     load_dataset_hf(
         dataset_name=args.dataset_name,
         output_path=args.output_path,
+        split=args.split,
         start_idx=args.start_idx,
         num_el=args.num_el,
         category=args.category,
