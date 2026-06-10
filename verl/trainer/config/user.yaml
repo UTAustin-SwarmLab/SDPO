@@ -36,7 +36,7 @@ actor_rollout_ref:
     max_model_len: ${max_model_len}
     val_kwargs:
       top_p: 0.95
-      temperature: 0.6
+      temperature: 0.7
       n: 4
       do_sample: True
 
