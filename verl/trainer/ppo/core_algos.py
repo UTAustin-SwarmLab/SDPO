@@ -1188,6 +1188,159 @@ def compute_self_distillation_loss(
     return loss, metrics
 
 
+
+def compute_self_distillation_q_loss(
+    student_log_probs: torch.Tensor,
+    teacher_log_probs: torch.Tensor,
+    response_mask: torch.Tensor,
+    self_distillation_config: Any,
+    old_log_probs: Optional[torch.Tensor] = None,
+    old_all_log_probs: Optional[torch.Tensor] = None,
+    old_topk_log_probs: Optional[torch.Tensor] = None,
+    sampled_token_ids: Optional[torch.Tensor] = None,
+    student_topk_indices: Optional[torch.Tensor] = None,
+    student_all_log_probs: Optional[torch.Tensor] = None,
+    teacher_all_log_probs: Optional[torch.Tensor] = None,
+    student_topk_log_probs: Optional[torch.Tensor] = None,
+    teacher_topk_log_probs: Optional[torch.Tensor] = None,
+    self_distillation_mask: Optional[torch.Tensor] = None,
+    loss_agg_mode: str = "token-mean",
+    rollout_is_weights: Optional[torch.Tensor] = None,
+    advantages: Optional[torch.Tensor] = None,
+) -> tuple[torch.Tensor, dict[str, Any]]:
+
+    metrics = {}
+
+    loss_mask = response_mask
+    if self_distillation_mask is not None:
+        loss_mask = loss_mask * self_distillation_mask.unsqueeze(1)
+
+    # compute Q values from  
+    
+    if self_distillation_config.full_logit_distillation:
+        use_topk = self_distillation_config.distillation_topk is not None
+        if use_topk:
+            if student_topk_log_probs is None or teacher_topk_log_probs is None:
+                raise ValueError("top-k distillation requires student_topk_log_probs and teacher_topk_log_probs.")
+
+            def add_tail(log_probs: torch.Tensor) -> torch.Tensor:
+                # Compute tail log-probability using logsumexp for numerical stability
+                # log(1 - sum(p_i)) = log(1 - exp(log_sum_exp(log(p_i))))
+                log_s = torch.logsumexp(log_probs, dim=-1, keepdim=True)
+                log_s = torch.clamp(log_s, max=-1e-7)  # Clamp to avoid log_s >= 0 (which implies sum(probs) >= 1)
+                tail_log = torch.log(-torch.expm1(log_s))  # We use the identity: 1 - exp(x) = -(exp(x) - 1); torch.expm1(x) computes (e^x - 1) with high precision for small x.
+                return torch.cat([log_probs, tail_log], dim=-1)
+
+            def renorm_topk_log_probs(logp: torch.Tensor) -> torch.Tensor:
+                logZ = torch.logsumexp(logp, dim=-1, keepdim=True)
+                return logp - logZ
+
+            student_distill_log_probs = student_topk_log_probs
+            teacher_distill_log_probs = teacher_topk_log_probs
+            q_vals = student_distill_log_probs - old_topk_log_probs.detach()
+            if not self_distillation_config.distillation_add_tail:
+                student_distill_log_probs = renorm_topk_log_probs(student_distill_log_probs)
+                teacher_distill_log_probs = renorm_topk_log_probs(teacher_distill_log_probs)
+        else:
+            if student_all_log_probs is None or teacher_all_log_probs is None:
+                raise ValueError("full_logit_distillation requires student_all_log_probs and teacher_all_log_probs.")
+            student_distill_log_probs = student_all_log_probs
+            teacher_distill_log_probs = teacher_all_log_probs
+            q_vals = student_distill_log_probs - old_all_log_probs.detach()
+            
+        if self_distillation_config.alpha == 0.0:
+            reward = student_distill_log_probs - teacher_distill_log_probs
+        elif self_distillation_config.alpha == 1.0:
+            reward = teacher_distill_log_probs - student_distill_log_probs
+        else:
+            raise ValueError("Only forward KL and reverse KL are supported for non-full-logit distillation")
+            # # Compute the log of the mixture distribution
+            # # log(a + b) = log(exp(log(a)) + exp(log(b))) -> for mixture
+            # alpha = torch.tensor(
+            #     self_distillation_config.alpha,
+            #     dtype=student_distill_log_probs.dtype,
+            #     device=student_distill_log_probs.device,
+            # )
+            # mixture_log_probs = torch.logsumexp(
+            #     torch.stack([student_distill_log_probs + torch.log(1 - alpha), teacher_distill_log_probs + torch.log(alpha)]),
+            #     dim=0,
+            # )
+            # kl_teacher = F.kl_div(mixture_log_probs, teacher_distill_log_probs, reduction="none", log_target=True)
+            # kl_student = F.kl_div(mixture_log_probs, student_distill_log_probs, reduction="none", log_target=True)
+            # reward = torch.lerp(kl_student, kl_teacher, alpha)  # Compute the Generalized Jensen-Shannon Divergence
+
+        gamma = self_distillation_config.success_reward_threshold
+        zero_tail = torch.zeros_like(q_vals[:, :1, :])
+        next_q_vals = torch.cat([q_vals[:, 1:, :], zero_tail], dim=1)
+        if self_distillation_config.use_env_reward:
+            if advantages is None:
+                raise ValueError("advantages is required when self_distillation.use_env_reward is enabled.")
+            if sampled_token_ids is None:
+                raise ValueError("sampled_token_ids is required when self_distillation.use_env_reward is enabled.")
+
+            env_adv = advantages.to(reward.dtype).unsqueeze(-1)  # [bs, seq, 1]
+            if use_topk:
+                if student_topk_indices is None:
+                    raise ValueError("student_topk_indices is required for top-k env reward assignment.")
+
+                sampled_in_topk = student_topk_indices.eq(sampled_token_ids.unsqueeze(-1))  # [bs, seq, k]
+                sampled_mask = sampled_in_topk.to(reward.dtype)
+
+                # If tail bucket exists, route unmatched sampled tokens to tail.
+                # if reward.size(-1) == sampled_mask.size(-1) + 1:
+                #     in_topk = sampled_in_topk.any(dim=-1, keepdim=True)
+                #     tail_mask = (~in_topk).to(reward.dtype)
+                #     sampled_mask = torch.cat([sampled_mask, tail_mask], dim=-1)
+
+                reward = reward + env_adv * sampled_mask * self_distillation_config.env_reward_scale
+            else:
+                reward = reward.scatter_add(-1, sampled_token_ids.unsqueeze(-1), env_adv)
+        if self_distillation_config.target_q_mode == "uniform":
+            target_q_vals = reward + gamma * next_q_vals.mean(-1)
+        elif self_distillation_config.target_q_mode == "max":
+            target_q_vals = reward + gamma * next_q_vals.max(-1)
+        else:
+            raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
+        per_token_loss = (q_vals - target_q_vals.detach()) ** 2
+    else:
+        assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
+        rewards = student_log_probs - teacher_log_probs
+        all_q_vals = student_all_log_probs - old_all_log_probs.detach()
+        zero_tail = torch.zeros_like(q_vals[:, :1, :])
+        next_q_vals = torch.cat([all_q_vals[:, 1:, :], zero_tail], dim=1)
+        q_vals = student_log_probs - old_log_probs.detach()
+        if self_distillation_config.target_q_mode == "uniform":
+            target_q_vals = rewards + gamma * next_q_vals.mean(-1)
+        elif self_distillation_config.target_q_mode == "max":
+            target_q_vals = rewards + gamma * next_q_vals.max(-1)
+        else:
+            raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
+        per_token_loss = (q_vals - target_q_vals.detach()) ** 2
+        # per_token_loss = log_ratio.detach() * student_log_probs
+
+    is_clip = self_distillation_config.is_clip
+    if is_clip is not None:
+        if old_log_probs is None:
+            raise ValueError("old_log_probs is required for distillation IS ratio.")
+
+        negative_approx_kl = (student_log_probs - old_log_probs).detach()
+        negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
+        ratio = torch.exp(negative_approx_kl).clamp(max=is_clip)
+        per_token_loss = per_token_loss * ratio
+
+    # Apply rollout correction weights if provided
+    if rollout_is_weights is not None:
+        per_token_loss = per_token_loss * rollout_is_weights
+
+    loss = agg_loss(
+        loss_mat=per_token_loss,
+        loss_mask=loss_mask,
+        loss_agg_mode=loss_agg_mode,
+        batch_num_tokens=loss_mask.sum().clamp(min=1.0),
+    )
+    return loss, metrics
+
+
 @deprecated("verl.trainer.ppo.core_algos.compute_policy_loss_vanilla")
 def compute_policy_loss(
     old_log_prob,

@@ -677,7 +677,7 @@ class RayPPOTrainer:
     ) -> Optional[tuple[DataProto, dict[str, float]]]:
         self_distillation_cfg = self.config.actor_rollout_ref.actor.get("self_distillation", None)
         loss_mode = self.config.actor_rollout_ref.actor.policy_loss.get("loss_mode", "vanilla")
-        if self_distillation_cfg is None or loss_mode != "sdpo":
+        if self_distillation_cfg is None or loss_mode not in {"sdpo", "sdql"}:
             return None
 
         device = batch.batch["input_ids"].device
@@ -1460,6 +1460,19 @@ class RayPPOTrainer:
         return ref_log_prob
 
     def _compute_old_log_prob(self, batch: DataProto):
+        policy_loss_cfg = self.config.actor_rollout_ref.actor.policy_loss
+        loss_mode = (
+            policy_loss_cfg.get("loss_mode", "vanilla")
+            if hasattr(policy_loss_cfg, "get")
+            else getattr(policy_loss_cfg, "loss_mode", "vanilla")
+        )
+        self_distillation_cfg = getattr(self.config.actor_rollout_ref.actor, "self_distillation", None)
+        need_old_all_log_probs = (
+            loss_mode in {"sdql"}
+            and self_distillation_cfg is not None
+            and bool(getattr(self_distillation_cfg, "full_logit_distillation", False))
+        )
+
         if self.use_legacy_worker_impl == "disable":
             # TODO: remove step 1, 2, 4 after we make the whole training tensordict and padding free
             # step 1: convert dataproto to tensordict.
@@ -1467,19 +1480,33 @@ class RayPPOTrainer:
             # step 2: convert from padding to nopadding
             batch_td = left_right_2_no_padding(batch_td)
             # step 3: add meta info
-            tu.assign_non_tensor(batch_td, calculate_entropy=True, compute_loss=False)
+            tu.assign_non_tensor(
+                batch_td,
+                calculate_entropy=True,
+                compute_loss=False,
+                return_all_logps=need_old_all_log_probs,
+            )
             output = self.actor_rollout_wg.compute_log_prob(batch_td)
             # gather output
             entropy = tu.get(output, "entropy")
             log_probs = tu.get(output, "log_probs")
+            all_log_probs = (
+                tu.get(output, "all_logps") if need_old_all_log_probs and "all_logps" in output.keys() else None
+            )
             old_log_prob_mfu = tu.get(output, "metrics")["mfu"]
             # step 4. No padding to padding
             entropy = no_padding_2_padding(entropy, batch_td)
             log_probs = no_padding_2_padding(log_probs, batch_td)
+            if all_log_probs is not None:
+                all_log_probs = no_padding_2_padding(all_log_probs, batch_td)
             # step 5: rebuild a tensordict and convert to dataproto
-            old_log_prob = tu.get_tensordict({"old_log_probs": log_probs.float(), "entropys": entropy.float()})
+            tensors = {"old_log_probs": log_probs.float(), "entropys": entropy.float()}
+            if all_log_probs is not None:
+                tensors["old_all_log_probs"] = all_log_probs.float()
+            old_log_prob = tu.get_tensordict(tensors)
             old_log_prob = DataProto.from_tensordict(old_log_prob)
         else:
+            batch.meta_info["return_all_logps"] = need_old_all_log_probs
             old_log_prob = self.actor_rollout_wg.compute_log_prob(batch)
             old_log_prob_mfu = 0
         return old_log_prob, old_log_prob_mfu

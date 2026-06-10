@@ -893,7 +893,7 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
             if self._is_actor:
                 self_distillation_cfg = self.config.actor.get("self_distillation", None)
                 loss_mode = self.config.actor.policy_loss.get("loss_mode", "vanilla")
-                if self_distillation_cfg is not None and loss_mode == "sdpo":
+                if self_distillation_cfg is not None and loss_mode in {"sdpo", "sdql"}:
                     teacher_regularization = self_distillation_cfg.get("teacher_regularization", "ema")
                     if teacher_regularization == "trust-region":
                         self.actor.teacher_module = TrustRegionTeacher(
@@ -1051,6 +1051,8 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
                 outputs = self.actor.compute_log_prob(data=data, calculate_entropy=calculate_entropy)
             if not is_lora:
                 tensors = {"old_log_probs": outputs["log_probs"]}
+                if "all_logps" in outputs:
+                    tensors["old_all_log_probs"] = outputs["all_logps"]
             else:
                 tensors = {"ref_log_prob": outputs["log_probs"]}
             if calculate_entropy:
