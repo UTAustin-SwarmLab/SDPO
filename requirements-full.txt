@@ -170,7 +170,7 @@ sympy==1.14.0
 tabulate==0.9.0
 tensorboard==2.20.0
 tensorboard-data-server==0.7.2
-tensordict==0.10.0
+tensordict==0.10.0`
 tiktoken==0.12.0
 tokenizers==0.22.1
 torch @ file:///opt/transfer/torch-2.10.0a0%2Bb4e4ee81d3.nv25.12-40345937-cp312-cp312-linux_aarch64.whl#sha256=aae06bbfe23a557da17ecfcff41ff2a9a8d2d61363899eac777771f3ccfb273e
