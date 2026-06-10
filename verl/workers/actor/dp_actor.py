@@ -29,7 +29,7 @@ from torch.distributed.tensor import DTensor
 
 import verl.utils.torch_functional as verl_F
 from verl import DataProto
-from verl.trainer.ppo.core_algos import agg_loss, compute_self_distillation_loss, get_policy_loss_fn, kl_penalty
+from verl.trainer.ppo.core_algos import agg_loss, compute_self_distillation_loss, compute_self_distillation_q_loss, get_policy_loss_fn, kl_penalty
 from verl.utils.attention_utils import index_first_axis, pad_input, rearrange, unpad_input
 from verl.utils.device import get_device_id, get_device_name
 from verl.utils.fsdp_utils import FSDPModule, fsdp2_clip_grad_norm_
@@ -132,7 +132,7 @@ class DataParallelPPOActor(BasePPOActor):
     def _update_teacher(self) -> None:
         self_distillation_cfg = getattr(self.config, "self_distillation", None)
         loss_mode = self.config.policy_loss.get("loss_mode", "vanilla")
-        if not self_distillation_cfg or loss_mode != "sdpo":
+        if not self_distillation_cfg or loss_mode not in {"sdpo", "sdql"}:
             return
         teacher_regularization = getattr(self_distillation_cfg, "teacher_regularization", "ema")
         if teacher_regularization != "ema":
@@ -607,8 +607,10 @@ class DataParallelPPOActor(BasePPOActor):
                 - ``log_probs``: tensor of shape [batch_size, response_length]. torch.float32.
                 - ``entropys``: tensor of shape [batch_size, response_length]. torch.float32.
                 - ``sum_pi_squared``: tensor of shape [batch_size, response_length]. torch.float32.
+                - ``all_logps``: tensor of shape [batch_size, response_length, vocab_size]. torch.float32.
         """
         calculate_sum_pi_squared = self.config.get("calculate_sum_pi_squared", False)
+        return_all_logps = data.meta_info.get("return_all_logps", False)
 
         # set to eval
         self.actor_module.eval()
@@ -639,24 +641,32 @@ class DataParallelPPOActor(BasePPOActor):
         log_probs_lst = []
         entropy_lst = []
         sum_pi_squared_lst = []
+        all_logps_lst = []
         for micro_batch in micro_batches:
             micro_batch = micro_batch.to(get_device_id())
             model_inputs = {**micro_batch.batch, **micro_batch.non_tensor_batch, "pad_token_id": pad_token_id}
             with torch.no_grad():
                 outputs = self._forward_micro_batch(
-                    model_inputs, temperature=temperature, calculate_entropy=calculate_entropy
+                    model_inputs,
+                    temperature=temperature,
+                    calculate_entropy=calculate_entropy,
+                    return_all_logps=return_all_logps,
                 )
             log_probs_lst.append(outputs["log_probs"])
             if calculate_entropy:
                 entropy_lst.append(outputs["entropys"])
             if calculate_sum_pi_squared:
                 sum_pi_squared_lst.append(outputs["sum_pi_squared"])
+            if return_all_logps:
+                all_logps_lst.append(outputs["all_logps"].detach().cpu())
 
         log_probs = torch.concat(log_probs_lst, dim=0)
         if calculate_entropy:
             entropys = torch.concat(entropy_lst, dim=0)
         if calculate_sum_pi_squared:
             sum_pi_squared = torch.concat(sum_pi_squared_lst, dim=0)
+        if return_all_logps:
+            all_logps = torch.concat(all_logps_lst, dim=0)
 
         if use_dynamic_bsz:
             log_probs = restore_dynamic_batch(log_probs, batch_idx_list)
@@ -664,12 +674,16 @@ class DataParallelPPOActor(BasePPOActor):
                 entropys = restore_dynamic_batch(entropys, batch_idx_list)
             if calculate_sum_pi_squared:
                 sum_pi_squared = restore_dynamic_batch(sum_pi_squared, batch_idx_list)
+            if return_all_logps:
+                all_logps = restore_dynamic_batch(all_logps, batch_idx_list)
 
         outputs = {"log_probs": log_probs}
         if calculate_entropy:
             outputs["entropys"] = entropys
         if calculate_sum_pi_squared:
             outputs["sum_pi_squared"] = sum_pi_squared
+        if return_all_logps:
+            outputs["all_logps"] = all_logps
         return outputs
 
     @GPUMemoryLogger(role="dp actor", logger=logger)
@@ -682,8 +696,9 @@ class DataParallelPPOActor(BasePPOActor):
         loss_mode = self.config.policy_loss.get("loss_mode", "vanilla")
 
         self_distillation_enabled = loss_mode == "sdpo"
+        self_distillation_q_enabled = loss_mode == "sdql"
         self_distillation_cfg = getattr(self.config, "self_distillation", None)
-        if self_distillation_enabled:
+        if self_distillation_enabled or self_distillation_q_enabled:
             self_distillation_required_keys = {
                 "teacher_input_ids",
                 "teacher_attention_mask",
@@ -701,11 +716,13 @@ class DataParallelPPOActor(BasePPOActor):
             "old_log_probs",
             "advantages",
         ]
+        if "old_all_log_probs" in data.batch.keys():
+            select_keys.append("old_all_log_probs")
         if self.use_prefix_grouper and "prompts" in data.batch.keys():
             select_keys.append("prompts")
         if self.config.use_kl_loss:
             select_keys.append("ref_log_prob")
-        if self_distillation_enabled:
+        if self_distillation_enabled or self_distillation_q_enabled:
             select_keys.extend(list(self_distillation_required_keys))
         # Include pre-computed IS weights if present in batch
         # Weights are computed centrally in trainer and added to batch when algorithm.rollout_is=True
@@ -751,9 +768,17 @@ class DataParallelPPOActor(BasePPOActor):
                 self.actor_optimizer.zero_grad()
 
                 for micro_batch in micro_batches:
+                    old_all_log_probs_cpu = None
+                    if "old_all_log_probs" in micro_batch.batch.keys():
+                        # Keep old-policy full logits on CPU to reduce HBM usage.
+                        old_all_log_probs_cpu = micro_batch.batch["old_all_log_probs"]
+                        gpu_batch_keys = [key for key in micro_batch.batch.keys() if key != "old_all_log_probs"]
+                        micro_batch = micro_batch.select(batch_keys=gpu_batch_keys)
                     micro_batch = micro_batch.to(get_device_id())
                     micro_batch_metrics = {}
                     model_inputs = {**micro_batch.batch, **micro_batch.non_tensor_batch, "pad_token_id": pad_token_id}
+                    if old_all_log_probs_cpu is not None:
+                        model_inputs["old_all_log_probs"] = old_all_log_probs_cpu
                     response_mask = model_inputs["response_mask"]
                     old_log_prob = model_inputs["old_log_probs"]
                     advantages = model_inputs["advantages"]
@@ -775,8 +800,17 @@ class DataParallelPPOActor(BasePPOActor):
                     if teacher_regularization == "trust-region" and self.use_fused_kernels:
                         raise ValueError("trust-region teacher requires disabling fused kernels to access logits.")
                     # all return: (bsz, response_length)
-                    return_all_logps = self_distillation_cfg.full_logit_distillation and not self_distillation_cfg.distillation_topk
-                    distill_topk = self_distillation_cfg.distillation_topk if self_distillation_cfg.full_logit_distillation else None
+                    need_distill_logits = self_distillation_enabled or self_distillation_q_enabled
+                    return_all_logps = (
+                        need_distill_logits
+                        and self_distillation_cfg.full_logit_distillation
+                        and not self_distillation_cfg.distillation_topk
+                    )
+                    distill_topk = (
+                        self_distillation_cfg.distillation_topk
+                        if need_distill_logits and self_distillation_cfg.full_logit_distillation
+                        else None
+                    )
                     outputs = self._forward_micro_batch(
                         model_inputs,
                         temperature=temperature,
@@ -804,8 +838,75 @@ class DataParallelPPOActor(BasePPOActor):
                     # Extract pre-computed rollout correction weights if present
                     # Weights are computed centrally in trainer and added when algorithm.rollout_is=True
                     rollout_is_weights = model_inputs.get("rollout_is_weights", None)
+                    if self_distillation_q_enabled:
+                        teacher_inputs = {
+                            "responses": model_inputs["responses"],
+                            "input_ids": model_inputs["teacher_input_ids"],
+                            "attention_mask": model_inputs["teacher_attention_mask"],
+                            "position_ids": model_inputs["teacher_position_ids"],
+                        }
+                        teacher_model = self.teacher_module or self.actor_module
+                        if teacher_regularization == "trust-region" and (
+                            self.teacher_module is None or self.teacher_module is self.actor_module
+                        ):
+                            raise ValueError("trust-region teacher requires a separate teacher_module in the actor worker.")
+                        with torch.no_grad():
+                            teacher_outputs = self._forward_micro_batch(
+                                teacher_inputs,
+                                temperature=temperature,
+                                calculate_entropy=False,
+                                return_all_logps=return_all_logps,
+                                distill_topk=distill_topk,
+                                topk_indices=student_topk_indices,
+                                module=teacher_model,
+                            )
+                        teacher_log_prob = teacher_outputs["log_probs"]
+                        teacher_all_logps = teacher_outputs.get("all_logps") if return_all_logps else None
+                        teacher_topk_logps = teacher_outputs.get("topk_logps") if distill_topk else None
+                        old_all_log_probs_for_loss = None
+                        if "old_all_log_probs" in model_inputs:
+                            old_all_log_probs_for_loss = model_inputs["old_all_log_probs"].to(
+                                log_prob.device, non_blocking=True
+                            )
+                        old_topk_log_probs = None
+                        if (
+                            distill_topk
+                            and student_topk_indices is not None
+                            and old_all_log_probs_for_loss is not None
+                        ):
+                            # Gather old-policy logits on the same top-k support used by student/teacher.
+                            gather_index = student_topk_indices
+                            if gather_index.dtype != torch.long:
+                                gather_index = gather_index.long()
+                            old_topk_log_probs = torch.gather(
+                                old_all_log_probs_for_loss,
+                                dim=-1,
+                                index=gather_index,
+                            )
 
-                    if self_distillation_enabled:
+                        pg_loss, pg_metrics = compute_self_distillation_q_loss(
+                            student_log_probs=log_prob,
+                            teacher_log_probs=teacher_log_prob,
+                            response_mask=response_mask,
+                            self_distillation_config=self_distillation_cfg,
+                            old_log_probs=old_log_prob,
+                            old_all_log_probs=old_all_log_probs_for_loss,
+                            student_all_log_probs=student_all_logps,
+                            teacher_all_log_probs=teacher_all_logps,
+                            sampled_token_ids=model_inputs["responses"],
+                            student_topk_indices=student_topk_indices,
+                            student_topk_log_probs=student_topk_logps,
+                            teacher_topk_log_probs=teacher_topk_logps,
+                            old_topk_log_probs=old_topk_log_probs,
+                            self_distillation_mask=self_distillation_mask,
+                            loss_agg_mode=loss_agg_mode,
+                            rollout_is_weights=rollout_is_weights,
+                            advantages=advantages,
+                        )
+
+                        pg_metrics["self_distillation/empty_target_batch"] = self_distillation_mask.sum().item() == 0
+                        micro_batch_metrics.update(pg_metrics)
+                    elif self_distillation_enabled:
                         teacher_inputs = {
                             "responses": model_inputs["responses"],
                             "input_ids": model_inputs["teacher_input_ids"],

@@ -17,7 +17,7 @@ def compute_score(
         results = math.compute_score(solution_str, ground_truth, extra_info)
     elif data_source in ["gpqa"]:
         results = gpqa.compute_score(solution_str, ground_truth)
-    elif data_source in ["sciknoweval"]:
+    elif data_source in ["sciknoweval", "sciknoweval_physics", "sciknoweval_biology", "sciknoweval_chemistry", "sciknoweval_material"]:
         results = mcq.compute_score(solution_str, ground_truth)
     elif data_source in ["tooluse"]:
         results = tooluse.compute_score(solution_str, ground_truth)
