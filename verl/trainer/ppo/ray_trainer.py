@@ -1472,6 +1472,9 @@ class RayPPOTrainer:
             and self_distillation_cfg is not None
             and bool(getattr(self_distillation_cfg, "full_logit_distillation", False))
         )
+        old_all_log_probs_cache_id = str(uuid.uuid4()) if need_old_all_log_probs else None
+        if old_all_log_probs_cache_id is not None:
+            batch.meta_info["old_all_log_probs_cache_id"] = old_all_log_probs_cache_id
 
         if self.use_legacy_worker_impl == "disable":
             # TODO: remove step 1, 2, 4 after we make the whole training tensordict and padding free
@@ -1509,6 +1512,8 @@ class RayPPOTrainer:
             batch.meta_info["return_all_logps"] = need_old_all_log_probs
             old_log_prob = self.actor_rollout_wg.compute_log_prob(batch)
             old_log_prob_mfu = 0
+            if old_all_log_probs_cache_id is not None:
+                old_log_prob.meta_info["old_all_log_probs_cache_id"] = old_all_log_probs_cache_id
         return old_log_prob, old_log_prob_mfu
 
     def _update_actor(self, batch: DataProto) -> DataProto:
