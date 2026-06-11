@@ -75,7 +75,9 @@ class SelfDistillationConfig(BaseConfig):
     dont_reprompt_on_self_success: bool = False
     remove_thinking_from_demonstration: bool = False
     is_clip: Optional[float] = None
+    env_reward_scale: float = 1.0
     use_env_reward: bool = False
+    target_q_mode: str = "uniform" # "uniform" or "max"
     reprompt_template: str = (
         "{prompt}{solution}{feedback}\n\n"
         "Correctly solve the original question.\n"

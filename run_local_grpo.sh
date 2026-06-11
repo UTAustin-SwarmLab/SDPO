@@ -22,7 +22,7 @@ MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048} # gsm8k 1024, physics 2048
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-4096} # reduce from 6144 to avoid actor OOM
 TEMPLATE_LENGTH=512  # heuristic upper bound, not enforced
 MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_RESPONSE_LENGTH))
-HOME_ROOT=/home/hg22723/projects/SDPO
+HOME_ROOT=${WORK}
 # Allow overriding experiment name suffix
 SUFFIX=${1:-"local_grpo_physics"}
 

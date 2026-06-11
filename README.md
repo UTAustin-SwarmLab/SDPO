@@ -189,6 +189,39 @@ pip install -r requirements_vllm.txt
 ```
 
 ---
+
+#### TACC
+
+```bash
+module load gcc/14.2.0 cuda/12.8 
+
+pip install torch==2.10.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128 --no-cache-dir
+
+pip install -r requirements2.txt
+
+echo "=== Pre-build environment check ===" 
+
+
+export CUDA_HOME="$TACC_CUDA_DIR" 
+export CC=$(which gcc) 
+export CXX=$(which g++) 
+export CMAKE_PREFIX_PATH=$(python -c 'import torch;print(torch.utils.cmake_prefix_path)')
+
+export TORCH_CUDA_ARCH_LIST="9.0" 
+export VLLM_FA_CMAKE_GPU_ARCHES="sm_90"
+
+FLASH_ATTN_FORCE_BUILD=TRUE MAX_JOBS=8 pip install flash-attn==2.8.3 --no-build-isolation --no-cache-dir --verbose 
+ 
+
+
+
+pip install flashinfer-python==0.5.3 --no-cache-dir pip install opencv-python pip install opencv-fixer &&
+python -c "from opencv_fixer import AutoFix; AutoFix()"
+```
+
+
+
+
 ### Requirement Files
 
 | File | Description |
