@@ -1044,6 +1044,7 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
         data.meta_info["use_dynamic_bsz"] = config_source.log_prob_use_dynamic_bsz
         data.meta_info["temperature"] = self.config.rollout.temperature
         data.meta_info.setdefault("pad_token_id", self.tokenizer.pad_token_id)
+        old_all_log_probs_cache_id = data.meta_info.get("old_all_log_probs_cache_id")
         # perform recompute log_prob
         calculate_entropy = not is_lora
         with self.ulysses_sharding_manager:
@@ -1052,7 +1053,13 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
             if not is_lora:
                 tensors = {"old_log_probs": outputs["log_probs"]}
                 if "all_logps" in outputs:
-                    tensors["old_all_log_probs"] = outputs["all_logps"]
+                    if old_all_log_probs_cache_id:
+                        self.actor.put_old_all_log_probs_cache(old_all_log_probs_cache_id, outputs["all_logps"])
+                        tensors["old_all_log_probs_row_idx"] = torch.arange(
+                            outputs["log_probs"].shape[0], dtype=torch.long
+                        )
+                    else:
+                        tensors["old_all_log_probs"] = outputs["all_logps"]
             else:
                 tensors = {"ref_log_prob": outputs["log_probs"]}
             if calculate_entropy:
