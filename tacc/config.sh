@@ -3,7 +3,7 @@
 # Edit ACCOUNT and paths before submitting jobs.
 
 # Slurm allocation (required on TACC when you belong to multiple projects)
-ACCOUNT="${TACC_ACCOUNT:ASC26054}"
+ACCOUNT="${TACC_ACCOUNT:-ASC26054}"
 
 # Vista GPU queue; use gpu-a100, gpu-h100, etc. on other TACC systems
 PARTITION="${TACC_PARTITION:-gh}"
@@ -18,8 +18,13 @@ GPUS_PER_NODE="${TACC_GPUS_PER_NODE:-1}"
 
 # Repository and artifact paths
 PROJECT_ROOT="${TACC_PROJECT_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
-LOG_DIR="${TACC_LOG_DIR:-${WORK}/SDPO/output}"
-CKPT_DIR="${TACC_CKPT_DIR:-${WORK}/SDPO/checkpoints}"
+if [[ -n "${WORK:-}" ]]; then
+    STORAGE_ROOT="${WORK}/SDPO"
+else
+    STORAGE_ROOT="${PROJECT_ROOT}"
+fi
+LOG_DIR="${TACC_LOG_DIR:-${STORAGE_ROOT}/output}"
+CKPT_DIR="${TACC_CKPT_DIR:-${STORAGE_ROOT}/checkpoints}"
 JOBS_DIR="${TACC_JOBS_DIR:-${PROJECT_ROOT}/tacc/jobs}"
 
 mkdir -p "$LOG_DIR" "$CKPT_DIR" "$JOBS_DIR"
