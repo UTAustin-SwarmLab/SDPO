@@ -1472,6 +1472,7 @@ class RayPPOTrainer:
             and self_distillation_cfg is not None
             and bool(getattr(self_distillation_cfg, "full_logit_distillation", False))
         )
+        batch.meta_info["return_all_logps"] = bool(need_old_all_log_probs)
         old_all_log_probs_cache_id = str(uuid.uuid4()) if need_old_all_log_probs else None
         if old_all_log_probs_cache_id is not None:
             batch.meta_info["old_all_log_probs_cache_id"] = old_all_log_probs_cache_id
@@ -1509,7 +1510,6 @@ class RayPPOTrainer:
             old_log_prob = tu.get_tensordict(tensors)
             old_log_prob = DataProto.from_tensordict(old_log_prob)
         else:
-            batch.meta_info["return_all_logps"] = need_old_all_log_probs
             old_log_prob = self.actor_rollout_wg.compute_log_prob(batch)
             old_log_prob_mfu = 0
             if old_all_log_probs_cache_id is not None:
@@ -1878,6 +1878,12 @@ class RayPPOTrainer:
                             actor_output = self._update_actor(batch)
                         actor_output_metrics = reduce_metrics(actor_output.meta_info["metrics"])
                         metrics.update(actor_output_metrics)
+                    else:
+                        # During critic warmup, actor update is skipped. If old-policy full logits
+                        # were cached for SDQL distillation, evict them now to avoid CPU RAM growth.
+                        old_all_log_probs_cache_id = batch.meta_info.get("old_all_log_probs_cache_id")
+                        if old_all_log_probs_cache_id:
+                            self.actor_rollout_wg.clear_old_all_log_probs_cache(old_all_log_probs_cache_id)
 
                     # Log rollout generations if enabled
                     rollout_data_dir = self.config.trainer.get("rollout_data_dir", None)

@@ -19,6 +19,7 @@ Single Process Actor
 
 import logging
 import os
+from bisect import bisect_right
 from types import SimpleNamespace
 from typing import Optional
 
@@ -129,12 +130,35 @@ class DataParallelPPOActor(BasePPOActor):
                 f"{self.use_fused_kernels=} or {self.use_prefix_grouper=} for now."
             )
         # Per-rank CPU cache for old-policy full log-prob tensors keyed by cache_id.
-        self._old_all_log_probs_cache: dict[str, torch.Tensor] = {}
+        # Value can be:
+        # - torch.Tensor with shape [rows, resp_len, vocab], or
+        # - dict(chunks=[tensor...], row_ends=[int...]) for streaming chunked cache.
+        self._old_all_log_probs_cache: dict[str, torch.Tensor | dict[str, list[torch.Tensor] | list[int]]] = {}
 
     def put_old_all_log_probs_cache(self, cache_id: str, old_all_log_probs: torch.Tensor) -> None:
         if not cache_id:
             raise ValueError("cache_id must be provided to cache old_all_log_probs.")
         self._old_all_log_probs_cache[cache_id] = old_all_log_probs.detach().to("cpu", copy=False)
+
+    def append_old_all_log_probs_cache(self, cache_id: str, old_all_log_probs_chunk: torch.Tensor) -> None:
+        """Append a chunk of old all-log-probs to rank-local CPU cache."""
+        if not cache_id:
+            raise ValueError("cache_id must be provided to cache old_all_log_probs.")
+        chunk_cpu = old_all_log_probs_chunk.detach().to("cpu", copy=False)
+        existing = self._old_all_log_probs_cache.get(cache_id)
+        if existing is None:
+            self._old_all_log_probs_cache[cache_id] = {
+                "chunks": [chunk_cpu],
+                "row_ends": [chunk_cpu.size(0)],
+            }
+            return
+        if not isinstance(existing, dict):
+            raise TypeError("append_old_all_log_probs_cache expects chunked cache format.")
+        chunks = existing["chunks"]
+        row_ends = existing["row_ends"]
+        last_end = row_ends[-1] if len(row_ends) > 0 else 0
+        chunks.append(chunk_cpu)
+        row_ends.append(last_end + chunk_cpu.size(0))
 
     def get_old_all_log_probs_rows(self, cache_id: str, row_indices: torch.Tensor) -> torch.Tensor:
         if cache_id not in self._old_all_log_probs_cache:
@@ -143,7 +167,17 @@ class DataParallelPPOActor(BasePPOActor):
         if row_indices.device.type != "cpu":
             row_indices = row_indices.to("cpu")
         row_indices = row_indices.long()
-        return cached.index_select(0, row_indices)
+        if isinstance(cached, torch.Tensor):
+            return cached.index_select(0, row_indices)
+        # Chunked cache path: gather rows without materializing a full [B, T, V] tensor.
+        chunks = cached["chunks"]
+        row_ends = cached["row_ends"]
+        out_rows = []
+        for row_idx in row_indices.tolist():
+            chunk_idx = bisect_right(row_ends, row_idx)
+            row_start = 0 if chunk_idx == 0 else row_ends[chunk_idx - 1]
+            out_rows.append(chunks[chunk_idx][row_idx - row_start])
+        return torch.stack(out_rows, dim=0)
 
     def pop_old_all_log_probs_cache(self, cache_id: str) -> None:
         self._old_all_log_probs_cache.pop(cache_id, None)
@@ -629,7 +663,7 @@ class DataParallelPPOActor(BasePPOActor):
                 - ``all_logps``: tensor of shape [batch_size, response_length, vocab_size]. torch.float32.
         """
         calculate_sum_pi_squared = self.config.get("calculate_sum_pi_squared", False)
-        return_all_logps = data.meta_info.get("return_all_logps", False)
+        return_all_logps = bool(data.meta_info.get("return_all_logps", False))
 
         # set to eval
         self.actor_module.eval()
@@ -637,6 +671,11 @@ class DataParallelPPOActor(BasePPOActor):
         micro_batch_size = data.meta_info["micro_batch_size"]
         temperature = data.meta_info["temperature"]  # temperature must be in the data.meta_info to avoid silent error
         use_dynamic_bsz = data.meta_info["use_dynamic_bsz"]
+        old_all_log_probs_cache_id = data.meta_info.get("old_all_log_probs_cache_id")
+        if old_all_log_probs_cache_id is not None and not return_all_logps:
+            raise ValueError(
+                "old_all_log_probs_cache_id is set but return_all_logps=False; this is an inconsistent request."
+            )
         pad_token_id = data.meta_info.get("pad_token_id", 0)
         has_multi_modal_inputs = self._has_non_empty_multi_modal_inputs(
             data.non_tensor_batch.get("multi_modal_inputs")
@@ -661,6 +700,7 @@ class DataParallelPPOActor(BasePPOActor):
         entropy_lst = []
         sum_pi_squared_lst = []
         all_logps_lst = []
+        stream_all_logps_to_cache = return_all_logps and old_all_log_probs_cache_id is not None and not use_dynamic_bsz
         for micro_batch in micro_batches:
             micro_batch = micro_batch.to(get_device_id())
             model_inputs = {**micro_batch.batch, **micro_batch.non_tensor_batch, "pad_token_id": pad_token_id}
@@ -677,14 +717,17 @@ class DataParallelPPOActor(BasePPOActor):
             if calculate_sum_pi_squared:
                 sum_pi_squared_lst.append(outputs["sum_pi_squared"])
             if return_all_logps:
-                all_logps_lst.append(outputs["all_logps"].detach().cpu())
+                if stream_all_logps_to_cache:
+                    self.append_old_all_log_probs_cache(old_all_log_probs_cache_id, outputs["all_logps"])
+                else:
+                    all_logps_lst.append(outputs["all_logps"].detach().cpu())
 
         log_probs = torch.concat(log_probs_lst, dim=0)
         if calculate_entropy:
             entropys = torch.concat(entropy_lst, dim=0)
         if calculate_sum_pi_squared:
             sum_pi_squared = torch.concat(sum_pi_squared_lst, dim=0)
-        if return_all_logps:
+        if return_all_logps and not stream_all_logps_to_cache:
             all_logps = torch.concat(all_logps_lst, dim=0)
 
         if use_dynamic_bsz:
@@ -693,7 +736,7 @@ class DataParallelPPOActor(BasePPOActor):
                 entropys = restore_dynamic_batch(entropys, batch_idx_list)
             if calculate_sum_pi_squared:
                 sum_pi_squared = restore_dynamic_batch(sum_pi_squared, batch_idx_list)
-            if return_all_logps:
+            if return_all_logps and not stream_all_logps_to_cache:
                 all_logps = restore_dynamic_batch(all_logps, batch_idx_list)
 
         outputs = {"log_probs": log_probs}
@@ -701,7 +744,7 @@ class DataParallelPPOActor(BasePPOActor):
             outputs["entropys"] = entropys
         if calculate_sum_pi_squared:
             outputs["sum_pi_squared"] = sum_pi_squared
-        if return_all_logps:
+        if return_all_logps and not stream_all_logps_to_cache:
             outputs["all_logps"] = all_logps
         return outputs
 
