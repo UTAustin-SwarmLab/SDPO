@@ -1066,7 +1066,9 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
                 outputs = self.actor.compute_log_prob(data=data, calculate_entropy=calculate_entropy)
             if not is_lora:
                 tensors = {"old_log_probs": outputs["log_probs"]}
-                if "all_logps" in outputs:
+                if "old_all_log_probs_row_idx" in outputs:
+                    tensors["old_all_log_probs_row_idx"] = outputs["old_all_log_probs_row_idx"]
+                elif "all_logps" in outputs:
                     if old_all_log_probs_cache_id:
                         self.actor.put_old_all_log_probs_cache(old_all_log_probs_cache_id, outputs["all_logps"])
                         tensors["old_all_log_probs_row_idx"] = torch.arange(

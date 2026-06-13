@@ -700,8 +700,13 @@ class DataParallelPPOActor(BasePPOActor):
         entropy_lst = []
         sum_pi_squared_lst = []
         all_logps_lst = []
-        stream_all_logps_to_cache = return_all_logps and old_all_log_probs_cache_id is not None and not use_dynamic_bsz
-        for micro_batch in micro_batches:
+        stream_all_logps_to_cache = return_all_logps and old_all_log_probs_cache_id is not None
+        old_all_log_probs_row_idx = None
+        cache_row_cursor = 0
+        if stream_all_logps_to_cache:
+            # We need output row-index mapping aligned to the original batch order.
+            old_all_log_probs_row_idx = torch.empty(data.batch["responses"].shape[0], dtype=torch.long)
+        for micro_batch_idx, micro_batch in enumerate(micro_batches):
             micro_batch = micro_batch.to(get_device_id())
             model_inputs = {**micro_batch.batch, **micro_batch.non_tensor_batch, "pad_token_id": pad_token_id}
             with torch.no_grad():
@@ -719,6 +724,14 @@ class DataParallelPPOActor(BasePPOActor):
             if return_all_logps:
                 if stream_all_logps_to_cache:
                     self.append_old_all_log_probs_cache(old_all_log_probs_cache_id, outputs["all_logps"])
+                    chunk_rows = outputs["all_logps"].shape[0]
+                    cache_rows = torch.arange(cache_row_cursor, cache_row_cursor + chunk_rows, dtype=torch.long)
+                    if use_dynamic_bsz:
+                        batch_indices = torch.tensor(batch_idx_list[micro_batch_idx], dtype=torch.long)
+                        old_all_log_probs_row_idx[batch_indices] = cache_rows
+                    else:
+                        old_all_log_probs_row_idx[cache_row_cursor : cache_row_cursor + chunk_rows] = cache_rows
+                    cache_row_cursor += chunk_rows
                 else:
                     all_logps_lst.append(outputs["all_logps"].detach().cpu())
 
@@ -746,6 +759,8 @@ class DataParallelPPOActor(BasePPOActor):
             outputs["sum_pi_squared"] = sum_pi_squared
         if return_all_logps and not stream_all_logps_to_cache:
             outputs["all_logps"] = all_logps
+        if stream_all_logps_to_cache and old_all_log_probs_row_idx is not None:
+            outputs["old_all_log_probs_row_idx"] = old_all_log_probs_row_idx
         return outputs
 
     @GPUMemoryLogger(role="dp actor", logger=logger)
