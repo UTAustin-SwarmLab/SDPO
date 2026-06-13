@@ -57,7 +57,7 @@ policy_loss:
   # # Required when using verl.utils.omega_conf_to_dataclass to instantiate dataclass configs
   _target_: verl.workers.config.PolicyLossConfig
 
-  # Loss function mode: vanilla / clip-cov / kl-cov / gpg / sdpo
+  # Loss function mode: vanilla / clip-cov / kl-cov / gpg / sdpo / sdql / distil
   loss_mode: "vanilla"
 
   # Ratio of tokens to be clipped for clip-cov loss
@@ -81,7 +81,7 @@ self_distillation:
   # Required when using verl.utils.omega_conf_to_dataclass to instantiate dataclass configs
   _target_: verl.workers.config.SelfDistillationConfig
 
-  # Distillation is enabled when policy_loss.loss_mode == "sdpo"
+  # Distillation is enabled when policy_loss.loss_mode in {"sdpo", "sdql", "distil"}
 
   # Whether to use full-logit KL distillation
   full_logit_distillation: True
