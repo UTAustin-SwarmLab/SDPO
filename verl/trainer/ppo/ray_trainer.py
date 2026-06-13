@@ -1467,15 +1467,22 @@ class RayPPOTrainer:
             else getattr(policy_loss_cfg, "loss_mode", "vanilla")
         )
         self_distillation_cfg = getattr(self.config.actor_rollout_ref.actor, "self_distillation", None)
-        need_old_all_log_probs = (
+        need_full_logit_distillation = (
             loss_mode in {"sdql"}
             and self_distillation_cfg is not None
             and bool(getattr(self_distillation_cfg, "full_logit_distillation", False))
         )
+        distillation_topk = (
+            getattr(self_distillation_cfg, "distillation_topk", None) if need_full_logit_distillation else None
+        )
+        need_old_topk_log_probs = need_full_logit_distillation and distillation_topk is not None
+        need_old_all_log_probs = need_full_logit_distillation and distillation_topk is None
         batch.meta_info["return_all_logps"] = bool(need_old_all_log_probs)
-        old_all_log_probs_cache_id = str(uuid.uuid4()) if need_old_all_log_probs else None
-        if old_all_log_probs_cache_id is not None:
-            batch.meta_info["old_all_log_probs_cache_id"] = old_all_log_probs_cache_id
+        batch.meta_info["return_topk"] = bool(need_old_topk_log_probs)
+        if need_old_topk_log_probs:
+            batch.meta_info["distill_topk"] = int(distillation_topk)
+        else:
+            batch.meta_info.pop("distill_topk", None)
 
         if self.use_legacy_worker_impl == "disable":
             # TODO: remove step 1, 2, 4 after we make the whole training tensordict and padding free
@@ -1489,6 +1496,8 @@ class RayPPOTrainer:
                 calculate_entropy=True,
                 compute_loss=False,
                 return_all_logps=need_old_all_log_probs,
+                return_topk=need_old_topk_log_probs,
+                distill_topk=int(distillation_topk) if need_old_topk_log_probs else None,
             )
             output = self.actor_rollout_wg.compute_log_prob(batch_td)
             # gather output
@@ -1497,23 +1506,37 @@ class RayPPOTrainer:
             all_log_probs = (
                 tu.get(output, "all_logps") if need_old_all_log_probs and "all_logps" in output.keys() else None
             )
+            topk_log_probs = (
+                tu.get(output, "topk_logps") if need_old_topk_log_probs and "topk_logps" in output.keys() else None
+            )
+            topk_indices = (
+                tu.get(output, "topk_indices")
+                if need_old_topk_log_probs and "topk_indices" in output.keys()
+                else None
+            )
             old_log_prob_mfu = tu.get(output, "metrics")["mfu"]
             # step 4. No padding to padding
             entropy = no_padding_2_padding(entropy, batch_td)
             log_probs = no_padding_2_padding(log_probs, batch_td)
             if all_log_probs is not None:
                 all_log_probs = no_padding_2_padding(all_log_probs, batch_td)
+            if topk_log_probs is not None:
+                topk_log_probs = no_padding_2_padding(topk_log_probs, batch_td)
+            if topk_indices is not None:
+                topk_indices = no_padding_2_padding(topk_indices, batch_td)
             # step 5: rebuild a tensordict and convert to dataproto
             tensors = {"old_log_probs": log_probs.float(), "entropys": entropy.float()}
             if all_log_probs is not None:
                 tensors["old_all_log_probs"] = all_log_probs.float()
+            if topk_log_probs is not None:
+                tensors["old_topk_log_probs"] = topk_log_probs.float()
+            if topk_indices is not None:
+                tensors["old_topk_indices"] = topk_indices.long()
             old_log_prob = tu.get_tensordict(tensors)
             old_log_prob = DataProto.from_tensordict(old_log_prob)
         else:
             old_log_prob = self.actor_rollout_wg.compute_log_prob(batch)
             old_log_prob_mfu = 0
-            if old_all_log_probs_cache_id is not None:
-                old_log_prob.meta_info["old_all_log_probs_cache_id"] = old_all_log_probs_cache_id
         return old_log_prob, old_log_prob_mfu
 
     def _update_actor(self, batch: DataProto) -> DataProto:
@@ -1879,11 +1902,8 @@ class RayPPOTrainer:
                         actor_output_metrics = reduce_metrics(actor_output.meta_info["metrics"])
                         metrics.update(actor_output_metrics)
                     else:
-                        # During critic warmup, actor update is skipped. If old-policy full logits
-                        # were cached for SDQL distillation, evict them now to avoid CPU RAM growth.
-                        old_all_log_probs_cache_id = batch.meta_info.get("old_all_log_probs_cache_id")
-                        if old_all_log_probs_cache_id:
-                            self.actor_rollout_wg.clear_old_all_log_probs_cache(old_all_log_probs_cache_id)
+                        # During critic warmup, actor update is skipped.
+                        pass
 
                     # Log rollout generations if enabled
                     rollout_data_dir = self.config.trainer.get("rollout_data_dir", None)

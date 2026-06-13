@@ -973,15 +973,6 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
 
         return output
 
-    @register(dispatch_mode=Dispatch.ONE_TO_ALL)
-    def clear_old_all_log_probs_cache(self, cache_id: str):
-        """Clear per-rank cached old-policy full log-probs by cache id."""
-        if not self._is_actor:
-            return
-        if not cache_id:
-            return
-        self.actor.pop_old_all_log_probs_cache(cache_id)
-
     @register(dispatch_mode=make_nd_compute_dataproto_dispatch_fn(mesh_name="rollout"))
     @DistProfiler.annotate(color="red", role="rollout_generate")
     def generate_sequences(self, prompts: DataProto):
@@ -1054,11 +1045,6 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
         data.meta_info["temperature"] = self.config.rollout.temperature
         data.meta_info.setdefault("pad_token_id", self.tokenizer.pad_token_id)
         return_all_logps = bool(data.meta_info.get("return_all_logps", False))
-        old_all_log_probs_cache_id = data.meta_info.get("old_all_log_probs_cache_id")
-        if old_all_log_probs_cache_id is not None and not return_all_logps:
-            raise ValueError(
-                "old_all_log_probs_cache_id requires return_all_logps=True in compute_log_prob request meta."
-            )
         # perform recompute log_prob
         calculate_entropy = not is_lora
         with self.ulysses_sharding_manager:
@@ -1066,20 +1052,12 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
                 outputs = self.actor.compute_log_prob(data=data, calculate_entropy=calculate_entropy)
             if not is_lora:
                 tensors = {"old_log_probs": outputs["log_probs"]}
-                if "old_all_log_probs_row_idx" in outputs:
-                    tensors["old_all_log_probs_row_idx"] = outputs["old_all_log_probs_row_idx"]
-                elif "all_logps" in outputs:
-                    if old_all_log_probs_cache_id:
-                        self.actor.put_old_all_log_probs_cache(old_all_log_probs_cache_id, outputs["all_logps"])
-                        tensors["old_all_log_probs_row_idx"] = torch.arange(
-                            outputs["log_probs"].shape[0], dtype=torch.long
-                        )
-                    else:
-                        tensors["old_all_log_probs"] = outputs["all_logps"]
-                elif old_all_log_probs_cache_id:
-                    # Streaming cache path in actor.compute_log_prob: rows are cached per micro-batch
-                    # and we only need to send row indices to the trainer.
-                    tensors["old_all_log_probs_row_idx"] = torch.arange(outputs["log_probs"].shape[0], dtype=torch.long)
+                if "all_logps" in outputs:
+                    tensors["old_all_log_probs"] = outputs["all_logps"]
+                if "topk_logps" in outputs:
+                    tensors["old_topk_log_probs"] = outputs["topk_logps"]
+                if "topk_indices" in outputs:
+                    tensors["old_topk_indices"] = outputs["topk_indices"]
             else:
                 tensors = {"ref_log_prob": outputs["log_probs"]}
             if calculate_entropy:
