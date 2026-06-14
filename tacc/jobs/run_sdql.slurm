@@ -9,7 +9,6 @@
 #SBATCH -t 48:00:00
 #SBATCH --mem=0
 
-set -euo pipefail
 
 echo "Starting job on $(hostname)"
 date
