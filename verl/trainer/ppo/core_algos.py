@@ -1421,6 +1421,7 @@ def compute_self_distillation_q_loss(
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
+        per_token_loss = per_token_loss.sum(-1)
         # per_token_loss = log_ratio.detach() * student_log_probs
 
     is_clip = self_distillation_config.is_clip
