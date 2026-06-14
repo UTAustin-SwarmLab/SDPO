@@ -150,6 +150,8 @@ self_distillation:
 # Constant C in Dual-clip PPO; clips when advantage < 0 and ratio > C
 clip_ratio_c: 3.0
 
+gamma: 1.0
+
 # Loss aggregation mode: "token-mean", "seq-mean-token-sum", "seq-mean-token-mean", or "seq-mean-token-sum-norm"
 loss_agg_mode: token-mean
 

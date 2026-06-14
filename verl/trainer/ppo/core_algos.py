@@ -1315,6 +1315,7 @@ def compute_self_distillation_q_loss(
 ) -> tuple[torch.Tensor, dict[str, Any]]:
 
     metrics = {}
+    gamma = self_distillation_config.gamma
 
     loss_mask = response_mask
     if self_distillation_mask is not None:
@@ -1374,7 +1375,6 @@ def compute_self_distillation_q_loss(
             # kl_student = F.kl_div(mixture_log_probs, student_distill_log_probs, reduction="none", log_target=True)
             # reward = torch.lerp(kl_student, kl_teacher, alpha)  # Compute the Generalized Jensen-Shannon Divergence
 
-        gamma = self_distillation_config.success_reward_threshold
         zero_tail = torch.zeros_like(q_vals[:, :1, :])
         next_q_vals = torch.cat([q_vals[:, 1:, :], zero_tail], dim=1)
         if self_distillation_config.use_env_reward:
@@ -1401,9 +1401,9 @@ def compute_self_distillation_q_loss(
             else:
                 reward = reward.scatter_add(-1, sampled_token_ids.unsqueeze(-1), env_adv)
         if self_distillation_config.target_q_mode == "uniform":
-            target_q_vals = reward + gamma * next_q_vals.mean(-1)
+            target_q_vals = reward + gamma * next_q_vals.mean(-1, keepdim=True)
         elif self_distillation_config.target_q_mode == "max":
-            target_q_vals = reward + gamma * next_q_vals.max(-1)
+            target_q_vals = reward + gamma * next_q_vals.max(-1, keepdim=True).values
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
@@ -1411,13 +1411,13 @@ def compute_self_distillation_q_loss(
         assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
         rewards = student_log_probs - teacher_log_probs
         all_q_vals = student_all_log_probs - old_all_log_probs.detach()
-        zero_tail = torch.zeros_like(q_vals[:, :1, :])
+        zero_tail = torch.zeros_like(all_q_vals[:, :1, :])
         next_q_vals = torch.cat([all_q_vals[:, 1:, :], zero_tail], dim=1)
         q_vals = student_log_probs - old_log_probs.detach()
         if self_distillation_config.target_q_mode == "uniform":
             target_q_vals = rewards + gamma * next_q_vals.mean(-1)
         elif self_distillation_config.target_q_mode == "max":
-            target_q_vals = rewards + gamma * next_q_vals.max(-1)
+            target_q_vals = rewards + gamma * next_q_vals.max(-1).values
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2

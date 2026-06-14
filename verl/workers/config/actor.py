@@ -40,7 +40,7 @@ class SelfDistillationConfig(BaseConfig):
     """Configuration for self-distillation loss.
 
     Args:
-        Distillation is enabled when policy_loss.loss_mode in {"sdpo", "sdql"}.
+        Distillation is enabled when policy_loss.loss_mode in {"sdpo", "sdql", "distil"}.
         full_logit_distillation (bool): Whether to use full-logit KL distillation.
         alpha (float): KL interpolation coefficient. 0.0=forward KL, 1.0=reverse KL, in-between=JSD.
         success_reward_threshold (float): Minimum sequence reward to be considered successful.
@@ -75,6 +75,7 @@ class SelfDistillationConfig(BaseConfig):
     dont_reprompt_on_self_success: bool = False
     remove_thinking_from_demonstration: bool = False
     is_clip: Optional[float] = None
+    gamma: float = 1.0
     env_reward_scale: float = 1.0
     use_env_reward: bool = False
     target_q_mode: str = "uniform" # "uniform" or "max"
@@ -152,7 +153,7 @@ class PolicyLossConfig(BaseConfig):
     The inheritance from BaseConfig provides omegaconf.DictConfig-like interface for a dataclass config.
 
     Args:
-        loss_mode (str): Loss function mode. Options: 'vanilla', 'clip-cov', 'kl-cov', 'gpg', 'sdpo', 'sdql'.
+        loss_mode (str): Loss function mode. Options: 'vanilla', 'clip-cov', 'kl-cov', 'gpg', 'sdpo', 'sdql', 'distil'.
         clip_cov_ratio (float): Ratio of tokens to be clipped for clip-cov loss.
         clip_cov_lb (float): Lower bound for clip-cov loss.
         clip_cov_ub (float): Upper bound for clip-cov loss.
