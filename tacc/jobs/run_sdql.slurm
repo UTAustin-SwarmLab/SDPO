@@ -55,6 +55,13 @@ if [ ! -f "$WRAPPER_SCRIPT" ]; then
     exit 1
 fi
 chmod +x "$WRAPPER_SCRIPT"
+if [ ! -d "$PROJECT_ROOT/verl" ]; then
+    PROJECT_ROOT="${WORK}/SDPO"
+fi
+if [ ! -d "$PROJECT_ROOT/verl" ]; then
+    echo "Error: could not locate project root with verl/ directory"
+    exit 1
+fi
 
 # ==========================================
 # 2. HEAD NODE IDENTIFICATION
@@ -136,8 +143,8 @@ TEMPLATE_LENGTH=512
 MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_RESPONSE_LENGTH))
 HOME_ROOT=${WORK}
 
-export PROJECT_ROOT="${WORK}/SDPO"
-export PYTHONPATH=$PROJECT_ROOT:$PYTHONPATH
+export PROJECT_ROOT
+export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 export LOCAL_OUTPUT_DIR="${HOME_ROOT}/output/SDQL-local"
 mkdir -p "$LOCAL_OUTPUT_DIR"
 
@@ -155,7 +162,7 @@ data.max_response_length=$MAX_RESPONSE_LENGTH \
 max_model_len=$MAX_MODEL_LEN \
 vars.log_dir=$LOCAL_OUTPUT_DIR \
 trainer.group_name=SDQL-generalization \
-trainer.nnodes=8 \
+trainer.nnodes=$SLURM_JOB_NUM_NODES \
 trainer.n_gpus_per_node=1 \
 actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.max_model_len=$MAX_MODEL_LEN \
