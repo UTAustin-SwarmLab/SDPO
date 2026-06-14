@@ -1355,11 +1355,14 @@ def compute_self_distillation_q_loss(
             q_vals = student_distill_log_probs - old_all_log_probs.detach()
             
         if self_distillation_config.alpha == 0.0:
-            reward = student_distill_log_probs - teacher_distill_log_probs
+            reward = (teacher_distill_log_probs.exp()/ student_distill_log_probs.exp()).detach()
         elif self_distillation_config.alpha == 1.0:
-            reward = teacher_distill_log_probs - student_distill_log_probs
+            reward = (teacher_distill_log_probs - student_distill_log_probs).detach()
         else:
-            raise ValueError("Only forward KL and reverse KL are supported for non-full-logit distillation")
+            reward_forward = (teacher_distill_log_probs.exp() / student_distill_log_probs.exp()).detach()
+            reward_reverse = (teacher_distill_log_probs - student_distill_log_probs).detach()
+            reward = reward_forward * self_distillation_config.alpha + reward_reverse * (1 - self_distillation_config.alpha)
+            #raise ValueError("Only forward KL and reverse KL are supported for non-full-logit distillation")
             # # Compute the log of the mixture distribution
             # # log(a + b) = log(exp(log(a)) + exp(log(b))) -> for mixture
             # alpha = torch.tensor(
@@ -1400,12 +1403,19 @@ def compute_self_distillation_q_loss(
                 reward = reward + env_adv * sampled_mask * self_distillation_config.env_reward_scale
             else:
                 reward = reward.scatter_add(-1, sampled_token_ids.unsqueeze(-1), env_adv)
+        
         if self_distillation_config.target_q_mode == "uniform":
-            target_q_vals = reward + gamma * next_q_vals.mean(-1, keepdim=True)
+            print(next_q_vals.shape)
+            print(reward.shape)
+            target_q_vals = reward.detach() + gamma * next_q_vals.mean(-1, keepdim=True)
         elif self_distillation_config.target_q_mode == "max":
-            target_q_vals = reward + gamma * next_q_vals.max(-1, keepdim=True).values
+            print(next_q_vals.shape)
+            print(reward.shape)
+            target_q_vals = reward.detach() + gamma * next_q_vals.max(-1, keepdim=True).values
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
+        print(q_vals.shape)
+        print(target_q_vals.shape)
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
         per_token_loss = per_token_loss.sum(-1)
     else:
