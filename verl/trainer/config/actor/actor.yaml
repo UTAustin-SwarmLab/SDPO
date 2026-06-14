@@ -89,6 +89,9 @@ self_distillation:
   # Top-k for logit distillation; null uses full logits
   distillation_topk: 100
 
+  # Discount factor for distillation reward
+  gamma: 1.0
+
   # Whether to add a tail bucket when using distillation_topk
   distillation_add_tail: True
 
@@ -149,8 +152,6 @@ self_distillation:
 
 # Constant C in Dual-clip PPO; clips when advantage < 0 and ratio > C
 clip_ratio_c: 3.0
-
-gamma: 1.0
 
 # Loss aggregation mode: "token-mean", "seq-mean-token-sum", "seq-mean-token-mean", or "seq-mean-token-sum-norm"
 loss_agg_mode: token-mean
