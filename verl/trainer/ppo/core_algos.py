@@ -1354,25 +1354,36 @@ def compute_self_distillation_q_loss(
 
             student_distill_log_probs = student_topk_log_probs
             teacher_distill_log_probs = teacher_topk_log_probs
-            q_vals = student_distill_log_probs - old_topk_log_probs.detach()
+            
             if not self_distillation_config.distillation_add_tail:
                 student_distill_log_probs = renorm_topk_log_probs(student_distill_log_probs)
+                old_topk_log_probs = renorm_topk_log_probs(old_topk_log_probs)
                 teacher_distill_log_probs = renorm_topk_log_probs(teacher_distill_log_probs)
+            q_vals = student_distill_log_probs - old_topk_log_probs.detach()
         else:
+            raise ValueError("Only top-k distillation is supported for full-logit distillation")
             if student_all_log_probs is None or teacher_all_log_probs is None:
                 raise ValueError("full_logit_distillation requires student_all_log_probs and teacher_all_log_probs.")
             student_distill_log_probs = student_all_log_probs
             teacher_distill_log_probs = teacher_all_log_probs
+            if not self_distillation_config.distillation_add_tail:
+                old_all_log_probs = renorm_topk_log_probs(old_all_log_probs)
             q_vals = student_distill_log_probs - old_all_log_probs.detach()
             
-        reward_forward = (teacher_distill_log_probs.exp() / student_distill_log_probs.exp()).detach()
-        reward_reverse = (teacher_distill_log_probs - student_distill_log_probs).detach()
+        # 
+        # 
         if self_distillation_config.alpha == 0.0:
-            reward = reward_forward
+            reward_forward = (teacher_distill_log_probs.exp() / student_distill_log_probs.exp()).detach()
+            reward = torch.clamp(reward_forward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
         elif self_distillation_config.alpha == 1.0:
-            reward = reward_reverse
+            reward_reverse = (teacher_distill_log_probs - student_distill_log_probs).detach()
+            reward = torch.clamp(reward_reverse, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
         else:
-            reward = reward_forward * self_distillation_config.alpha + reward_reverse * (1 - self_distillation_config.alpha)
+            mixed_logits = (1-self_distillation_config.alpha) * teacher_distill_log_probs.exp() + self_distillation_config.alpha * student_distill_log_probs.exp()
+            mixed_logits_log = torch.log(mixed_logits) 
+            mixed_logits_log = renorm_topk_log_probs(mixed_logits_log)
+            reward = (mixed_logits_log - student_distill_log_probs).detach()
+            reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
             #raise ValueError("Only forward KL and reverse KL are supported for non-full-logit distillation")
             # # Compute the log of the mixture distribution
             # # log(a + b) = log(exp(log(a)) + exp(log(b))) -> for mixture
@@ -1436,6 +1447,7 @@ def compute_self_distillation_q_loss(
             metrics["sdql/target_q_mean"] = target_q_mean.item()
             metrics["sdql/target_q_std"] = target_q_std.item()
     else:
+        
         assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
         rewards = student_log_probs - teacher_log_probs
         all_q_vals = student_all_log_probs - old_all_log_probs.detach()

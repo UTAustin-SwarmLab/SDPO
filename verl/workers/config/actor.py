@@ -76,6 +76,8 @@ class SelfDistillationConfig(BaseConfig):
     remove_thinking_from_demonstration: bool = False
     is_clip: Optional[float] = None
     gamma: float = 1.0
+    clamp_high: float = 2.0
+    clamp_low: float = -2.0
     env_reward_scale: float = 1.0
     use_env_reward: bool = False
     target_q_mode: str = "uniform" # "uniform" or "max"
