@@ -1380,6 +1380,7 @@ def compute_self_distillation_q_loss(
 
         zero_tail = torch.zeros_like(q_vals[:, :1, :])
         next_q_vals = torch.cat([q_vals[:, 1:, :], zero_tail], dim=1)
+        next_q_vals = next_q_vals.detach()
         if self_distillation_config.use_env_reward:
             if advantages is None:
                 raise ValueError("advantages is required when self_distillation.use_env_reward is enabled.")
@@ -1405,17 +1406,11 @@ def compute_self_distillation_q_loss(
                 reward = reward.scatter_add(-1, sampled_token_ids.unsqueeze(-1), env_adv)
         
         if self_distillation_config.target_q_mode == "uniform":
-            print(next_q_vals.shape)
-            print(reward.shape)
             target_q_vals = reward.detach() + gamma * next_q_vals.mean(-1, keepdim=True)
         elif self_distillation_config.target_q_mode == "max":
-            print(next_q_vals.shape)
-            print(reward.shape)
             target_q_vals = reward.detach() + gamma * next_q_vals.max(-1, keepdim=True).values
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
-        print(q_vals.shape)
-        print(target_q_vals.shape)
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
         per_token_loss = per_token_loss.sum(-1)
     else:

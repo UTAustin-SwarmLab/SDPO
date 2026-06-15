@@ -20,6 +20,7 @@ actor_rollout_ref:
       is_clip: 2.0
       use_env_reward: False
       env_reward_scale: 1.0
+      distillation_add_tail: False
       target_q_mode: "uniform" # "uniform" or "max"
     optim:
       lr: 1e-5
