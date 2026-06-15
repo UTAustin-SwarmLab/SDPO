@@ -1317,6 +1317,17 @@ def compute_self_distillation_q_loss(
     metrics = {}
     gamma = self_distillation_config.gamma
 
+    def masked_mean_std(values: torch.Tensor, token_mask: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        expanded_mask = token_mask.to(values.dtype)
+        while expanded_mask.dim() < values.dim():
+            expanded_mask = expanded_mask.unsqueeze(-1)
+
+        denom = expanded_mask.sum().clamp(min=1.0)
+        mean = (values * expanded_mask).sum() / denom
+        var = (((values - mean) ** 2) * expanded_mask).sum() / denom
+        std = torch.sqrt(torch.clamp(var, min=0.0))
+        return mean, std
+
     loss_mask = response_mask
     if self_distillation_mask is not None:
         loss_mask = loss_mask * self_distillation_mask.unsqueeze(1)
@@ -1354,13 +1365,13 @@ def compute_self_distillation_q_loss(
             teacher_distill_log_probs = teacher_all_log_probs
             q_vals = student_distill_log_probs - old_all_log_probs.detach()
             
+        reward_forward = (teacher_distill_log_probs.exp() / student_distill_log_probs.exp()).detach()
+        reward_reverse = (teacher_distill_log_probs - student_distill_log_probs).detach()
         if self_distillation_config.alpha == 0.0:
-            reward = (teacher_distill_log_probs.exp()/ student_distill_log_probs.exp()).detach()
+            reward = reward_forward
         elif self_distillation_config.alpha == 1.0:
-            reward = (teacher_distill_log_probs - student_distill_log_probs).detach()
+            reward = reward_reverse
         else:
-            reward_forward = (teacher_distill_log_probs.exp() / student_distill_log_probs.exp()).detach()
-            reward_reverse = (teacher_distill_log_probs - student_distill_log_probs).detach()
             reward = reward_forward * self_distillation_config.alpha + reward_reverse * (1 - self_distillation_config.alpha)
             #raise ValueError("Only forward KL and reverse KL are supported for non-full-logit distillation")
             # # Compute the log of the mixture distribution
@@ -1413,6 +1424,17 @@ def compute_self_distillation_q_loss(
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
         per_token_loss = per_token_loss.sum(-1)
+
+        with torch.no_grad():
+            reward_forward_mean, reward_forward_std = masked_mean_std(reward_forward, loss_mask)
+            reward_reverse_mean, reward_reverse_std = masked_mean_std(reward_reverse, loss_mask)
+            target_q_mean, target_q_std = masked_mean_std(target_q_vals.detach(), loss_mask)
+            metrics["sdql/reward_forward_mean"] = reward_forward_mean.item()
+            metrics["sdql/reward_forward_std"] = reward_forward_std.item()
+            metrics["sdql/reward_reverse_mean"] = reward_reverse_mean.item()
+            metrics["sdql/reward_reverse_std"] = reward_reverse_std.item()
+            metrics["sdql/target_q_mean"] = target_q_mean.item()
+            metrics["sdql/target_q_std"] = target_q_std.item()
     else:
         assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
         rewards = student_log_probs - teacher_log_probs
@@ -1428,6 +1450,11 @@ def compute_self_distillation_q_loss(
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
         per_token_loss = per_token_loss.sum(-1)
+
+        with torch.no_grad():
+            target_q_mean, target_q_std = masked_mean_std(target_q_vals.detach(), loss_mask)
+            metrics["sdql/target_q_mean"] = target_q_mean.item()
+            metrics["sdql/target_q_std"] = target_q_std.item()
         # per_token_loss = log_ratio.detach() * student_log_probs
 
     is_clip = self_distillation_config.is_clip
@@ -1450,6 +1477,11 @@ def compute_self_distillation_q_loss(
         loss_agg_mode=loss_agg_mode,
         batch_num_tokens=loss_mask.sum().clamp(min=1.0),
     )
+    with torch.no_grad():
+        per_token_loss_mean, per_token_loss_std = masked_mean_std(per_token_loss.detach(), loss_mask)
+        metrics["sdql/per_token_loss_mean"] = per_token_loss_mean.item()
+        metrics["sdql/per_token_loss_std"] = per_token_loss_std.item()
+        metrics["sdql/loss"] = loss.item()
     return loss, metrics
 
 
