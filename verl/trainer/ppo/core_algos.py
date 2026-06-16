@@ -1373,7 +1373,7 @@ def compute_self_distillation_q_loss(
         # 
         # 
         if self_distillation_config.alpha == 0.0:
-            reward_forward = (teacher_distill_log_probs.exp() / student_distill_log_probs.exp()).detach()
+            reward_forward = (teacher_distill_log_probs - student_distill_log_probs).exp().detach()
             reward = torch.clamp(reward_forward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
         elif self_distillation_config.alpha == 1.0:
             reward_reverse = (teacher_distill_log_probs - student_distill_log_probs).detach()
@@ -1448,9 +1448,21 @@ def compute_self_distillation_q_loss(
             metrics["sdql/target_q_std"] = target_q_std.item()
     else:
         
-        assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
-        rewards = student_log_probs - teacher_log_probs
-        all_q_vals = student_all_log_probs - old_all_log_probs.detach()
+        #assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
+        if self_distillation_config.alpha == 0.0:
+            rewards = (teacher_log_probs.exp() / student_log_probs.exp()).detach()
+        elif self_distillation_config.alpha == 1.0:
+            rewards = (teacher_log_probs - student_log_probs).detach()
+        else:
+            mixed_logits = (1-self_distillation_config.alpha) * teacher_log_probs.exp() + self_distillation_config.alpha * student_log_probs.exp()
+            mixed_logits_log = torch.log(mixed_logits) 
+            rewards = mixed_logits_log - student_log_probs
+
+        use_topk = self_distillation_config.distillation_topk is not None
+        if use_topk:
+            all_q_vals = student_topk_log_probs - old_topk_log_probs.detach()
+        else:
+            all_q_vals = student_all_log_probs - old_all_log_probs.detach()
         zero_tail = torch.zeros_like(all_q_vals[:, :1, :])
         next_q_vals = torch.cat([all_q_vals[:, 1:, :], zero_tail], dim=1)
         q_vals = student_log_probs - old_log_probs.detach()
@@ -1464,6 +1476,9 @@ def compute_self_distillation_q_loss(
         per_token_loss = per_token_loss.sum(-1)
 
         with torch.no_grad():
+            rewards_mean, rewards_std = masked_mean_std(rewards, loss_mask)
+            metrics["sdql/rewards_mean"] = rewards_mean.item()
+            metrics["sdql/rewards_std"] = rewards_std.item()
             target_q_mean, target_q_std = masked_mean_std(target_q_vals.detach(), loss_mask)
             metrics["sdql/target_q_mean"] = target_q_mean.item()
             metrics["sdql/target_q_std"] = target_q_std.item()
