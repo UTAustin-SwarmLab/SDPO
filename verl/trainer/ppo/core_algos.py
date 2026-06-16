@@ -1437,8 +1437,8 @@ def compute_self_distillation_q_loss(
         per_token_loss = per_token_loss.sum(-1)
 
         with torch.no_grad():
-            reward_forward_mean, reward_forward_std = masked_mean_std(reward_forward, loss_mask)
-            reward_reverse_mean, reward_reverse_std = masked_mean_std(reward_reverse, loss_mask)
+            reward_forward_mean, reward_forward_std = masked_mean_std(reward, loss_mask)
+            reward_reverse_mean, reward_reverse_std = masked_mean_std(reward, loss_mask)
             target_q_mean, target_q_std = masked_mean_std(target_q_vals.detach(), loss_mask)
             metrics["sdql/reward_forward_mean"] = reward_forward_mean.item()
             metrics["sdql/reward_forward_std"] = reward_forward_std.item()
