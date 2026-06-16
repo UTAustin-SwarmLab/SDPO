@@ -22,6 +22,8 @@ actor_rollout_ref:
       env_reward_scale: 1.0
       distillation_add_tail: False
       target_q_mode: "uniform" # "uniform" or "max"
+      clamp_high: 2.0
+      clamp_low: -2.0
     optim:
       lr: 1e-5
   rollout:
