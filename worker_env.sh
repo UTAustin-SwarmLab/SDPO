@@ -1,0 +1,14 @@
+CONDA_EXE=/work/11123/harshgoel99/vista/miniforge3/bin/conda
+CONDA_PREFIX=/work/11123/harshgoel99/vista/miniforge3/envs/sdql
+CONDA_PROMPT_MODIFIER=(sdql) 
+CUDA_PATH=/home1/apps/nvidia/Linux_aarch64/25.3/cuda/12.8
+CUDA_ROOT=/home1/apps/nvidia/Linux_aarch64/25.3/cuda/12.8
+CONDA_SHLVL=4
+CONDA_PYTHON_EXE=/work/11123/harshgoel99/vista/miniforge3/bin/python
+LD_LIBRARY_PATH=/home1/apps/nvidia/Linux_aarch64/26.1/math_libs/nvpl/lib:/opt/apps/gcc14/cuda12/openmpi/5.0.5/lib:/home1/apps/nvidia/Linux_aarch64/25.3/math_libs/12.8/lib64:/home1/apps/nvidia/Linux_aarch64/25.3/comm_libs/12.8/nvshmem/lib:/home1/apps/nvidia/Linux_aarch64/25.3/comm_libs/12.8/nccl/lib:/home1/apps/nvidia/Linux_aarch64/25.3/cuda/12.8/extras/CUPTI/lib64:/home1/apps/nvidia/Linux_aarch64/25.3/cuda/12.8/lib64:/opt/apps/gcc/14.2.0/lib64:/opt/apps/gcc/14.2.0/lib:/opt/apps/ucx/1.20.0/lib/ucx:/opt/apps/ucx/1.20.0/lib:/opt/apps/ucc/1.7.0/lib
+CONDA_DEFAULT_ENV=sdql
+CUDA_HOME=/home1/apps/nvidia/Linux_aarch64/25.3/cuda/12.8
+PATH=/home1/apps/nvidia/Linux_aarch64/25.3/cuda/12.8/bin:/opt/apps/xalt/xalt/bin:/opt/apps/gcc14/cuda12/openmpi/5.0.5/libexec/osu-micro-benchmarks/mpi/one-sided:/opt/apps/gcc14/cuda12/openmpi/5.0.5/libexec/osu-micro-benchmarks/mpi/collective:/opt/apps/gcc14/cuda12/openmpi/5.0.5/libexec/osu-micro-benchmarks/mpi/pt2pt:/opt/apps/gcc14/cuda12/openmpi/5.0.5/libexec/osu-micro-benchmarks/mpi/startup:/opt/apps/gcc14/cuda12/openmpi/5.0.5/bin:/home1/apps/nvidia/Linux_aarch64/25.3/comm_libs/12.8/nvshmem/bin:/home1/apps/nvidia/Linux_aarch64/25.3/cuda/12.8/bin:/opt/apps/gcc/14.2.0/bin:/home1/11123/harshgoel99/.cursor-server/bin/linux-arm64/81fcf2931d7687b4ff3f3017858d0c6dee7e2a60/bin/remote-cli:/work/11123/harshgoel99/vista/miniforge3/envs/sdql/bin:/work/11123/harshgoel99/vista/miniforge3/condabin:/home1/apps/cmake/4.1.1/bin:/opt/apps/ucx/1.20.0/bin:/opt/apps/ucc/1.7.0/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:.:/home1/11123/harshgoel99/.local/bin
+CONDA_PREFIX_1=/work/11123/harshgoel99/vista/miniforge3
+CONDA_PREFIX_2=/work/11123/harshgoel99/vista/miniforge3/envs/sdql
+CONDA_PREFIX_3=/work/11123/harshgoel99/vista/miniforge3
