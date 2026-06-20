@@ -1468,7 +1468,7 @@ class RayPPOTrainer:
         )
         self_distillation_cfg = getattr(self.config.actor_rollout_ref.actor, "self_distillation", None)
         need_full_logit_distillation = (
-            loss_mode in {"sdql"}
+            loss_mode in {"sdql", "rover", "reover"}
             and self_distillation_cfg is not None
             and bool(getattr(self_distillation_cfg, "full_logit_distillation", False))
         )

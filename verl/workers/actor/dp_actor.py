@@ -32,6 +32,7 @@ from verl import DataProto
 from verl.trainer.ppo.core_algos import (
     agg_loss,
     compute_distil_self_distillation_loss,
+    compute_rover_loss,
     compute_self_distillation_loss,
     compute_self_distillation_q_loss,
     get_policy_loss_fn,
@@ -726,6 +727,7 @@ class DataParallelPPOActor(BasePPOActor):
 
         self_distillation_enabled = loss_mode == "sdpo"
         self_distillation_q_enabled = loss_mode == "sdql"
+        rover_q_enabled = loss_mode in {"rover"}
         distil_self_distillation_enabled = loss_mode == "distil"
         self_distillation_cfg = getattr(self.config, "self_distillation", None)
         if self_distillation_enabled or self_distillation_q_enabled or distil_self_distillation_enabled:
@@ -841,7 +843,10 @@ class DataParallelPPOActor(BasePPOActor):
                             raise ValueError("trust-region teacher requires disabling fused kernels to access logits.")
                         # all return: (bsz, response_length)
                         need_distill_logits = (
-                            self_distillation_enabled or self_distillation_q_enabled or distil_self_distillation_enabled
+                            self_distillation_enabled
+                            or self_distillation_q_enabled
+                            or rover_q_enabled
+                            or distil_self_distillation_enabled
                         )
                         return_all_logps = (
                             need_distill_logits
@@ -958,6 +963,47 @@ class DataParallelPPOActor(BasePPOActor):
                             )
 
                             pg_metrics["self_distillation/empty_target_batch"] = self_distillation_mask.sum().item() == 0
+                            micro_batch_metrics.update(pg_metrics)
+                        elif rover_q_enabled:
+                            old_all_log_probs_for_loss = None
+                            if "old_all_log_probs" in model_inputs:
+                                old_all_log_probs_for_loss = model_inputs["old_all_log_probs"].to(
+                                    log_prob.device, non_blocking=True
+                                )
+                            old_topk_log_probs = (
+                                model_inputs["old_topk_log_probs"].to(log_prob.device, non_blocking=True)
+                                if "old_topk_log_probs" in model_inputs
+                                else None
+                            )
+                            if (
+                                distill_topk
+                                and student_topk_indices is not None
+                                and old_topk_log_probs is None
+                                and old_all_log_probs_for_loss is not None
+                            ):
+                                gather_index = student_topk_indices
+                                if gather_index.dtype != torch.long:
+                                    gather_index = gather_index.long()
+                                old_topk_log_probs = torch.gather(
+                                    old_all_log_probs_for_loss,
+                                    dim=-1,
+                                    index=gather_index,
+                                )
+
+                            pg_loss, pg_metrics = compute_rover_loss(
+                                student_log_probs=log_prob,
+                                response_mask=response_mask,
+                                config=self_distillation_cfg,
+                                old_log_probs=old_log_prob,
+                                old_all_log_probs=old_all_log_probs_for_loss,
+                                old_topk_log_probs=old_topk_log_probs,
+                                student_all_log_probs=student_all_logps,
+                                student_topk_log_probs=student_topk_logps,
+                                metric_prefix="rover",
+                                loss_agg_mode=loss_agg_mode,
+                                rollout_is_weights=rollout_is_weights,
+                                advantages=advantages,
+                            )
                             micro_batch_metrics.update(pg_metrics)
                         elif self_distillation_enabled:
                             teacher_inputs = {
