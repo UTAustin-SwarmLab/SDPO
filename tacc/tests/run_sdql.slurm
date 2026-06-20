@@ -12,8 +12,6 @@
 # Usage: sbatch tacc/tests/run_sdql.slurm
 # Purpose: lightweight SDQL smoke test on TACC
 
-set -euo pipefail
-
 echo "Starting SDQL smoke test on $(hostname)"
 date
 
@@ -112,17 +110,21 @@ fi
 
 CONFIG_NAME="sdql"
 DATA_PATH="${DATA_PATH:-datasets/sciknoweval/all}"
-TRAIN_BATCH_SIZE="${TRAIN_BATCH_SIZE:-8}"
-ROLLOUT_BATCH_SIZE="${ROLLOUT_BATCH_SIZE:-2}"
-MINI_BATCH_SIZE="${MINI_BATCH_SIZE:-4}"
+TRAIN_BATCH_SIZE="${TRAIN_BATCH_SIZE:-32}"
+ROLLOUT_BATCH_SIZE="${ROLLOUT_BATCH_SIZE:-8}"
+MINI_BATCH_SIZE="${MINI_BATCH_SIZE:-32}"
 LR="${LR:-1e-5}"
-ALPHA="${ALPHA:-0.5}"
+ALPHA="${ALPHA:-0.0}"
 DONT_REPROMPT_ON_SELF_SUCCESS="${DONT_REPROMPT_ON_SELF_SUCCESS:-True}"
 MODEL_PATH="${MODEL_PATH:-Qwen/Qwen3-4B}"
-MAX_PROMPT_LENGTH="${MAX_PROMPT_LENGTH:-1024}"
-MAX_RESPONSE_LENGTH="${MAX_RESPONSE_LENGTH:-2048}"
+RAY_DASHBOARD_PORT=${RAY_DASHBOARD_PORT:-8170}
+MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
+MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
 TEMPLATE_LENGTH=512
-MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_RESPONSE_LENGTH))
+MAX_FEEDBACK_LENGTH=$((MAX_RESPONSE_LENGTH + 512))
+MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_FEEDBACK_LENGTH + MAX_RESPONSE_LENGTH))
+HOME_ROOT=${WORK}
+SUFFIX=${1:-"local_sdql_sciknoweval_all"}
 
 export PROJECT_ROOT
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
@@ -147,7 +149,7 @@ trainer.n_gpus_per_node=1 \
 actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.max_model_len=$MAX_MODEL_LEN \
 actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
-actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=4 \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=16 \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=8 \
 actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \

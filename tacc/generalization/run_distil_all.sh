@@ -15,19 +15,20 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TACC_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 DATA_PATHS=(
-    "datasets/sciknoweval/all/"
+    "datasets/sciknoweval2/all/"
 )
 
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
-MINI_BATCH_SIZES=(32)
-LRS=(1e-5)
+MINI_BATCH_SIZES=(16)
+LRS=(3e-6)
 ALPHAS=(1.0)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
+TOPK=50
 
 MODEL_PATHS=(
-    "Qwen/Qwen3-8B"
     "allenai/Olmo-3-7B-Instruct"
+    "Qwen/Qwen3-8B"
 )
 
 for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
@@ -52,6 +53,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                     "${ALPHA}"
                                     "${DONTS_REPROMPT_ON_SELF_SUCCESS}"
                                     "${EXP_NAME}"
+                                    "${TOPK}"
                                 )
                                 if [[ "$DRY_RUN" == true ]]; then
                                     printf '%q ' "${CMD[@]}"

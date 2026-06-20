@@ -6,7 +6,7 @@
 #SBATCH -N 8
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-#SBATCH -t 48:00:00
+#SBATCH -t 12:00:00
 #SBATCH --mem=0
 
 
@@ -136,11 +136,16 @@ MODEL_PATH=${6:-"Qwen/Qwen3-8B"}
 ALPHA=${7:-0.5}
 DONT_REPROMPT_ON_SELF_SUCCESS=${8:-True}
 SUFFIX=${9:-"local_sdql"}
+TOPK=${10:-100}
+FULL_LOGIT_DISTILLATION=${11:-True}
+CLAMP_HIGH=${12:-5.0}
+CLAMP_LOW=${13:-5.0}
 
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
 TEMPLATE_LENGTH=512
-MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_RESPONSE_LENGTH))
+MAX_FEEDBACK_LENGTH=$((MAX_RESPONSE_LENGTH + 512))
+MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_FEEDBACK_LENGTH + MAX_RESPONSE_LENGTH))
 HOME_ROOT=${WORK}
 
 export PROJECT_ROOT
@@ -168,12 +173,15 @@ actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.max_model_len=$MAX_MODEL_LEN \
 actor_rollout_ref.actor.optim.lr=$LR \
 actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
-actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=16 \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=8 \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=32 \
 actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
-actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
+actor_rollout_ref.actor.self_distillation.distillation_topk=$TOPK \
+actor_rollout_ref.actor.self_distillation.full_logit_distillation=$FULL_LOGIT_DISTILLATION \
+actor_rollout_ref.actor.self_distillation.clamp_high=$CLAMP_HIGH \
+actor_rollout_ref.actor.self_distillation.clamp_low=$CLAMP_LOW \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
@@ -181,7 +189,7 @@ actor_rollout_ref.actor.self_distillation.include_environment_feedback=False \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
 trainer.test_freq=20 \
-trainer.val_before_train=False \
+trainer.val_before_train=True \
 custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__init__.py"
 
 echo "----------------------------------------------------------------"

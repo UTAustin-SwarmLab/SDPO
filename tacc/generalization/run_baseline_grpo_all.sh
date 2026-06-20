@@ -20,7 +20,7 @@ CONFIG_NAME="baseline_grpo"
 OUTPUT_SUBDIR="GRPO"
 
 DATA_PATHS=(
-    "datasets/sciknoweval/all/"
+    "datasets/sciknoweval2/all/"
 )
 
 TRAIN_BATCH_SIZES=(32)

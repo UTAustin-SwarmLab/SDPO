@@ -54,7 +54,7 @@ reward_model:
   use_reward_loop: False # disables experimental reward manager (which gives lower scores)
 
 trainer:
-  project_name: SDPO-${oc.env:USER}
+  project_name: SDPO2-${oc.env:USER}
   group_name: ${oc.env:EXPERIMENT}
   experiment_name: ${oc.env:EXPERIMENT}
   n_gpus_per_node: 4

@@ -12,7 +12,6 @@
 # Usage: sbatch tacc/tests/run_distil.slurm
 # Purpose: lightweight DistIL smoke test on TACC
 
-set -euo pipefail
 
 echo "Starting DistIL smoke test on $(hostname)"
 date
@@ -112,9 +111,9 @@ fi
 
 CONFIG_NAME="distil"
 DATA_PATH="${DATA_PATH:-datasets/sciknoweval/all}"
-TRAIN_BATCH_SIZE="${TRAIN_BATCH_SIZE:-8}"
-ROLLOUT_BATCH_SIZE="${ROLLOUT_BATCH_SIZE:-2}"
-MINI_BATCH_SIZE="${MINI_BATCH_SIZE:-4}"
+TRAIN_BATCH_SIZE="${TRAIN_BATCH_SIZE:-32}"
+ROLLOUT_BATCH_SIZE="${ROLLOUT_BATCH_SIZE:-8}"
+MINI_BATCH_SIZE="${MINI_BATCH_SIZE:-32}"
 LR="${LR:-1e-5}"
 ALPHA="${ALPHA:-1.0}"
 DONT_REPROMPT_ON_SELF_SUCCESS="${DONT_REPROMPT_ON_SELF_SUCCESS:-True}"

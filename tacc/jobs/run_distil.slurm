@@ -6,10 +6,8 @@
 #SBATCH -N 8
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-#SBATCH -t 48:00:00
+#SBATCH -t 12:00:00
 #SBATCH --mem=0
-
-set -euo pipefail
 
 echo "Starting job on $(hostname)"
 date
@@ -124,17 +122,18 @@ CONFIG_NAME="distil"
 DATA_PATH=${1:-"datasets/sciknoweval/all"}
 TRAIN_BATCH_SIZE=${2:-32}
 ROLLOUT_BATCH_SIZE=${3:-8}
-MINI_BATCH_SIZE=${4:-32}
+MINI_BATCH_SIZE=${4:-16}
 LR=${5:-1e-5}
 MODEL_PATH=${6:-"Qwen/Qwen3-8B"}
 ALPHA=${7:-1.0}
 DONT_REPROMPT_ON_SELF_SUCCESS=${8:-True}
 SUFFIX=${9:-"local_distil"}
-
+TOPK=${10:-50}
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
 TEMPLATE_LENGTH=512
-MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_RESPONSE_LENGTH))
+MAX_FEEDBACK_LENGTH=$((MAX_RESPONSE_LENGTH + 512))
+MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_RESPONSE_LENGTH + MAX_FEEDBACK_LENGTH))
 HOME_ROOT=${WORK}
 
 export PROJECT_ROOT="${WORK}/SDPO"
@@ -162,12 +161,12 @@ actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.max_model_len=$MAX_MODEL_LEN \
 actor_rollout_ref.actor.optim.lr=$LR \
 actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
-actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=16 \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=8 \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=32 \
 actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
-actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
+actor_rollout_ref.actor.self_distillation.distillation_topk=$TOPK \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \

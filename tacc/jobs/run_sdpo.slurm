@@ -6,7 +6,7 @@
 #SBATCH -N 8
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-#SBATCH -t 48:00:00
+#SBATCH -t 12:00:00
 #SBATCH --mem=0
 
 echo "Starting job on $(hostname)"
@@ -33,6 +33,7 @@ export CC=$(which gcc)
 export CXX=$(which g++)
 export CUDA_HOME="$TACC_CUDA_DIR"
 export PATH="${CUDA_HOME}/bin:${PATH}"
+
 conda activate sdql
 echo "Conda environment: $CONDA_DEFAULT_ENV"
 
@@ -128,6 +129,7 @@ MODEL_PATH=${6:-"Qwen/Qwen3-8B"}
 ALPHA=${7:-0.5}
 DONT_REPROMPT_ON_SELF_SUCCESS=${8:-True}
 SUFFIX=${9:-"local_sdpo"}
+TOPK=${10:-50}
 
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
@@ -161,12 +163,12 @@ actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.max_model_len=$MAX_MODEL_LEN \
 actor_rollout_ref.actor.optim.lr=$LR \
 actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
-actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=16 \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=8 \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=32 \
 actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
-actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
+actor_rollout_ref.actor.self_distillation.distillation_topk=$TOPK \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \

@@ -15,16 +15,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TACC_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 DATA_PATHS=(
-    "datasets/sciknoweval/all/"
+    "datasets/sciknoweval2/all/"
 )
 
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
-MINI_BATCH_SIZES=(32)
-LRS=(1e-5)
+MINI_BATCH_SIZES=(16)
+LRS=(3e-6)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
-ALPHAS=(0.5)
-
+ALPHAS=(0.0 0.5 1.0)
+FULL_LOGIT_DISTILLATION=True
+CLAMP_HIGH=5.0
+CLAMP_LOW=-5.0
+TOPK=50
 MODEL_PATHS=(
     "Qwen/Qwen3-8B"
     "allenai/Olmo-3-7B-Instruct"
@@ -38,14 +41,15 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                     for ALPHA in "${ALPHAS[@]}"; do
                         for DONTS_REPROMPT_ON_SELF_SUCCESS in "${DONTS_REPROMPT_ON_SELF_SUCCESSS[@]}"; do
                             for DATA_PATH in "${DATA_PATHS[@]}"; do
-                                EXP_NAME="FINAL-SDQL-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
-                                CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdql.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}")
+                                EXP_NAME="FINAL-SDQL-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}-topk${TOPK}"
+                                CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdql.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}" "${FULL_LOGIT_DISTILLATION}" "${CLAMP_HIGH}" "${CLAMP_LOW}")
                                 if [[ "$DRY_RUN" == true ]]; then
                                     printf '%q ' "${CMD[@]}"
                                     echo
                                 else
                                     "${CMD[@]}"
                                 fi
+                                sleep 90
                             done
                         done
                     done
