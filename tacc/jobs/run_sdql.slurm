@@ -115,7 +115,7 @@ done
 
 echo "Waiting for Ray cluster to initialize..."
 for i in {1..30}; do
-    alive_nodes=$(ray status --address "$HEAD_IP:$RAY_PORT" 2>/dev/null | rg -c "node_" || true)
+    alive_nodes=$(ray status --address "$HEAD_IP:$RAY_PORT" 2>/dev/null | awk '/node_/{c++} END{print c+0}' || true)
     if [ "${alive_nodes:-0}" -ge "$SLURM_JOB_NUM_NODES" ]; then
         echo "Ray Cluster Ready! ($alive_nodes nodes connected)"
         break
@@ -136,7 +136,8 @@ LR=${5:-1e-5}
 MODEL_PATH=${6:-"Qwen/Qwen3-8B"}
 ALPHA=${7:-0.5}
 DONT_REPROMPT_ON_SELF_SUCCESS=${8:-True}
-SUFFIX=${9:-"local_sdql"}
+TEACHER_UPDATE_RATE=${9:-0.05}
+SUFFIX=${10:-"local_sdql"}
 
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
@@ -178,7 +179,8 @@ actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
-actor_rollout_ref.actor.self_distillation.include_environment_feedback=False \
+actor_rollout_ref.actor.self_distillation.include_environment_feedback=True \
+actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
 trainer.test_freq=20 \

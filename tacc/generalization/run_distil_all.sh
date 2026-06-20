@@ -24,7 +24,7 @@ MINI_BATCH_SIZES=(32)
 LRS=(1e-5)
 ALPHAS=(1.0)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
-
+TEACHER_UPDATE_RATE=0.01
 MODEL_PATHS=(
     "Qwen/Qwen3-8B"
     "allenai/Olmo-3-7B-Instruct"
@@ -51,6 +51,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                     "${MODEL_PATH}"
                                     "${ALPHA}"
                                     "${DONTS_REPROMPT_ON_SELF_SUCCESS}"
+                                    "${TEACHER_UPDATE_RATE}"
                                     "${EXP_NAME}"
                                 )
                                 if [[ "$DRY_RUN" == true ]]; then

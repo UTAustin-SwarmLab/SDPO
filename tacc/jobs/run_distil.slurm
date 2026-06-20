@@ -108,7 +108,7 @@ done
 
 echo "Waiting for Ray cluster to initialize..."
 for i in {1..30}; do
-    alive_nodes=$(ray status --address "$HEAD_IP:$RAY_PORT" 2>/dev/null | rg -c "node_" || true)
+    alive_nodes=$(ray status --address "$HEAD_IP:$RAY_PORT" 2>/dev/null | awk '/node_/{c++} END{print c+0}' || true)
     if [ "${alive_nodes:-0}" -ge "$SLURM_JOB_NUM_NODES" ]; then
         echo "Ray Cluster Ready! ($alive_nodes nodes connected)"
         break
@@ -129,7 +129,8 @@ LR=${5:-1e-5}
 MODEL_PATH=${6:-"Qwen/Qwen3-8B"}
 ALPHA=${7:-1.0}
 DONT_REPROMPT_ON_SELF_SUCCESS=${8:-True}
-SUFFIX=${9:-"local_distil"}
+TEACHER_UPDATE_RATE=${9:-0.01}
+SUFFIX=${10:-"local_distil"}
 
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
@@ -165,6 +166,7 @@ actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
 actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=16 \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=32 \
 actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
+actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
 actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
