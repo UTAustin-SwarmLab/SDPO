@@ -24,7 +24,8 @@ MINI_BATCH_SIZES=(16)
 LRS=(3e-6)
 ALPHAS=(0.0 0.5 1.0)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
-TOPKS=50
+TOPK=50
+TEACHER_UPDATE_RATE=0.05
 MODEL_PATHS=(
     "allenai/Olmo-3-7B-Instruct"
     "Qwen/Qwen3-8B"
@@ -39,7 +40,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                         for DONTS_REPROMPT_ON_SELF_SUCCESS in "${DONTS_REPROMPT_ON_SELF_SUCCESSS[@]}"; do
                             for DATA_PATH in "${DATA_PATHS[@]}"; do
                                 EXP_NAME="FINAL-SDPO-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
-                                CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdpo.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}")
+                                CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdpo.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}" "${TEACHER_UPDATE_RATE}")
                                 if [[ "$DRY_RUN" == true ]]; then
                                     printf '%q ' "${CMD[@]}"
                                     echo

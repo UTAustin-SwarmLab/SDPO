@@ -130,6 +130,9 @@ ALPHA=${7:-0.5}
 DONT_REPROMPT_ON_SELF_SUCCESS=${8:-True}
 SUFFIX=${9:-"local_sdpo"}
 TOPK=${10:-50}
+TEACHER_UPDATE_RATE=${11:-0.05}
+
+
 
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
@@ -173,6 +176,7 @@ algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.include_environment_feedback=False \
+actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
 trainer.test_freq=20 \

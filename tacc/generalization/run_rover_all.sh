@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Usage: ./run_distil_all.sh [--dry-run]
+# Usage: ./run_rover_all.sh [--dry-run]
 #
-# TACC generalization sweep for DistIL baseline.
-# Mirrors tacc/generalization/run_baseline_grpo_all.sh style.
+# TACC generalization sweep for ROVER baseline.
+# Mirrors experiments/generalization/run_sdql_all.sh.
 
 DRY_RUN=false
 if [[ "${1:-}" == "--dry-run" ]]; then
@@ -15,20 +15,19 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TACC_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 DATA_PATHS=(
-    "datasets/sciknoweval2/all/"
+    "datasets/sciknoweval/all/"
 )
 
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
-MINI_BATCH_SIZES=(16)
-LRS=(3e-6)
-ALPHAS=(1.0)
+MINI_BATCH_SIZES=(32)
+LRS=(1e-5)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
-TOPK=50
-TEACHER_UPDATE_RATE=0.01
+ALPHAS=(0.5)
+TEACHER_UPDATE_RATE=0.05
 MODEL_PATHS=(
-    "allenai/Olmo-3-7B-Instruct"
     "Qwen/Qwen3-8B"
+    "allenai/Olmo-3-7B-Instruct"
 )
 
 for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
@@ -39,23 +38,8 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                     for ALPHA in "${ALPHAS[@]}"; do
                         for DONTS_REPROMPT_ON_SELF_SUCCESS in "${DONTS_REPROMPT_ON_SELF_SUCCESSS[@]}"; do
                             for DATA_PATH in "${DATA_PATHS[@]}"; do
-                                EXP_NAME="FINAL-DISTIL-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
-                                CMD=(
-                                    sbatch
-                                    -A ASC26054
-                                    "$TACC_DIR/jobs/run_distil.slurm"
-                                    "${DATA_PATH}"
-                                    "${TRAIN_BATCH_SIZE}"
-                                    "${ROLLOUT_BATCH_SIZE}"
-                                    "${MINI_BATCH_SIZE}"
-                                    "${LR}"
-                                    "${MODEL_PATH}"
-                                    "${ALPHA}"
-                                    "${DONTS_REPROMPT_ON_SELF_SUCCESS}"
-                                    "${TEACHER_UPDATE_RATE}"
-                                    "${EXP_NAME}"
-                                    "${TOPK}"
-                                )
+                                EXP_NAME="FINAL-ROVER-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
+                                CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_rover.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${TEACHER_UPDATE_RATE}" "${EXP_NAME}")
                                 if [[ "$DRY_RUN" == true ]]; then
                                     printf '%q ' "${CMD[@]}"
                                     echo

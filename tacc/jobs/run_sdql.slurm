@@ -114,7 +114,7 @@ done
 
 echo "Waiting for Ray cluster to initialize..."
 for i in {1..30}; do
-    alive_nodes=$(ray status --address "$HEAD_IP:$RAY_PORT" 2>/dev/null | rg -c "node_" || true)
+    alive_nodes=$(ray status --address "$HEAD_IP:$RAY_PORT" 2>/dev/null | awk '/node_/{c++} END{print c+0}' || true)
     if [ "${alive_nodes:-0}" -ge "$SLURM_JOB_NUM_NODES" ]; then
         echo "Ray Cluster Ready! ($alive_nodes nodes connected)"
         break
@@ -140,6 +140,8 @@ TOPK=${10:-100}
 FULL_LOGIT_DISTILLATION=${11:-True}
 CLAMP_HIGH=${12:-5.0}
 CLAMP_LOW=${13:-5.0}
+TEACHER_UPDATE_RATE=${14:-0.05}
+
 
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
@@ -185,7 +187,8 @@ actor_rollout_ref.actor.self_distillation.clamp_low=$CLAMP_LOW \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
-actor_rollout_ref.actor.self_distillation.include_environment_feedback=False \
+actor_rollout_ref.actor.self_distillation.include_environment_feedback=True \
+actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
 trainer.test_freq=20 \

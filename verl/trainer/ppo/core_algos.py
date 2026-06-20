@@ -1292,8 +1292,94 @@ def compute_distil_self_distillation_loss(
     )
     return loss, metrics
 
+def compute_rover_loss(
+    student_log_probs: torch.Tensor,
+    response_mask: torch.Tensor,
+    config: Any,
+    old_log_probs: Optional[torch.Tensor] = None,
+    old_all_log_probs: Optional[torch.Tensor] = None,
+    old_topk_log_probs: Optional[torch.Tensor] = None,
+    student_all_log_probs: Optional[torch.Tensor] = None,
+    student_topk_log_probs: Optional[torch.Tensor] = None,
+    metric_prefix: str = "rover",
+    loss_agg_mode: str = "token-mean",
+    rollout_is_weights: Optional[torch.Tensor] = None,
+    advantages: Optional[torch.Tensor] = None,
+) -> tuple[torch.Tensor, dict[str, Any]]:
+    metrics = {}
+    gamma = config.gamma
 
+    def masked_mean_std(values: torch.Tensor, token_mask: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        expanded_mask = token_mask.to(values.dtype)
+        while expanded_mask.dim() < values.dim():
+            expanded_mask = expanded_mask.unsqueeze(-1)
 
+        denom = expanded_mask.sum().clamp(min=1.0)
+        mean = (values * expanded_mask).sum() / denom
+        var = (((values - mean) ** 2) * expanded_mask).sum() / denom
+        std = torch.sqrt(torch.clamp(var, min=0.0))
+        return mean, std
+
+    loss_mask = response_mask
+    if advantages is None:
+        raise ValueError("advantages is required for rover loss.")
+    if old_log_probs is None:
+        raise ValueError("old_log_probs is required for rover loss.")
+
+    use_topk = config.distillation_topk is not None
+    if use_topk:
+        if student_topk_log_probs is None or old_topk_log_probs is None:
+            raise ValueError("top-k rover loss requires student_topk_log_probs and old_topk_log_probs.")
+        all_q_vals = student_topk_log_probs - old_topk_log_probs.detach()
+    else:
+        if student_all_log_probs is None or old_all_log_probs is None:
+            raise ValueError("full-logit rover loss requires student_all_log_probs and old_all_log_probs.")
+        all_q_vals = student_all_log_probs - old_all_log_probs.detach()
+    zero_tail = torch.zeros_like(all_q_vals[:, :1, :])
+    next_q_vals = torch.cat([all_q_vals[:, 1:, :], zero_tail], dim=1)
+    q_vals = student_log_probs - old_log_probs.detach()
+
+    target_q_vals = advantages + gamma * next_q_vals.mean(-1)
+    per_token_loss = (q_vals - target_q_vals.detach()) ** 2
+
+    with torch.no_grad():
+        advantages_mean, advantages_std = masked_mean_std(advantages, loss_mask)
+        metrics[f"{metric_prefix}/advantages_mean"] = advantages_mean.item()
+        metrics[f"{metric_prefix}/advantages_std"] = advantages_std.item()
+        target_q_mean, target_q_std = masked_mean_std(target_q_vals.detach(), loss_mask)
+        metrics[f"{metric_prefix}/target_q_mean"] = target_q_mean.item()
+        metrics[f"{metric_prefix}/target_q_std"] = target_q_std.item()
+        # per_token_loss = log_ratio.detach() * student_log_probs
+
+    is_clip = config.is_clip
+    if is_clip is not None:
+        if old_log_probs is None:
+            raise ValueError("old_log_probs is required for distillation IS ratio.")
+
+        negative_approx_kl = (student_log_probs - old_log_probs).detach()
+        negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
+        ratio = torch.exp(negative_approx_kl).clamp(max=is_clip)
+        per_token_loss = per_token_loss * ratio
+
+    # Apply rollout correction weights if provided
+    if rollout_is_weights is not None:
+        per_token_loss = per_token_loss * rollout_is_weights
+
+    loss = agg_loss(
+        loss_mat=per_token_loss,
+        loss_mask=loss_mask,
+        loss_agg_mode=loss_agg_mode,
+        batch_num_tokens=loss_mask.sum().clamp(min=1.0),
+    )
+    with torch.no_grad():
+        per_token_loss_mean, per_token_loss_std = masked_mean_std(per_token_loss.detach(), loss_mask)
+        metrics[f"{metric_prefix}/per_token_loss_mean"] = per_token_loss_mean.item()
+        metrics[f"{metric_prefix}/per_token_loss_std"] = per_token_loss_std.item()
+        metrics[f"{metric_prefix}/loss"] = loss.item()
+    return loss, metrics
+        
+        
+        
 def compute_self_distillation_q_loss(
     student_log_probs: torch.Tensor,
     teacher_log_probs: torch.Tensor,
@@ -1450,13 +1536,13 @@ def compute_self_distillation_q_loss(
         
         #assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
         if self_distillation_config.alpha == 0.0:
-            rewards = (teacher_log_probs.exp() / student_log_probs.exp()).detach()
+            reward = (teacher_log_probs.exp() / student_log_probs.exp()).detach()
         elif self_distillation_config.alpha == 1.0:
-            rewards = (teacher_log_probs - student_log_probs).detach()
+            reward = (teacher_log_probs - student_log_probs).detach()
         else:
             mixed_logits = (1-self_distillation_config.alpha) * teacher_log_probs.exp() + self_distillation_config.alpha * student_log_probs.exp()
             mixed_logits_log = torch.log(mixed_logits) 
-            rewards = mixed_logits_log - student_log_probs
+            reward = mixed_logits_log - student_log_probs
 
         use_topk = self_distillation_config.distillation_topk is not None
         if use_topk:
@@ -1466,17 +1552,26 @@ def compute_self_distillation_q_loss(
         zero_tail = torch.zeros_like(all_q_vals[:, :1, :])
         next_q_vals = torch.cat([all_q_vals[:, 1:, :], zero_tail], dim=1)
         q_vals = student_log_probs - old_log_probs.detach()
+        
+        if self_distillation_config.use_env_reward:
+            if advantages is None:
+                raise ValueError("advantages is required when self_distillation.use_env_reward is enabled.")
+            if sampled_token_ids is None:
+                raise ValueError("sampled_token_ids is required when self_distillation.use_env_reward is enabled.")
+
+            env_adv = advantages.to(reward.dtype).unsqueeze(-1)  # [bs, seq, 1]
+            reward = reward + env_adv *  self_distillation_config.env_reward_scale
+        # compute target Q values
         if self_distillation_config.target_q_mode == "uniform":
-            target_q_vals = rewards + gamma * next_q_vals.mean(-1)
+            target_q_vals = reward + gamma * next_q_vals.mean(-1)
         elif self_distillation_config.target_q_mode == "max":
-            target_q_vals = rewards + gamma * next_q_vals.max(-1).values
+            target_q_vals = reward + gamma * next_q_vals.max(-1).values
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
-        per_token_loss = per_token_loss.sum(-1)
 
         with torch.no_grad():
-            rewards_mean, rewards_std = masked_mean_std(rewards, loss_mask)
+            rewards_mean, rewards_std = masked_mean_std(reward, loss_mask)
             metrics["sdql/rewards_mean"] = rewards_mean.item()
             metrics["sdql/rewards_std"] = rewards_std.item()
             target_q_mean, target_q_std = masked_mean_std(target_q_vals.detach(), loss_mask)

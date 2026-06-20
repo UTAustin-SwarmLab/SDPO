@@ -1,13 +1,15 @@
 #!/bin/bash
-#SBATCH -J distil_job
-#SBATCH -o distil_job-%j.out
-#SBATCH -e distil_job-%j.err
+#SBATCH -J rover_job
+#SBATCH -o rover_job-%j.out
+#SBATCH -e rover_job-%j.err
 #SBATCH -p gh
 #SBATCH -N 8
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-#SBATCH -t 12:00:00
+#SBATCH -t 48:00:00
 #SBATCH --mem=0
+
+set -euo pipefail
 
 echo "Starting job on $(hostname)"
 date
@@ -54,6 +56,13 @@ if [ ! -f "$WRAPPER_SCRIPT" ]; then
     exit 1
 fi
 chmod +x "$WRAPPER_SCRIPT"
+if [ ! -d "$PROJECT_ROOT/verl" ]; then
+    PROJECT_ROOT="${WORK}/SDPO"
+fi
+if [ ! -d "$PROJECT_ROOT/verl" ]; then
+    echo "Error: could not locate project root with verl/ directory"
+    exit 1
+fi
 
 # ==========================================
 # 2. HEAD NODE IDENTIFICATION
@@ -118,29 +127,27 @@ ray status --address "$HEAD_IP:$RAY_PORT"
 # ==========================================
 # 4. TRAINING ARGUMENTS (from sbatch CLI)
 # ==========================================
-CONFIG_NAME="distil"
+CONFIG_NAME="rover"
 DATA_PATH=${1:-"datasets/sciknoweval/all"}
 TRAIN_BATCH_SIZE=${2:-32}
 ROLLOUT_BATCH_SIZE=${3:-8}
-MINI_BATCH_SIZE=${4:-16}
+MINI_BATCH_SIZE=${4:-32}
 LR=${5:-1e-5}
 MODEL_PATH=${6:-"Qwen/Qwen3-8B"}
-ALPHA=${7:-1.0}
+ALPHA=${7:-0.5}
 DONT_REPROMPT_ON_SELF_SUCCESS=${8:-True}
-TEACHER_UPDATE_RATE=${9:-0.01}
-SUFFIX=${10:-"local_distil"}
-TOPK=${11:-50}
+TEACHER_UPDATE_RATE=${9:-0.05}
+SUFFIX=${10:-"local_rover"}
 
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
 TEMPLATE_LENGTH=512
-MAX_FEEDBACK_LENGTH=$((MAX_RESPONSE_LENGTH + 512))
-MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_RESPONSE_LENGTH + MAX_FEEDBACK_LENGTH))
+MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_RESPONSE_LENGTH))
 HOME_ROOT=${WORK}
 
-export PROJECT_ROOT="${WORK}/SDPO"
-export PYTHONPATH=$PROJECT_ROOT:$PYTHONPATH
-export LOCAL_OUTPUT_DIR="${HOME_ROOT}/output/DISTIL-local"
+export PROJECT_ROOT
+export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
+export LOCAL_OUTPUT_DIR="${HOME_ROOT}/output/ROVER-local"
 mkdir -p "$LOCAL_OUTPUT_DIR"
 
 export USER=${USER:-$(whoami)}
@@ -156,24 +163,24 @@ data.max_prompt_length=$MAX_PROMPT_LENGTH \
 data.max_response_length=$MAX_RESPONSE_LENGTH \
 max_model_len=$MAX_MODEL_LEN \
 vars.log_dir=$LOCAL_OUTPUT_DIR \
-trainer.group_name=DISTIL-generalization \
-trainer.nnodes=8 \
+trainer.group_name=ROVER-generalization \
+trainer.nnodes=$SLURM_JOB_NUM_NODES \
 trainer.n_gpus_per_node=1 \
 actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.max_model_len=$MAX_MODEL_LEN \
 actor_rollout_ref.actor.optim.lr=$LR \
 actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
-actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=8 \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=16 \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=32 \
 actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
-actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
-actor_rollout_ref.actor.self_distillation.distillation_topk=$TOPK \
+actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
-actor_rollout_ref.actor.self_distillation.include_environment_feedback=False \
+actor_rollout_ref.actor.self_distillation.include_environment_feedback=True \
+actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
 trainer.test_freq=20 \
@@ -181,7 +188,7 @@ trainer.val_before_train=False \
 custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__init__.py"
 
 echo "----------------------------------------------------------------"
-echo "Starting DistIL Training"
+echo "Starting ROVER Training"
 echo "Experiment: $EXP_NAME"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
