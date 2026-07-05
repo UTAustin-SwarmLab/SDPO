@@ -647,6 +647,24 @@ trainer:
   - console
   - wandb
   log_val_generations: 0
+  icl_validation:
+    enable: false
+    policy: student
+    success_reward_threshold: 0.5
+    include_environment_feedback: true
+    do_sample: ${actor_rollout_ref.rollout.val_kwargs.do_sample}
+    correct_feedback: Your previous answer was correct.
+    incorrect_feedback: Your previous answer was incorrect.
+    prompt_template: |-
+      {prompt}
+
+      Previous answer:
+      {previous_answer}
+
+      Feedback:
+      {feedback}
+
+      Answer the original question again.
   nnodes: 1
   n_gpus_per_node: 8
   save_freq: -1

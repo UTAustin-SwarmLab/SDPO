@@ -29,11 +29,18 @@ setup_env() {
 setup_env
 start_ray_cluster_if_needed
 
+ICL_VALIDATION="${ICL_VALIDATION:-True}"
+ICL_VALIDATION_POLICY="${ICL_VALIDATION_POLICY:-student}"
+LOG_VAL_GENERATIONS="${LOG_VAL_GENERATIONS:-10}"
+
 COMMON_ARGS="vars.dir=${PROJECT_ROOT} \
 vars.log_dir=${LOG_DIR} \
 vars.ckpt_dir=${CKPT_DIR} \
 trainer.nnodes=${NODES} \
 trainer.n_gpus_per_node=${GPUS_PER_NODE} \
+trainer.icl_validation.enable=${ICL_VALIDATION} \
+trainer.icl_validation.policy=${ICL_VALIDATION_POLICY} \
+trainer.log_val_generations=${LOG_VAL_GENERATIONS} \
 custom_reward_function.path=${PROJECT_ROOT}/verl/utils/reward_score/feedback/__init__.py"
 
 RUN_CMD="bash ${PROJECT_ROOT}/training/verl_training.sh ${EXP_NAME} ${CONFIG_NAME} ${DATA_PATH} ${SCRIPT_ARGS} ${COMMON_ARGS}"

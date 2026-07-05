@@ -130,6 +130,9 @@ export PROJECT_ROOT
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 export USER="${USER:-$(whoami)}"
 export TASK="${TASK:-$DATA_PATH}"
+ICL_VALIDATION=${ICL_VALIDATION:-True}
+ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-teacher}
+LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 OUTPUT_DIR="${WORK}/output/SDQL-test"
 mkdir -p "$OUTPUT_DIR"
 
@@ -162,6 +165,9 @@ actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.optim.lr_warmup_steps=2 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.5 \
 actor_rollout_ref.rollout.val_kwargs.n=2 \
+trainer.icl_validation.enable=$ICL_VALIDATION \
+trainer.icl_validation.policy=$ICL_VALIDATION_POLICY \
+trainer.log_val_generations=$LOG_VAL_GENERATIONS \
 trainer.test_freq=5 \
 actor_rollout_ref.rollout.agent.num_workers=2 \
 actor_rollout_ref.rollout.max_num_seqs=32 \

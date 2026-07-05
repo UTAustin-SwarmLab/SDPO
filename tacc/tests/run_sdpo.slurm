@@ -155,6 +155,9 @@ mkdir -p "$LOCAL_OUTPUT_DIR"
 
 export USER=${USER:-$(whoami)}
 export TASK="${TASK:-$DATA_PATH}"
+ICL_VALIDATION=${ICL_VALIDATION:-True}
+ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-teacher}
+LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 
 EXP_NAME="LOCAL-SDPO-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-model${MODEL_PATH}-${SUFFIX}"
 
@@ -183,6 +186,9 @@ actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.55 \
 actor_rollout_ref.rollout.val_kwargs.n=4 \
+trainer.icl_validation.enable=$ICL_VALIDATION \
+trainer.icl_validation.policy=$ICL_VALIDATION_POLICY \
+trainer.log_val_generations=$LOG_VAL_GENERATIONS \
 trainer.test_freq=20 \
 actor_rollout_ref.rollout.agent.num_workers=4 \
 actor_rollout_ref.rollout.max_num_seqs=64 \

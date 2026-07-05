@@ -141,6 +141,9 @@ mkdir -p "$LOCAL_OUTPUT_DIR"
 
 export USER=${USER:-$(whoami)}
 export TASK="${TASK:-$DATA_PATH}"
+ICL_VALIDATION=${ICL_VALIDATION:-True}
+ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-student}
+LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 EXP_NAME="$SUFFIX"
 
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
@@ -166,6 +169,9 @@ actor_rollout_ref.model.path=$MODEL_PATH \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.55 \
+trainer.icl_validation.enable=$ICL_VALIDATION \
+trainer.icl_validation.policy=$ICL_VALIDATION_POLICY \
+trainer.log_val_generations=$LOG_VAL_GENERATIONS \
 trainer.test_freq=20 \
 trainer.val_before_train=False \
 custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__init__.py"
