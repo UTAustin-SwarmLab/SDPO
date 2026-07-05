@@ -758,6 +758,70 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
         self.torch_random_states = get_torch_device().get_rng_state()
         get_torch_device().set_rng_state(self.gen_random_states)
 
+    async def teacher_rollout_mode(self):
+        """Context switch hybridengine to rollout mode with EMA teacher weights."""
+        if not self._is_actor:
+            raise ValueError("Teacher rollout requires an actor worker.")
+        teacher_module = getattr(getattr(self, "actor", None), "teacher_module", None)
+        if teacher_module is None:
+            raise ValueError("Teacher rollout requested, but actor.teacher_module is not initialized.")
+        if teacher_module.__class__.__name__ == "TrustRegionTeacher":
+            raise NotImplementedError("Teacher rollout is only supported for materialized EMA teacher weights.")
+
+        aggressive_empty_cache(force_sync=True)
+
+        log_gpu_memory_usage("Before load teacher model to gpu", logger=logger)
+        if self._is_offload_param:
+            load_fsdp_model_to_gpu(teacher_module)
+        log_gpu_memory_usage("After load teacher model to gpu", logger=logger)
+
+        peft_config = None
+        peft_model = getattr(teacher_module, "_fsdp_wrapped_module", teacher_module)
+        if hasattr(peft_model, "peft_config"):
+            peft_config = peft_model.peft_config.get("default", None)
+            params = collect_lora_params(
+                module=teacher_module,
+                layered_summon=self.config.rollout.get("layered_summon", False),
+                base_sync_done=self.base_sync_done,
+            )
+            if not self.base_sync_done:
+                params = {replace_lora_wrapper(k, peft_config): v for k, v in params.items()}
+        else:
+            params = teacher_module.state_dict()
+
+        params = convert_weight_keys(params, getattr(teacher_module, "_fsdp_wrapped_module", teacher_module))
+
+        log_gpu_memory_usage("Before offload teacher model to cpu", logger=logger)
+        if self._is_offload_param:
+            offload_fsdp_model_to_cpu(teacher_module)
+        log_gpu_memory_usage("After offload teacher model to cpu", logger=logger)
+
+        set_expandable_segments(False)
+
+        if peft_config is not None and self.base_sync_done:
+            per_tensor_param = params.items() if isinstance(params, dict) else params
+        else:
+            device = get_device_id()
+            per_tensor_param = (
+                (name, param.to(device, non_blocking=True).full_tensor() if isinstance(param, DTensor) else param)
+                for name, param in params.items()
+            )
+
+        if self.config.rollout.free_cache_engine:
+            await self.rollout.resume(tags=["weights"])
+        log_gpu_memory_usage("After resume teacher weights", logger=logger)
+
+        await self.rollout.update_weights(per_tensor_param, peft_config=peft_config, base_sync_done=self.base_sync_done)
+        log_gpu_memory_usage("After update teacher weights", logger=logger)
+        del params, per_tensor_param
+        aggressive_empty_cache(force_sync=True)
+        if self.config.rollout.free_cache_engine:
+            await self.rollout.resume(tags=["kv_cache"])
+        log_gpu_memory_usage("After resume teacher kv_cache", logger=logger)
+
+        self.torch_random_states = get_torch_device().get_rng_state()
+        get_torch_device().set_rng_state(self.gen_random_states)
+
     async def trainer_mode(self):
         """Context switch hybridengine to trainer mode."""
         if self.config.rollout.free_cache_engine:
@@ -1007,6 +1071,54 @@ class ActorRolloutRefWorker(Worker, DistProfilerExtension):
         # to make sure meta_info["timing"] is the same
         timing_generate_topk_ratio, timing_generate_min, timing_generate_max = topk_reduce_ratio_min_max(
             timing_generate["generate_sequences"]
+        )
+        timing_generate = reduce_timing(timing_generate)
+        timing_generate.update(
+            {
+                "generation_timing/max": timing_generate_max,
+                "generation_timing/min": timing_generate_min,
+                "generation_timing/topk_ratio": timing_generate_topk_ratio,
+            }
+        )
+        output.meta_info["timing"] = timing_generate
+        output = output.to("cpu")
+
+        # clear kv cache
+        get_torch_device().empty_cache()
+        return output
+
+    @register(dispatch_mode=make_nd_compute_dataproto_dispatch_fn(mesh_name="rollout"))
+    @DistProfiler.annotate(color="red", role="teacher_rollout_generate")
+    def generate_sequences_from_teacher(self, prompts: DataProto):
+        # Support all hardwares
+        assert self._is_rollout
+        prompts = prompts.to(get_device_id())
+
+        meta_info = {
+            "eos_token_id": self.generation_config.eos_token_id
+            if self.generation_config is not None
+            else self.tokenizer.eos_token_id,
+            "pad_token_id": self.generation_config.pad_token_id
+            if self.generation_config is not None
+            else self.tokenizer.pad_token_id,
+        }
+        prompts.meta_info.update(meta_info)
+
+        timing_generate = {}
+        if not self._is_actor:
+            raise ValueError("Teacher rollout requires a colocated actor/rollout worker.")
+        loop = get_event_loop()
+        loop.run_until_complete(self.teacher_rollout_mode())
+        log_gpu_memory_usage("After switch to teacher rollout mode", logger=logger)
+
+        with simple_timer("generate_sequences_from_teacher", timing_generate):
+            output = self.rollout.generate_sequences(prompts=prompts)
+
+        loop.run_until_complete(self.trainer_mode())
+        log_gpu_memory_usage("After switch to trainer mode", logger=logger)
+
+        timing_generate_topk_ratio, timing_generate_min, timing_generate_max = topk_reduce_ratio_min_max(
+            timing_generate["generate_sequences_from_teacher"]
         )
         timing_generate = reduce_timing(timing_generate)
         timing_generate.update(

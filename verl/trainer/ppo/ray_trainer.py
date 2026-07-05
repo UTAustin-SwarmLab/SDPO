@@ -517,7 +517,7 @@ class RayPPOTrainer:
                 dump_path=rollout_data_dir,
             )
 
-    def _maybe_log_val_generations(self, inputs, outputs, scores):
+    def _maybe_log_val_generations(self, inputs, outputs, scores, table_name="val/generations"):
         """Log a table of validation samples to the configured logger (wandb or swanlab)"""
 
         generations_to_log = self.config.trainer.log_val_generations
@@ -539,7 +539,155 @@ class RayPPOTrainer:
         samples = samples[:generations_to_log]
 
         # Log to each configured logger
-        self.validation_generations_logger.log(self.config.trainer.logger, samples, self.global_steps)
+        self.validation_generations_logger.log(
+            self.config.trainer.logger, samples, self.global_steps, table_name=table_name
+        )
+
+    @staticmethod
+    def _as_float(value: Any) -> Optional[float]:
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
+    def _correctness_from_scores(
+        self,
+        scores: list[float],
+        reward_extra_info: dict[str, Any],
+        success_reward_threshold: float,
+    ) -> list[bool]:
+        acc_values = reward_extra_info.get("acc", None)
+        if acc_values is not None and len(acc_values) == len(scores):
+            correctness = []
+            for value in acc_values:
+                value_float = self._as_float(value)
+                correctness.append(bool(value) if value_float is None else value_float >= success_reward_threshold)
+            return correctness
+        return [score >= success_reward_threshold for score in scores]
+
+    def _build_icl_feedback(
+        self,
+        is_correct: bool,
+        feedback_raw: Any,
+        icl_cfg: Any,
+    ) -> str:
+        if is_correct:
+            feedback = icl_cfg.get("correct_feedback", "Your previous answer was correct.")
+        else:
+            feedback = icl_cfg.get("incorrect_feedback", "Your previous answer was incorrect.")
+
+        include_environment_feedback = icl_cfg.get("include_environment_feedback", True)
+        if include_environment_feedback and isinstance(feedback_raw, str) and feedback_raw.strip():
+            feedback = f"{feedback}\n\nAdditional feedback:\n{feedback_raw.strip()}"
+        return feedback
+
+    def _build_icl_messages(
+        self,
+        raw_prompt: Any,
+        previous_answer: str,
+        feedback: str,
+        icl_cfg: Any,
+    ) -> list[dict]:
+        messages = list(raw_prompt)
+        system_messages = messages[:-1]
+        prompt_content = messages[-1].get("content", "") if messages and isinstance(messages[-1], dict) else ""
+        if not isinstance(prompt_content, str):
+            prompt_content = str(prompt_content)
+
+        prompt_template = icl_cfg.get(
+            "prompt_template",
+            (
+                "{prompt}\n\n"
+                "Previous answer:\n{previous_answer}\n\n"
+                "Feedback:\n{feedback}\n\n"
+                "Answer the original question again."
+            ),
+        )
+        reprompt = prompt_template.format(
+            prompt=prompt_content,
+            previous_answer=previous_answer,
+            feedback=feedback,
+        )
+        return system_messages + [{"role": "user", "content": reprompt}]
+
+    def _build_icl_validation_batch(
+        self,
+        batch: DataProto,
+        first_pass_outputs: list[str],
+        first_pass_scores: list[float],
+        reward_extra_info: dict[str, Any],
+        icl_cfg: Any,
+    ) -> Optional[tuple[DataProto, list[str], list[bool], list[str]]]:
+        if "raw_prompt" not in batch.non_tensor_batch or "uid" not in batch.non_tensor_batch:
+            return None
+
+        selected_idxs = []
+        seen_uids = set()
+        for idx, uid in enumerate(batch.non_tensor_batch["uid"]):
+            if uid in seen_uids:
+                continue
+            seen_uids.add(uid)
+            selected_idxs.append(idx)
+
+        if len(selected_idxs) == 0:
+            return None
+
+        success_reward_threshold = icl_cfg.get("success_reward_threshold", 0.5)
+        correctness = self._correctness_from_scores(first_pass_scores, reward_extra_info, success_reward_threshold)
+        raw_feedback = reward_extra_info.get("feedback", [None] * len(first_pass_scores))
+        if len(raw_feedback) != len(first_pass_scores):
+            raw_feedback = [None] * len(first_pass_scores)
+
+        icl_raw_prompts = []
+        selected_first_outputs = []
+        selected_correctness = []
+        selected_feedback = []
+        for idx in selected_idxs:
+            feedback = self._build_icl_feedback(correctness[idx], raw_feedback[idx], icl_cfg)
+            icl_raw_prompts.append(
+                self._build_icl_messages(
+                    batch.non_tensor_batch["raw_prompt"][idx],
+                    first_pass_outputs[idx],
+                    feedback,
+                    icl_cfg,
+                )
+            )
+            selected_first_outputs.append(first_pass_outputs[idx])
+            selected_correctness.append(correctness[idx])
+            selected_feedback.append(feedback)
+
+        non_tensors = {}
+        for key, values in batch.non_tensor_batch.items():
+            if len(values) == len(first_pass_scores):
+                non_tensors[key] = values[selected_idxs]
+        non_tensors["raw_prompt"] = np.array(icl_raw_prompts, dtype=object)
+
+        tensors = {"dummy_tensor": torch.zeros((len(selected_idxs), 1), dtype=torch.uint8)}
+        icl_batch = DataProto.from_dict(tensors=tensors, non_tensors=non_tensors)
+        return icl_batch, selected_first_outputs, selected_correctness, selected_feedback
+
+    def _select_first_per_uid_validation_batch(self, batch: DataProto) -> Optional[DataProto]:
+        if "raw_prompt" not in batch.non_tensor_batch or "uid" not in batch.non_tensor_batch:
+            return None
+
+        selected_idxs = []
+        seen_uids = set()
+        for idx, uid in enumerate(batch.non_tensor_batch["uid"]):
+            if uid in seen_uids:
+                continue
+            seen_uids.add(uid)
+            selected_idxs.append(idx)
+
+        if len(selected_idxs) == 0:
+            return None
+
+        non_tensors = {}
+        for key, values in batch.non_tensor_batch.items():
+            if len(values) == len(batch):
+                non_tensors[key] = values[selected_idxs]
+
+        tensors = {"dummy_tensor": torch.zeros((len(selected_idxs), 1), dtype=torch.uint8)}
+        return DataProto.from_dict(tensors=tensors, non_tensors=non_tensors)
 
     def _compute_or_extract_reward(
         self,
@@ -815,6 +963,10 @@ class RayPPOTrainer:
     def _validate(self, merged: bool = False):
         data_source_lst = []
         reward_extra_infos_dict: dict[str, list] = defaultdict(list)
+        icl_cfg = self.config.trainer.get("icl_validation", {})
+        run_icl_validation = bool(icl_cfg.get("enable", False)) and not merged
+        icl_data_source_lst = []
+        icl_reward_extra_infos_dict: dict[str, list] = defaultdict(list)
 
         # Lists to collect samples for the table
         sample_inputs = []
@@ -823,6 +975,11 @@ class RayPPOTrainer:
         sample_scores = []
         sample_turns = []
         sample_uids = []
+        icl_sample_inputs = []
+        icl_sample_outputs = []
+        icl_sample_gts = []
+        icl_sample_scores = []
+        icl_sample_uids = []
 
         for test_data in self.val_dataloader:
             test_batch = DataProto.from_single_dict(test_data)
@@ -909,9 +1066,157 @@ class RayPPOTrainer:
             if "__num_turns__" in test_batch.non_tensor_batch:
                 sample_turns.append(test_batch.non_tensor_batch["__num_turns__"])
 
-            data_source_lst.append(test_batch.non_tensor_batch.get("data_source", ["unknown"] * reward_tensor.shape[0]))
+            data_source_lst.append(
+                test_batch.non_tensor_batch.get("data_source", ["unknown"] * reward_tensor.shape[0])
+            )
+
+            if run_icl_validation:
+                icl_policy = icl_cfg.get("policy", "student")
+                icl_do_sample = icl_cfg.get("do_sample", self.config.actor_rollout_ref.rollout.val_kwargs.do_sample)
+                first_pass_batch = test_batch
+                first_pass_outputs = output_texts
+                first_pass_scores = scores
+                first_pass_reward_extra_info = reward_extra_info
+
+                if icl_policy == "teacher":
+                    if self.async_rollout_mode:
+                        raise NotImplementedError("Teacher ICL validation is not supported with async_rollout_mode.")
+                    first_pass_batch = self._select_first_per_uid_validation_batch(test_batch)
+                    if first_pass_batch is not None:
+                        teacher_first_gen_batch = self._get_gen_batch(first_pass_batch)
+                        teacher_first_gen_batch.meta_info = {
+                            "eos_token_id": self.tokenizer.eos_token_id,
+                            "pad_token_id": self.tokenizer.pad_token_id,
+                            "recompute_log_prob": False,
+                            "do_sample": icl_do_sample,
+                            "validate": True,
+                            "global_steps": self.global_steps,
+                        }
+                        teacher_first_gen_batch_padded, teacher_first_pad_size = pad_dataproto_to_divisor(
+                            teacher_first_gen_batch, size_divisor
+                        )
+                        teacher_first_output_gen_batch_padded = self.actor_rollout_wg.generate_sequences_from_teacher(
+                            teacher_first_gen_batch_padded
+                        )
+                        teacher_first_output_gen_batch = unpad_dataproto(
+                            teacher_first_output_gen_batch_padded, pad_size=teacher_first_pad_size
+                        )
+                        teacher_first_output_ids = teacher_first_output_gen_batch.batch["responses"]
+                        first_pass_outputs = [
+                            self.tokenizer.decode(ids, skip_special_tokens=True) for ids in teacher_first_output_ids
+                        ]
+                        first_pass_batch = first_pass_batch.union(teacher_first_output_gen_batch)
+                        first_pass_batch.meta_info["validate"] = True
+                        teacher_first_result = self._compute_or_extract_reward(
+                            first_pass_batch, reward_fn=self.val_reward_fn, return_dict=True
+                        )
+                        teacher_first_reward_tensor = teacher_first_result["reward_tensor"]
+                        first_pass_scores = teacher_first_reward_tensor.sum(-1).cpu().tolist()
+                        first_pass_reward_extra_info = teacher_first_result.get("reward_extra_info", {})
+                elif icl_policy != "student":
+                    raise ValueError(f"Unknown trainer.icl_validation.policy={icl_policy!r}")
+
+                icl_build_result = None
+                if first_pass_batch is not None:
+                    icl_build_result = self._build_icl_validation_batch(
+                        batch=first_pass_batch,
+                        first_pass_outputs=first_pass_outputs,
+                        first_pass_scores=first_pass_scores,
+                        reward_extra_info=first_pass_reward_extra_info,
+                        icl_cfg=icl_cfg,
+                    )
+                if icl_build_result is not None:
+                    icl_batch, first_outputs, first_correctness, feedbacks = icl_build_result
+                    icl_gts = [
+                        item.non_tensor_batch.get("reward_model", {}).get("ground_truth", None) for item in icl_batch
+                    ]
+
+                    icl_gen_batch = self._get_gen_batch(icl_batch)
+                    icl_gen_batch.meta_info = {
+                        "eos_token_id": self.tokenizer.eos_token_id,
+                        "pad_token_id": self.tokenizer.pad_token_id,
+                        "recompute_log_prob": False,
+                        "do_sample": icl_do_sample,
+                        "validate": True,
+                        "global_steps": self.global_steps,
+                    }
+
+                    icl_gen_batch_padded, icl_pad_size = pad_dataproto_to_divisor(icl_gen_batch, size_divisor)
+                    if not self.async_rollout_mode:
+                        if icl_policy == "teacher":
+                            icl_output_gen_batch_padded = self.actor_rollout_wg.generate_sequences_from_teacher(
+                                icl_gen_batch_padded
+                            )
+                        elif icl_policy == "student":
+                            icl_output_gen_batch_padded = self.actor_rollout_wg.generate_sequences(
+                                icl_gen_batch_padded
+                            )
+                        else:
+                            raise ValueError(f"Unknown trainer.icl_validation.policy={icl_policy!r}")
+                    else:
+                        if icl_policy != "student":
+                            raise NotImplementedError(
+                                "Teacher ICL validation is not supported with async_rollout_mode."
+                            )
+                        icl_output_gen_batch_padded = self.async_rollout_manager.generate_sequences(
+                            icl_gen_batch_padded
+                        )
+                    icl_output_gen_batch = unpad_dataproto(icl_output_gen_batch_padded, pad_size=icl_pad_size)
+
+                    icl_output_ids = icl_output_gen_batch.batch["responses"]
+                    icl_output_texts = [
+                        self.tokenizer.decode(ids, skip_special_tokens=True) for ids in icl_output_ids
+                    ]
+                    icl_sample_outputs.extend(icl_output_texts)
+
+                    icl_batch = icl_batch.union(icl_output_gen_batch)
+                    icl_batch.meta_info["validate"] = True
+
+                    icl_input_ids = icl_batch.batch["prompts"]
+                    icl_input_texts = [self.tokenizer.decode(ids, skip_special_tokens=True) for ids in icl_input_ids]
+                    icl_sample_inputs.extend(icl_input_texts)
+                    icl_sample_uids.extend(icl_batch.non_tensor_batch["uid"])
+                    icl_sample_gts.extend(icl_gts)
+
+                    icl_result = self._compute_or_extract_reward(
+                        icl_batch, reward_fn=self.val_reward_fn, return_dict=True
+                    )
+                    icl_reward_tensor = icl_result["reward_tensor"]
+                    icl_scores = icl_reward_tensor.sum(-1).cpu().tolist()
+                    icl_sample_scores.extend(icl_scores)
+
+                    icl_reward_extra_infos_dict["reward"].extend(icl_scores)
+                    icl_reward_extra_infos_dict["previous_correct"].extend(
+                        [float(correct) for correct in first_correctness]
+                    )
+                    icl_reward_extra_infos_dict["previous_output"].extend(first_outputs)
+                    icl_reward_extra_infos_dict["previous_feedback"].extend(feedbacks)
+                    icl_reward_extra_info = icl_result.get("reward_extra_info", {})
+                    for key, values in icl_reward_extra_info.items():
+                        if key not in icl_reward_extra_infos_dict:
+                            icl_reward_extra_infos_dict[key] = []
+                        if isinstance(values, np.ndarray):
+                            icl_reward_extra_infos_dict[key].extend(values.tolist())
+                        else:
+                            icl_reward_extra_infos_dict[key].extend(values if isinstance(values, list) else [values])
+                    if "acc" not in icl_reward_extra_info:
+                        success_reward_threshold = icl_cfg.get("success_reward_threshold", 0.5)
+                        icl_reward_extra_infos_dict["acc"].extend(
+                            [float(score >= success_reward_threshold) for score in icl_scores]
+                        )
+
+                    icl_data_source_lst.append(
+                        icl_batch.non_tensor_batch.get("data_source", ["unknown"] * icl_reward_tensor.shape[0])
+                    )
 
         self._maybe_log_val_generations(inputs=sample_inputs, outputs=sample_outputs, scores=sample_scores)
+        if run_icl_validation and len(icl_sample_scores) > 0:
+            self._maybe_log_val_generations(
+                inputs=icl_sample_inputs,
+                outputs=icl_sample_outputs,
+                scores=icl_sample_scores,
+                table_name="val/icl_generations",
+            )
 
         # dump generations
         val_data_dir = self.config.trainer.get("validation_data_dir", None)
@@ -924,9 +1229,22 @@ class RayPPOTrainer:
                 reward_extra_infos_dict=reward_extra_infos_dict,
                 dump_path=val_data_dir,
             )
+            if run_icl_validation and len(icl_sample_scores) > 0:
+                self._dump_generations(
+                    inputs=icl_sample_inputs,
+                    outputs=icl_sample_outputs,
+                    gts=icl_sample_gts,
+                    scores=icl_sample_scores,
+                    reward_extra_infos_dict=icl_reward_extra_infos_dict,
+                    dump_path=os.path.join(val_data_dir, "icl"),
+                )
 
         for key_info, lst in reward_extra_infos_dict.items():
             assert len(lst) == 0 or len(lst) == len(sample_scores), f"{key_info}: {len(lst)=}, {len(sample_scores)=}"
+        for key_info, lst in icl_reward_extra_infos_dict.items():
+            assert len(lst) == 0 or len(lst) == len(icl_sample_scores), (
+                f"icl {key_info}: {len(lst)=}, {len(icl_sample_scores)=}"
+            )
 
         if merged:
             print("_merge_validation_results validate result will be merged")
@@ -937,7 +1255,17 @@ class RayPPOTrainer:
                 "reward_extra_infos_dict": reward_extra_infos_dict,
             }
         data_sources = np.concatenate(data_source_lst, axis=0)
-        return self._val_metrics_update(data_sources, sample_uids, reward_extra_infos_dict, sample_turns)
+        metric_dict = self._val_metrics_update(data_sources, sample_uids, reward_extra_infos_dict, sample_turns)
+        if run_icl_validation and len(icl_sample_scores) > 0:
+            icl_data_sources = np.concatenate(icl_data_source_lst, axis=0)
+            icl_metric_dict = self._val_metrics_update(
+                icl_data_sources, icl_sample_uids, icl_reward_extra_infos_dict, []
+            )
+            for metric_name, metric_val in icl_metric_dict.items():
+                metric_name = metric_name.replace("val-core/", "val-icl-core/", 1)
+                metric_name = metric_name.replace("val-aux/", "val-icl-aux/", 1)
+                metric_dict[metric_name] = metric_val
+        return metric_dict
 
     def _val_metrics_update(self, data_sources, sample_uids, reward_extra_infos_dict, sample_turns):
         data_src2var2metric2val = process_validation_metrics(data_sources, sample_uids, reward_extra_infos_dict)

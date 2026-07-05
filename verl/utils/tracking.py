@@ -349,33 +349,33 @@ class ValidationGenerationsLogger:
     project_name: str = None
     experiment_name: str = None
 
-    def log(self, loggers, samples, step):
+    def log(self, loggers, samples, step, table_name="val/generations"):
         if "wandb" in loggers:
-            self.log_generations_to_wandb(samples, step)
+            self.log_generations_to_wandb(samples, step, table_name=table_name)
         if "swanlab" in loggers:
-            self.log_generations_to_swanlab(samples, step)
+            self.log_generations_to_swanlab(samples, step, table_name=table_name)
         if "mlflow" in loggers:
-            self.log_generations_to_mlflow(samples, step)
+            self.log_generations_to_mlflow(samples, step, table_name=table_name)
 
         if "clearml" in loggers:
-            self.log_generations_to_clearml(samples, step)
+            self.log_generations_to_clearml(samples, step, table_name=table_name)
         if "tensorboard" in loggers:
-            self.log_generations_to_tensorboard(samples, step)
+            self.log_generations_to_tensorboard(samples, step, table_name=table_name)
 
         if "vemlp_wandb" in loggers:
-            self.log_generations_to_vemlp_wandb(samples, step)
+            self.log_generations_to_vemlp_wandb(samples, step, table_name=table_name)
 
-    def log_generations_to_vemlp_wandb(self, samples, step):
+    def log_generations_to_vemlp_wandb(self, samples, step, table_name="val/generations"):
         from volcengine_ml_platform import wandb as vemlp_wandb
 
-        self._log_generations_to_wandb(samples, step, vemlp_wandb)
+        self._log_generations_to_wandb(samples, step, vemlp_wandb, table_name=table_name)
 
-    def log_generations_to_wandb(self, samples, step):
+    def log_generations_to_wandb(self, samples, step, table_name="val/generations"):
         import wandb
 
-        self._log_generations_to_wandb(samples, step, wandb)
+        self._log_generations_to_wandb(samples, step, wandb, table_name=table_name)
 
-    def _log_generations_to_wandb(self, samples, step, wandb):
+    def _log_generations_to_wandb(self, samples, step, wandb, table_name="val/generations"):
         """Log samples to wandb as a table"""
 
         # Create column names for all samples
@@ -383,13 +383,15 @@ class ValidationGenerationsLogger:
             [[f"input_{i + 1}", f"output_{i + 1}", f"score_{i + 1}"] for i in range(len(samples))], []
         )
 
-        if not hasattr(self, "validation_table"):
+        if not hasattr(self, "validation_tables"):
+            self.validation_tables = {}
+        if table_name not in self.validation_tables:
             # Initialize the table on first call
-            self.validation_table = wandb.Table(columns=columns)
+            self.validation_tables[table_name] = wandb.Table(columns=columns)
 
         # Create a new table with same columns and existing data
         # Workaround for https://github.com/wandb/wandb/issues/2981#issuecomment-1997445737
-        new_table = wandb.Table(columns=columns, data=self.validation_table.data)
+        new_table = wandb.Table(columns=columns, data=self.validation_tables[table_name].data)
 
         # Add new row with all data
         row_data = []
@@ -401,10 +403,10 @@ class ValidationGenerationsLogger:
 
         # Update reference and log
         if wandb.run is not None:
-            wandb.log({"val/generations": new_table}, step=step)
-        self.validation_table = new_table
+            wandb.log({table_name: new_table}, step=step)
+        self.validation_tables[table_name] = new_table
 
-    def log_generations_to_swanlab(self, samples, step):
+    def log_generations_to_swanlab(self, samples, step, table_name="val/generations"):
         """Log samples to swanlab as text"""
         import swanlab
 
@@ -417,9 +419,9 @@ class ValidationGenerationsLogger:
         swanlab_table.add(headers=headers, rows=swanlab_row_list)
 
         # Log to swanlab
-        swanlab.log({"val/generations": swanlab_table}, step=step)
+        swanlab.log({table_name: swanlab_table}, step=step)
 
-    def log_generations_to_mlflow(self, samples, step):
+    def log_generations_to_mlflow(self, samples, step, table_name="val/generations"):
         """Log validation generation to mlflow as artifacts"""
         # https://mlflow.org/docs/latest/api_reference/python_api/mlflow.html?highlight=log_artifact#mlflow.log_artifact
 
@@ -429,7 +431,8 @@ class ValidationGenerationsLogger:
 
         try:
             with tempfile.TemporaryDirectory() as tmp_dir:
-                validation_gen_step_file = Path(tmp_dir, f"val_step{step}.json")
+                artifact_name = table_name.replace("/", "_")
+                validation_gen_step_file = Path(tmp_dir, f"{artifact_name}_step{step}.json")
                 row_data = []
                 for sample in samples:
                     data = {"input": sample[0], "output": sample[1], "score": sample[2]}
@@ -440,7 +443,7 @@ class ValidationGenerationsLogger:
         except Exception as e:
             print(f"WARNING: save validation generation file to mlflow failed with error {e}")
 
-    def log_generations_to_clearml(self, samples, step):
+    def log_generations_to_clearml(self, samples, step, table_name="val/generations"):
         """Log validation generation to clearml as table"""
 
         import clearml
@@ -462,13 +465,13 @@ class ValidationGenerationsLogger:
 
         logger = task.get_logger()
         logger.report_table(
-            series="Validation generations",
-            title="Validation",
+            series=table_name,
+            title=table_name,
             table_plot=pd.DataFrame.from_records(table),
             iteration=step,
         )
 
-    def log_generations_to_tensorboard(self, samples, step):
+    def log_generations_to_tensorboard(self, samples, step, table_name="val/generations"):
         """Log samples to tensorboard as text"""
         # Initialize tensorboard writer if not exists
         if not hasattr(self, "writer"):
@@ -504,6 +507,6 @@ class ValidationGenerationsLogger:
             text_content += "---\n\n"
 
         # Log to tensorboard as text
-        self.writer.add_text("val/generations", text_content, step)
+        self.writer.add_text(table_name, text_content, step)
         # Flush to ensure data is written
         self.writer.flush()
