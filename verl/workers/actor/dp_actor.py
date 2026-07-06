@@ -994,6 +994,7 @@ class DataParallelPPOActor(BasePPOActor):
                                 student_log_probs=log_prob,
                                 response_mask=response_mask,
                                 config=self_distillation_cfg,
+                                actor_config=self.config,
                                 old_log_probs=old_log_prob,
                                 old_all_log_probs=old_all_log_probs_for_loss,
                                 old_topk_log_probs=old_topk_log_probs,

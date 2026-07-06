@@ -92,6 +92,21 @@ self_distillation:
   # Discount factor for distillation reward
   gamma: 1.0
 
+  # ROVER log-importance scale. Defaults to 1.0 for gamma-compatible behavior.
+  rover_t: 1.0
+
+  # If true, use advantages directly as the ROVER target without bootstrapped next-Q.
+  target_adv_only: false
+
+  # If true, apply target-aware ROVER clipping in log-importance space.
+  use_rover_clip: false
+
+  # If true, compute ROVER loss at response level instead of token level.
+  response_level_rover_loss: false
+
+  # Optional multiplier for the bootstrapped next-Q term; null disables extra scaling.
+  next_q_scale_factor: null
+
   # Whether to add a tail bucket when using distillation_topk
   distillation_add_tail: True
 

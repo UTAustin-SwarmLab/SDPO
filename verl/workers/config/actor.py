@@ -53,6 +53,11 @@ class SelfDistillationConfig(BaseConfig):
         dont_reprompt_on_self_success (bool): Whether to not reprompt on self-success.
         remove_thinking_from_demonstration (bool): Whether to remove <think>...</think> tags from successful demonstrations before reprompting.
         is_clip (Optional[float]): Clip value for distillation IS ratio; None disables IS weighting.
+        rover_t (float): ROVER log-importance scale. Defaults to gamma-compatible 1.0.
+        target_adv_only (bool): If True, use advantages directly as the ROVER target.
+        use_rover_clip (bool): If True, apply target-aware ROVER clipping in log-IS space.
+        response_level_rover_loss (bool): If True, compute ROVER MSE after averaging each response.
+        next_q_scale_factor (Optional[float]): Optional multiplier for the bootstrapped next-Q term.
         use_env_reward (bool): If True, inject environment advantages only at sampled token actions.
         reprompt_template (str): Template for reprompting. Uses {prompt}, {solution}, {feedback} placeholders.
         solution_template (str): Template for formatting solution section. Uses {successful_previous_attempt} placeholder.
@@ -76,6 +81,11 @@ class SelfDistillationConfig(BaseConfig):
     remove_thinking_from_demonstration: bool = False
     is_clip: Optional[float] = None
     gamma: float = 1.0
+    rover_t: float = 1.0
+    target_adv_only: bool = False
+    use_rover_clip: bool = False
+    response_level_rover_loss: bool = False
+    next_q_scale_factor: Optional[float] = None
     clamp_high: float = 2.0
     clamp_low: float = -2.0
     env_reward_scale: float = 1.0
@@ -117,6 +127,18 @@ class SelfDistillationConfig(BaseConfig):
             )
         if self.is_clip is not None and self.is_clip <= 0:
             raise ValueError(f"self_distillation.is_clip must be positive, got {self.is_clip}")
+        if self.rover_t <= 0:
+            raise ValueError(f"self_distillation.rover_t must be positive, got {self.rover_t}")
+        if self.next_q_scale_factor is not None and self.next_q_scale_factor < 0:
+            raise ValueError(
+                "self_distillation.next_q_scale_factor must be non-negative when set, "
+                f"got {self.next_q_scale_factor}"
+            )
+        if self.target_q_mode not in {"uniform", "max"}:
+            raise ValueError(
+                "self_distillation.target_q_mode must be one of {'uniform', 'max'}, "
+                f"got {self.target_q_mode}"
+            )
 
 
 @dataclass

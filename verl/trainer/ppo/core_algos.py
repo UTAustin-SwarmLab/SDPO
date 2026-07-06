@@ -1296,6 +1296,7 @@ def compute_rover_loss(
     student_log_probs: torch.Tensor,
     response_mask: torch.Tensor,
     config: Any,
+    actor_config: Optional[Any] = None,
     old_log_probs: Optional[torch.Tensor] = None,
     old_all_log_probs: Optional[torch.Tensor] = None,
     old_topk_log_probs: Optional[torch.Tensor] = None,
@@ -1307,7 +1308,19 @@ def compute_rover_loss(
     advantages: Optional[torch.Tensor] = None,
 ) -> tuple[torch.Tensor, dict[str, Any]]:
     metrics = {}
-    gamma = config.gamma
+
+    def cfg_get(source: Optional[Any], key: str, default: Any = None) -> Any:
+        if source is None:
+            return default
+        if hasattr(source, "get"):
+            return source.get(key, default)
+        return getattr(source, key, default)
+
+    rover_t = cfg_get(config, "rover_t", cfg_get(config, "gamma", 1.0))
+    target_adv_only = bool(cfg_get(config, "target_adv_only", False))
+    use_rover_clip = bool(cfg_get(config, "use_rover_clip", False))
+    response_level_rover_loss = bool(cfg_get(config, "response_level_rover_loss", False))
+    next_q_scale_factor = cfg_get(config, "next_q_scale_factor", None)
 
     def masked_mean_std(values: torch.Tensor, token_mask: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         expanded_mask = token_mask.to(values.dtype)
@@ -1326,21 +1339,58 @@ def compute_rover_loss(
     if old_log_probs is None:
         raise ValueError("old_log_probs is required for rover loss.")
 
-    use_topk = config.distillation_topk is not None
-    if use_topk:
-        if student_topk_log_probs is None or old_topk_log_probs is None:
-            raise ValueError("top-k rover loss requires student_topk_log_probs and old_topk_log_probs.")
-        all_q_vals = student_topk_log_probs - old_topk_log_probs.detach()
-    else:
-        if student_all_log_probs is None or old_all_log_probs is None:
-            raise ValueError("full-logit rover loss requires student_all_log_probs and old_all_log_probs.")
-        all_q_vals = student_all_log_probs - old_all_log_probs.detach()
-    zero_tail = torch.zeros_like(all_q_vals[:, :1, :])
-    next_q_vals = torch.cat([all_q_vals[:, 1:, :], zero_tail], dim=1)
-    q_vals = student_log_probs - old_log_probs.detach()
+    q_vals = rover_t * (student_log_probs - old_log_probs.detach())
 
-    target_q_vals = advantages + gamma * next_q_vals.mean(-1)
-    per_token_loss = (q_vals - target_q_vals.detach()) ** 2
+    if target_adv_only:
+        target_q_vals = advantages
+        next_q_vals = None
+    else:
+        use_topk = cfg_get(config, "distillation_topk", None) is not None
+        if use_topk:
+            if student_topk_log_probs is None or old_topk_log_probs is None:
+                raise ValueError("top-k rover loss requires student_topk_log_probs and old_topk_log_probs.")
+            all_q_vals = student_topk_log_probs - old_topk_log_probs.detach()
+        else:
+            if student_all_log_probs is None or old_all_log_probs is None:
+                raise ValueError("full-logit rover loss requires student_all_log_probs and old_all_log_probs.")
+            all_q_vals = student_all_log_probs - old_all_log_probs.detach()
+        zero_tail = torch.zeros_like(all_q_vals[:, :1, :])
+        next_q_vals = torch.cat([all_q_vals[:, 1:, :], zero_tail], dim=1)
+        target_q_mode = cfg_get(config, "target_q_mode", "uniform")
+        if target_q_mode == "max":
+            next_q = next_q_vals.max(dim=-1).values
+        else:
+            next_q = next_q_vals.mean(dim=-1)
+        next_q = rover_t * next_q
+        if next_q_scale_factor is not None:
+            next_q = next_q * next_q_scale_factor
+            metrics[f"{metric_prefix}/scaled_next_q_scale_factor"] = float(next_q_scale_factor)
+        target_q_vals = advantages + next_q
+
+    q_vals_for_loss = q_vals
+    if use_rover_clip:
+        clip_ratio = cfg_get(actor_config, "clip_ratio", cfg_get(config, "clip_ratio", 0.2))
+        clip_ratio_low = cfg_get(actor_config, "clip_ratio_low", cfg_get(config, "clip_ratio_low", clip_ratio))
+        clip_ratio_high = cfg_get(actor_config, "clip_ratio_high", cfg_get(config, "clip_ratio_high", clip_ratio))
+        clip_high = torch.log(torch.tensor(1.0 + clip_ratio_high, device=q_vals.device, dtype=q_vals.dtype))
+        clip_low = torch.log(torch.tensor(1.0 - clip_ratio_low, device=q_vals.device, dtype=q_vals.dtype))
+        cond_high = (target_q_vals > q_vals) & (q_vals > clip_high)
+        cond_low = (target_q_vals < q_vals) & (q_vals < clip_low)
+        q_vals_for_loss = torch.where(cond_high, clip_high.detach(), torch.where(cond_low, clip_low.detach(), q_vals))
+
+        with torch.no_grad():
+            total_valid = loss_mask.sum().float().clamp(min=1.0)
+            clip_high_count = torch.sum((cond_high & loss_mask.bool()).float())
+            clip_low_count = torch.sum((cond_low & loss_mask.bool()).float())
+            metrics[f"{metric_prefix}/clip_high_ratio"] = (clip_high_count / total_valid).item()
+            metrics[f"{metric_prefix}/clip_low_ratio"] = (clip_low_count / total_valid).item()
+
+    if response_level_rover_loss:
+        per_sample_q = (q_vals_for_loss * loss_mask).sum(dim=-1) / (loss_mask.sum(dim=-1).clamp(min=1.0))
+        per_sample_target = (target_q_vals.detach() * loss_mask).sum(dim=-1) / (loss_mask.sum(dim=-1).clamp(min=1.0))
+        per_token_loss = ((per_sample_q - per_sample_target) ** 2).unsqueeze(-1).expand_as(loss_mask)
+    else:
+        per_token_loss = (q_vals_for_loss - target_q_vals.detach()) ** 2
 
     with torch.no_grad():
         advantages_mean, advantages_std = masked_mean_std(advantages, loss_mask)
@@ -1349,15 +1399,18 @@ def compute_rover_loss(
         target_q_mean, target_q_std = masked_mean_std(target_q_vals.detach(), loss_mask)
         metrics[f"{metric_prefix}/target_q_mean"] = target_q_mean.item()
         metrics[f"{metric_prefix}/target_q_std"] = target_q_std.item()
-        # per_token_loss = log_ratio.detach() * student_log_probs
+        q_mean, q_std = masked_mean_std(q_vals.detach(), loss_mask)
+        metrics[f"{metric_prefix}/q_vals_mean"] = q_mean.item()
+        metrics[f"{metric_prefix}/q_vals_std"] = q_std.item()
+        if not target_adv_only and next_q_vals is not None:
+            next_q_mean, next_q_std = masked_mean_std(next_q.detach(), loss_mask)
+            metrics[f"{metric_prefix}/next_q_mean"] = next_q_mean.item()
+            metrics[f"{metric_prefix}/next_q_std"] = next_q_std.item()
 
-    is_clip = config.is_clip
-    if is_clip is not None:
-        if old_log_probs is None:
-            raise ValueError("old_log_probs is required for distillation IS ratio.")
-
-        negative_approx_kl = (student_log_probs - old_log_probs).detach()
-        negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
+    # Backward-compatible IS loss weighting when rover clipping is disabled.
+    is_clip = cfg_get(config, "is_clip", None)
+    if (not use_rover_clip) and is_clip is not None:
+        negative_approx_kl = (student_log_probs - old_log_probs).detach().clamp(min=-20.0, max=20.0)
         ratio = torch.exp(negative_approx_kl).clamp(max=is_clip)
         per_token_loss = per_token_loss * ratio
 

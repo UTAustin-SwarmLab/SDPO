@@ -17,7 +17,12 @@ actor_rollout_ref:
       loss_mode: rover
     self_distillation:
       max_reprompt_len: 10240
-      is_clip: 2.0
+      is_clip: null
+      rover_t: 1.0
+      target_adv_only: False
+      use_rover_clip: True
+      response_level_rover_loss: False
+      next_q_scale_factor: null
       use_env_reward: False
       env_reward_scale: 1.0
       distillation_add_tail: False
