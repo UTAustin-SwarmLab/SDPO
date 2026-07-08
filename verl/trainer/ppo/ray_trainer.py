@@ -1169,6 +1169,8 @@ class RayPPOTrainer:
                     ]
                     icl_sample_outputs.extend(icl_output_texts)
 
+                    for key in set(icl_batch.non_tensor_batch) & set(icl_output_gen_batch.non_tensor_batch):
+                        icl_output_gen_batch.non_tensor_batch.pop(key)
                     icl_batch = icl_batch.union(icl_output_gen_batch)
                     icl_batch.meta_info["validate"] = True
 
