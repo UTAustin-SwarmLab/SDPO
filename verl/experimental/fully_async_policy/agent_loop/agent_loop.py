@@ -124,6 +124,9 @@ class FullyAsyncAgentLoopWorker(AgentLoopWorker):
             batch.meta_info.get("global_steps", -1), index, batch.meta_info.get("validate", False)
         )
 
+        # Optional per-batch override (e.g. longer ICL validation prompts).
+        prompt_length = batch.meta_info.get("prompt_length", config.prompt_length)
+
         if not partial_output_list:
             partial_output_list = [None] * len(batch)
         try:
@@ -132,7 +135,14 @@ class FullyAsyncAgentLoopWorker(AgentLoopWorker):
                 kwargs = {k: v[i] for k, v in batch.non_tensor_batch.items()}
                 kwargs["output"] = partial_output_list[i]
                 tasks.append(
-                    asyncio.create_task(self._partial_run_agent_loop(sampling_params, trajectory_info[i], **kwargs))
+                    asyncio.create_task(
+                        self._partial_run_agent_loop(
+                            sampling_params,
+                            trajectory_info[i],
+                            prompt_length=prompt_length,
+                            **kwargs,
+                        )
+                    )
                 )
             outputs = await asyncio.gather(*tasks)
         except Exception:
@@ -161,6 +171,7 @@ class FullyAsyncAgentLoopWorker(AgentLoopWorker):
         trajectory: dict[str, Any],
         *,
         agent_name: str,
+        prompt_length: Optional[int] = None,
         **kwargs,
     ) -> AgentLoopOutput:
         # Completed, return directly
@@ -194,7 +205,9 @@ class FullyAsyncAgentLoopWorker(AgentLoopWorker):
                 )
                 if not output.extra_fields.get("is_cancel", False):
                     kwargs.pop("output", None)
-                    output = await self._agent_loop_postprocess(output, **kwargs)
+                    output = await self._agent_loop_postprocess(
+                        output, prompt_length=prompt_length, **kwargs
+                    )
 
                 return output
         except Exception:

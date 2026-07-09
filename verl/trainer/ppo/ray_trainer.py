@@ -1140,6 +1140,10 @@ class RayPPOTrainer:
                         "validate": True,
                         "global_steps": self.global_steps,
                     }
+                    # ICL prompts append previous answers and can exceed rollout.prompt_length.
+                    icl_prompt_length = icl_cfg.get("max_prompt_length", None)
+                    if icl_prompt_length is not None:
+                        icl_gen_batch.meta_info["prompt_length"] = int(icl_prompt_length)
 
                     icl_gen_batch_padded, icl_pad_size = pad_dataproto_to_divisor(icl_gen_batch, size_divisor)
                     if not self.async_rollout_mode:

@@ -466,13 +466,22 @@ class AgentLoopWorker:
             batch.meta_info.get("global_steps", -1), index.tolist(), batch.meta_info.get("validate", False)
         )
 
+        # Optional per-batch override (e.g. longer ICL validation prompts).
+        prompt_length = batch.meta_info.get("prompt_length", config.prompt_length)
+
         tasks = []
         for i in range(len(batch)):
             trace_this_sample = i in traced_indices
             kwargs = {k: v[i] for k, v in batch.non_tensor_batch.items()}
             tasks.append(
                 asyncio.create_task(
-                    self._run_agent_loop(sampling_params, trajectory_info[i], trace=trace_this_sample, **kwargs)
+                    self._run_agent_loop(
+                        sampling_params,
+                        trajectory_info[i],
+                        trace=trace_this_sample,
+                        prompt_length=prompt_length,
+                        **kwargs,
+                    )
                 )
             )
         outputs = await asyncio.gather(*tasks)
@@ -488,6 +497,7 @@ class AgentLoopWorker:
         *,
         agent_name: str,
         trace: bool = True,
+        prompt_length: Optional[int] = None,
         **kwargs,
     ) -> _InternalAgentLoopOutput:
         with rollout_trace_attr(
@@ -513,9 +523,9 @@ class AgentLoopWorker:
                 dataset_config=self.config.data,
             )
             output: AgentLoopOutput = await agent_loop.run(sampling_params, **kwargs)
-            return await self._agent_loop_postprocess(output, **kwargs)
+            return await self._agent_loop_postprocess(output, prompt_length=prompt_length, **kwargs)
 
-    async def _agent_loop_postprocess(self, output, **kwargs) -> _InternalAgentLoopOutput:
+    async def _agent_loop_postprocess(self, output, prompt_length: Optional[int] = None, **kwargs) -> _InternalAgentLoopOutput:
         """Perform post-processing operations on the output of each individual agent loop."""
         output.extra_fields["raw_prompt"] = kwargs["raw_prompt"]
 
@@ -540,11 +550,13 @@ class AgentLoopWorker:
         #   e.g., [0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,0,0,0,0]
 
         # TODO(wuxibin): remove padding and use tensordict.
+        if prompt_length is None:
+            prompt_length = self.config.actor_rollout_ref.rollout.prompt_length
         self.tokenizer.padding_side = "left"
         prompt_output = self.tokenizer.pad(
             {"input_ids": output.prompt_ids},
             padding="max_length",
-            max_length=self.config.actor_rollout_ref.rollout.prompt_length,
+            max_length=prompt_length,
             return_tensors="pt",
             return_attention_mask=True,
         )
