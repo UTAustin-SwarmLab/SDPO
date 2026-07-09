@@ -145,6 +145,9 @@ trainer:
     success_reward_threshold: 0.5
     include_environment_feedback: True
     do_sample: ${actor_rollout_ref.rollout.val_kwargs.do_sample}
+    # Pad width for ICL prompts in async agent-loop postprocess. Defaults to
+    # self-distillation max_reprompt_len so appended previous answers fit.
+    max_prompt_length: ${oc.select:actor_rollout_ref.actor.self_distillation.max_reprompt_len,${data.max_prompt_length}}
     correct_feedback: "Your previous answer was correct."
     incorrect_feedback: "Your previous answer was incorrect."
     prompt_template: |-
