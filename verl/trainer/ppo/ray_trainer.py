@@ -861,28 +861,40 @@ class RayPPOTrainer:
             has_feedback = feedback_list[i] is not None
             feedback_only_without_solution = self_distillation_cfg.get("environment_feedback_only_without_solution", False)
 
-            # If feedback_only_without_solution is True, only use feedback when no solution exists
-            use_feedback = has_feedback and (not feedback_only_without_solution or not has_solution)
+            include_solution = has_solution and self_distillation_cfg.use_solution
+            include_response = self_distillation_cfg.use_response
+            include_feedback = (
+                has_feedback
+                and self_distillation_cfg.use_feedback
+                and (not feedback_only_without_solution or not include_solution)
+            )
 
             # build solution section
             solution_section = ""
-            if has_solution:
+            if include_solution:
                 solution_section = self_distillation_cfg.solution_template.format(
                     successful_previous_attempt=solution_strs[i]
                 )
 
+            response_section = ""
+            if include_response:
+                response_section = self_distillation_cfg.response_template.format(
+                    response=response_texts[i]
+                )
+
             # build feedback section
             feedback_section = ""
-            if use_feedback:
+            if include_feedback:
                 feedback_section = self_distillation_cfg.feedback_template.format(
                     feedback_raw=feedback_list[i]
                 )
 
-            # combine solution and feedback sections
-            if use_feedback or has_solution:
+            # combine enabled sections
+            if include_solution or include_response or include_feedback:
                 reprompt_text = self_distillation_cfg.reprompt_template.format(
                     prompt=prompt_texts[i],
                     solution=solution_section,
+                    response=response_section,
                     feedback=feedback_section,
                 )
             else:
@@ -2262,15 +2274,16 @@ class RayPPOTrainer:
                     redundant_time=self.config.trainer.esi_redundant_time,
                 )
                 # Check if the conditions for saving a checkpoint are met.
-                # The conditions include a mandatory condition (1) and
-                # one of the following optional conditions (2/3/4):
-                # 1. The save frequency is set to a positive value.
-                # 2. It's the last training step.
-                # 3. The current step number is a multiple of the save frequency.
-                # 4. The ESI(Elastic Server Instance)/training plan is close to expiration.
-                if self.config.trainer.save_freq > 0 and (
-                    is_last_step or self.global_steps % self.config.trainer.save_freq == 0 or esi_close_to_expiration
-                ):
+                # save_freq < 0 disables checkpointing entirely (including the final step).
+                # save_freq == 0 saves only on the last step (and ESI preemption).
+                # save_freq > 0 also saves every save_freq steps.
+                save_freq = self.config.trainer.save_freq
+                should_save_checkpoint = save_freq >= 0 and (
+                    is_last_step
+                    or esi_close_to_expiration
+                    or (save_freq > 0 and self.global_steps % save_freq == 0)
+                )
+                if should_save_checkpoint:
                     if esi_close_to_expiration:
                         print("Force saving checkpoint: ESI instance expiration approaching.")
                     with marked_timer("save_checkpoint", timing_raw, color="green"):

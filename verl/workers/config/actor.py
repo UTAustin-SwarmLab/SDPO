@@ -59,7 +59,7 @@ class SelfDistillationConfig(BaseConfig):
         response_level_rover_loss (bool): If True, compute ROVER MSE after averaging each response.
         next_q_scale_factor (Optional[float]): Optional multiplier for the bootstrapped next-Q term.
         use_env_reward (bool): If True, inject environment advantages only at sampled token actions.
-        reprompt_template (str): Template for reprompting. Uses {prompt}, {solution}, {feedback} placeholders.
+        reprompt_template (str): Template for reprompting. Uses {prompt}, {solution}, {response}, {feedback} placeholders.
         solution_template (str): Template for formatting solution section. Uses {successful_previous_attempt} placeholder.
         feedback_template (str): Template for formatting feedback section. Uses {feedback_raw} placeholder.
         include_environment_feedback (bool): Whether to include environment feedback in reprompting for wrong attempts.
@@ -85,6 +85,9 @@ class SelfDistillationConfig(BaseConfig):
     target_adv_only: bool = False
     use_rover_clip: bool = False
     response_level_rover_loss: bool = False
+    use_solution: bool = True
+    use_feedback: bool = True
+    use_response: bool = False
     next_q_scale_factor: Optional[float] = None
     clamp_high: float = 2.0
     clamp_low: float = -2.0
@@ -92,7 +95,7 @@ class SelfDistillationConfig(BaseConfig):
     use_env_reward: bool = False
     target_q_mode: str = "uniform" # "uniform" or "max"
     reprompt_template: str = (
-        "{prompt}{solution}{feedback}\n\n"
+        "{prompt}{solution}{response}{feedback}\n\n"
         "Correctly solve the original question.\n"
     )
     solution_template: str = (
@@ -104,6 +107,11 @@ class SelfDistillationConfig(BaseConfig):
         "\n"
         "The following is feedback from your unsuccessful earlier attempt:\n\n"
         "{feedback_raw}\n\n"
+    )
+    response_template: str = (
+        "\n"
+        "The following was your prior response to the original question:\n\n"
+        "{response}\n\n"
     )
     include_environment_feedback: bool = False
     environment_feedback_only_without_solution: bool = False
