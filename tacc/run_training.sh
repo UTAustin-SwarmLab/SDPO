@@ -33,6 +33,11 @@ ICL_VALIDATION="${ICL_VALIDATION:-True}"
 ICL_VALIDATION_POLICY="${ICL_VALIDATION_POLICY:-student}"
 LOG_VAL_GENERATIONS="${LOG_VAL_GENERATIONS:-10}"
 
+# SAVE_FREQ defaults to test_freq when unset so checkpoints land after validation.
+TEST_FREQ="${TEST_FREQ:-20}"
+SAVE_FREQ="${SAVE_FREQ:-${TEST_FREQ}}"
+MAX_ACTOR_CKPT_TO_KEEP="${MAX_ACTOR_CKPT_TO_KEEP:-3}"
+
 COMMON_ARGS="vars.dir=${PROJECT_ROOT} \
 vars.log_dir=${LOG_DIR} \
 vars.ckpt_dir=${CKPT_DIR} \
@@ -41,6 +46,9 @@ trainer.n_gpus_per_node=${GPUS_PER_NODE} \
 trainer.icl_validation.enable=${ICL_VALIDATION} \
 trainer.icl_validation.policy=${ICL_VALIDATION_POLICY} \
 trainer.log_val_generations=${LOG_VAL_GENERATIONS} \
+trainer.test_freq=${TEST_FREQ} \
+trainer.save_freq=${SAVE_FREQ} \
+trainer.max_actor_ckpt_to_keep=${MAX_ACTOR_CKPT_TO_KEEP} \
 custom_reward_function.path=${PROJECT_ROOT}/verl/utils/reward_score/feedback/__init__.py"
 
 RUN_CMD="bash ${PROJECT_ROOT}/training/verl_training.sh ${EXP_NAME} ${CONFIG_NAME} ${DATA_PATH} ${SCRIPT_ARGS} ${COMMON_ARGS}"

@@ -173,6 +173,8 @@ trainer.icl_validation.enable=$ICL_VALIDATION \
 trainer.icl_validation.policy=$ICL_VALIDATION_POLICY \
 trainer.log_val_generations=$LOG_VAL_GENERATIONS \
 trainer.test_freq=20 \
+trainer.save_freq=20 \
+trainer.max_actor_ckpt_to_keep=3 \
 trainer.val_before_train=False \
 custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__init__.py"
 echo "----------------------------------------------------------------"
