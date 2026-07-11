@@ -178,7 +178,8 @@ trainer:
   # Number of GPUs per node
   n_gpus_per_node: 8
 
-  # Save frequency (by iteration) for model checkpoints
+  # Save frequency (by iteration) for model checkpoints.
+  # < 0: disabled (including final step). 0: final step only. > 0: every N steps + final.
   save_freq: -1
 
   # ESI refers to the elastic server instance used during training, similar to the training plan. For example,
