@@ -1188,6 +1188,65 @@ def compute_self_distillation_loss(
     return loss, metrics
 
 
+def compute_phantom_icl_loss(
+    log_probs: torch.Tensor,
+    response_mask: torch.Tensor,
+    labels: torch.Tensor,
+    self_distillation_config: Any,
+    self_distillation_mask: Optional[torch.Tensor] = None,
+    loss_agg_mode: str = "token-mean",
+) -> tuple[torch.Tensor, dict[str, Any]]:
+    """Binary likelihood objective for phantom ICL trajectories.
+
+    Correct trajectories increase token likelihood; incorrect trajectories apply
+    token-level unlikelihood to discourage reproducing that response.
+    """
+    loss_mask = response_mask
+    if self_distillation_mask is not None:
+        loss_mask = loss_mask * self_distillation_mask.unsqueeze(1)
+
+    labels = labels.to(dtype=log_probs.dtype, device=log_probs.device).unsqueeze(1)
+    positive_weight = float(getattr(self_distillation_config, "phantom_positive_weight", 1.0))
+    negative_weight = float(getattr(self_distillation_config, "phantom_negative_weight", 1.0))
+
+    positive_loss = -log_probs
+    token_probs = torch.exp(torch.clamp(log_probs, max=-1e-6))
+    negative_loss = -torch.log1p(-token_probs)
+    per_token_loss = labels * positive_weight * positive_loss + (1.0 - labels) * negative_weight * negative_loss
+
+    loss = agg_loss(
+        loss_mat=per_token_loss,
+        loss_mask=loss_mask,
+        loss_agg_mode=loss_agg_mode,
+        batch_num_tokens=loss_mask.sum().clamp(min=1.0),
+    )
+
+    with torch.no_grad():
+        valid = loss_mask.sum().clamp(min=1.0)
+        seq_mask = (loss_mask.sum(dim=-1) > 0).to(dtype=labels.dtype)
+        positive_seq_mask = seq_mask * labels.squeeze(1)
+        negative_seq_mask = seq_mask * (1.0 - labels.squeeze(1))
+        metrics = {
+            "phantom_icl/target_fraction": seq_mask.mean().item(),
+            "phantom_icl/positive_fraction": (
+                positive_seq_mask.sum() / seq_mask.sum().clamp(min=1.0)
+            ).item(),
+            "phantom_icl/token_loss": ((per_token_loss * loss_mask).sum() / valid).item(),
+        }
+        if positive_seq_mask.sum() > 0:
+            positive_token_mask = loss_mask * labels
+            metrics["phantom_icl/positive_nll"] = (
+                (positive_loss * positive_token_mask).sum() / positive_token_mask.sum().clamp(min=1.0)
+            ).item()
+        if negative_seq_mask.sum() > 0:
+            negative_token_mask = loss_mask * (1.0 - labels)
+            metrics["phantom_icl/negative_unlikelihood"] = (
+                (negative_loss * negative_token_mask).sum() / negative_token_mask.sum().clamp(min=1.0)
+            ).item()
+
+    return loss, metrics
+
+
 def compute_distil_self_distillation_loss(
     student_log_probs: torch.Tensor,
     teacher_log_probs: torch.Tensor,
