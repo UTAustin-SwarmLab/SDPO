@@ -21,6 +21,7 @@ actor_rollout_ref:
       use_solution: False
       use_feedback: True
       use_response: True
+      include_environment_feedback: True
     optim:
       lr: 1e-5
   rollout:

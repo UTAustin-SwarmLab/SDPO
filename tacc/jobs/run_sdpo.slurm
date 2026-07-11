@@ -119,7 +119,6 @@ ray status --address "$HEAD_IP:$RAY_PORT"
 # ==========================================
 # 4. TRAINING ARGUMENTS (from sbatch CLI)
 # ==========================================
-CONFIG_NAME="sdpo"
 DATA_PATH=${1:-"datasets/sciknoweval/all"}
 TRAIN_BATCH_SIZE=${2:-32}
 ROLLOUT_BATCH_SIZE=${3:-8}
@@ -131,6 +130,16 @@ DONT_REPROMPT_ON_SELF_SUCCESS=${8:-True}
 SUFFIX=${9:-"local_sdpo"}
 TOPK=${10:-50}
 TEACHER_UPDATE_RATE=${11:-0.05}
+ENABLE_ICL=${12:-False}
+
+if [[ "${ENABLE_ICL}" == "True" || "${ENABLE_ICL}" == "true" || "${ENABLE_ICL}" == "1" ]]; then
+    CONFIG_NAME="sdpo_icl"
+    # ICL training needs env feedback strings in the teacher prompt (use_feedback=True).
+    INCLUDE_ENVIRONMENT_FEEDBACK=True
+else
+    CONFIG_NAME="sdpo"
+    INCLUDE_ENVIRONMENT_FEEDBACK=False
+fi
 
 
 
@@ -178,7 +187,7 @@ actor_rollout_ref.actor.self_distillation.distillation_topk=$TOPK \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
-actor_rollout_ref.actor.self_distillation.include_environment_feedback=False \
+actor_rollout_ref.actor.self_distillation.include_environment_feedback=${INCLUDE_ENVIRONMENT_FEEDBACK} \
 actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
@@ -194,6 +203,7 @@ custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__ini
 echo "----------------------------------------------------------------"
 echo "Starting SDPO Training"
 echo "Experiment: $EXP_NAME"
+echo "Config: $CONFIG_NAME (enable_icl=$ENABLE_ICL, include_environment_feedback=$INCLUDE_ENVIRONMENT_FEEDBACK)"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"

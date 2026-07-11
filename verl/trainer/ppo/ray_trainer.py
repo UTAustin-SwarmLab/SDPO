@@ -923,18 +923,28 @@ class RayPPOTrainer:
         teacher_attention_mask = torch.cat([teacher_prompt["attention_mask"].to(device), response_mask], dim=1)
         teacher_position_ids = compute_position_id_with_mask(teacher_attention_mask)
 
-        # Compute which samples actually use feedback (accounting for environment_feedback_only_without_solution)
+        # Match the include_* logic used when building teacher messages so the loss
+        # mask covers every sample that actually received a non-trivial reprompt.
         feedback_only_without_solution = self_distillation_cfg.get("environment_feedback_only_without_solution", False)
+        include_solution_flags = [
+            solution_strs[i] is not None and self_distillation_cfg.use_solution for i in range(batch_size)
+        ]
+        include_response_flags = [bool(self_distillation_cfg.use_response) for _ in range(batch_size)]
         feedback_used = [
-            feedback_list[i] is not None and (not feedback_only_without_solution or solution_strs[i] is None)
+            feedback_list[i] is not None
+            and self_distillation_cfg.use_feedback
+            and (not feedback_only_without_solution or not include_solution_flags[i])
             for i in range(batch_size)
         ]
 
-        # self_distillation_mask is True if sample has a solution OR feedback is used (i.e., will get a reprompted message)
+        # True iff the teacher prompt includes solution, prior response, and/or feedback.
         self_distillation_mask = torch.tensor(
-            [solution_strs[i] is not None or feedback_used[i] for i in range(batch_size)],
+            [
+                include_solution_flags[i] or include_response_flags[i] or feedback_used[i]
+                for i in range(batch_size)
+            ],
             dtype=torch.float32,
-            device=device
+            device=device,
         )
 
         uids = set(batch.non_tensor_batch["uid"])
