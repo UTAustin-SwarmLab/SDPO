@@ -131,7 +131,8 @@ ICL_VALIDATION=${ICL_VALIDATION:-True}
 ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-teacher}
 LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 OUTPUT_DIR="${WORK}/output/DISTIL-test"
-mkdir -p "$OUTPUT_DIR"
+CKPT_DIR="${OUTPUT_DIR}/checkpoints"
+mkdir -p "$OUTPUT_DIR" "$CKPT_DIR"
 
 EXP_NAME="${EXP_NAME:-SMOKE-DISTIL-$(date +%Y%m%d-%H%M%S)}"
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
@@ -143,6 +144,7 @@ data.max_response_length=$MAX_RESPONSE_LENGTH \
 max_model_len=$MAX_MODEL_LEN \
 vars.dir=$PROJECT_ROOT \
 vars.log_dir=$OUTPUT_DIR \
+vars.ckpt_dir=$CKPT_DIR \
 trainer.group_name=DISTIL-test \
 trainer.nnodes=$SLURM_JOB_NUM_NODES \
 trainer.n_gpus_per_node=1 \

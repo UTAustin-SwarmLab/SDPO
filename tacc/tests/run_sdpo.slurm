@@ -151,7 +151,8 @@ SUFFIX=${1:-"local_sdpo_sciknoweval_all"}
 export PROJECT_ROOT
 export PYTHONPATH=$PROJECT_ROOT:$PYTHONPATH
 export LOCAL_OUTPUT_DIR="${HOME_ROOT}/output/SDPO-local"
-mkdir -p "$LOCAL_OUTPUT_DIR"
+CKPT_DIR="${LOCAL_OUTPUT_DIR}/checkpoints"
+mkdir -p "$LOCAL_OUTPUT_DIR" "$CKPT_DIR"
 
 export USER=${USER:-$(whoami)}
 export TASK="${TASK:-$DATA_PATH}"
@@ -168,6 +169,7 @@ vars.task=$TASK \
 max_model_len=$MAX_MODEL_LEN \
 vars.dir=$PROJECT_ROOT \
 vars.log_dir=$LOCAL_OUTPUT_DIR \
+vars.ckpt_dir=$CKPT_DIR \
 trainer.group_name=SDPO-local \
 trainer.nnodes=8 \
 trainer.n_gpus_per_node=1 \

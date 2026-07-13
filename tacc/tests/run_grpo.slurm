@@ -225,7 +225,8 @@ export PROJECT_ROOT="${WORK}/SDPO"
 export PYTHONPATH=$PROJECT_ROOT:$PYTHONPATH
 export LOCAL_OUTPUT_DIR="${HOME_ROOT}/output/GRPO-local"
 # Suggested by PyTorch OOM hint to reduce fragmentation-related failures.
-mkdir -p "$LOCAL_OUTPUT_DIR"
+CKPT_DIR="${LOCAL_OUTPUT_DIR}/checkpoints"
+mkdir -p "$LOCAL_OUTPUT_DIR" "$CKPT_DIR"
 
 # Define USER for Hydra config (required by user.yaml)
 export USER=${USER:-$(whoami)}
@@ -250,6 +251,7 @@ data.max_prompt_length=$MAX_PROMPT_LENGTH \
 data.max_response_length=$MAX_RESPONSE_LENGTH \
 max_model_len=$MAX_MODEL_LEN \
 vars.log_dir=$LOCAL_OUTPUT_DIR \
+vars.ckpt_dir=$CKPT_DIR \
 trainer.group_name=GRPO-local \
 trainer.nnodes=8 \
 trainer.n_gpus_per_node=1 \
