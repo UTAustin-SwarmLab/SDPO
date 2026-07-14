@@ -142,6 +142,15 @@ self_distillation:
   # Requires include_environment_feedback=True to have any effect
   environment_feedback_only_without_solution: True
 
+  # Whether to include a successful peer solution in the teacher reprompt
+  use_solution: True
+
+  # Whether to include environment feedback in the teacher reprompt
+  use_feedback: True
+
+  # Whether to include the student's own prior response in the teacher reprompt
+  use_response: False
+
   # IS clip for loss; null disables IS weighting
   is_clip: 2
 
@@ -164,6 +173,13 @@ self_distillation:
     The following is feedback from your unsuccessful earlier attempt:
 
     {feedback_raw}
+
+  # Response template - available variables: response
+  response_template: |-
+
+    The following was your prior response to the original question:
+
+    {response}
 
 # Constant C in Dual-clip PPO; clips when advantage < 0 and ratio > C
 clip_ratio_c: 3.0
