@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH -J sdql_test
-#SBATCH -o sdql_test-%j.out
-#SBATCH -e sdql_test-%j.err
+#SBATCH -J sdpo_nofulllogit
+#SBATCH -o sdpo_nofulllogit-%j.out
+#SBATCH -e sdpo_nofulllogit-%j.err
 #SBATCH -p gh
 #SBATCH -N 2
 #SBATCH --ntasks-per-node=1
@@ -9,10 +9,13 @@
 #SBATCH -t 02:00:00
 #SBATCH --mem=0
 
-# Usage: sbatch tacc/tests/run_sdql.slurm
-# Purpose: lightweight SDQL smoke test on TACC
+# Usage: sbatch tacc/tests/run_sdpo_nofulllogit.slurm
+# Purpose: SDPO smoke test with sampled-token (non-full-logit) distillation
+#
+# Optional env overrides:
+#   ALPHA=0.0|0.5|1.0  DATA_PATH=...  MODEL_PATH=...  EXP_NAME=...
 
-echo "Starting SDQL smoke test on $(hostname)"
+echo "Starting SDPO no-full-logit smoke test on $(hostname)"
 date
 
 source ~/.bashrc
@@ -108,23 +111,22 @@ if [[ ! -d "$PROJECT_ROOT/verl" ]]; then
     exit 1
 fi
 
-CONFIG_NAME="sdql"
+CONFIG_NAME="sdpo"
 DATA_PATH="${DATA_PATH:-datasets/sciknoweval/all}"
 TRAIN_BATCH_SIZE="${TRAIN_BATCH_SIZE:-32}"
 ROLLOUT_BATCH_SIZE="${ROLLOUT_BATCH_SIZE:-8}"
 MINI_BATCH_SIZE="${MINI_BATCH_SIZE:-32}"
 LR="${LR:-1e-5}"
-ALPHA="${ALPHA:-0.0}"
+ALPHA="${ALPHA:-1.0}"
+CLAMP_HIGH="${CLAMP_HIGH:-2.0}"
+CLAMP_LOW="${CLAMP_LOW:--2.0}"
 DONT_REPROMPT_ON_SELF_SUCCESS="${DONT_REPROMPT_ON_SELF_SUCCESS:-True}"
 MODEL_PATH="${MODEL_PATH:-Qwen/Qwen3-4B}"
-RAY_DASHBOARD_PORT=${RAY_DASHBOARD_PORT:-8170}
-MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
-MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
+MAX_PROMPT_LENGTH="${MAX_PROMPT_LENGTH:-1024}"
+MAX_RESPONSE_LENGTH="${MAX_RESPONSE_LENGTH:-2048}"
 TEMPLATE_LENGTH=512
 MAX_FEEDBACK_LENGTH=$((MAX_RESPONSE_LENGTH + 512))
 MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_FEEDBACK_LENGTH + MAX_RESPONSE_LENGTH))
-HOME_ROOT=${WORK}
-SUFFIX=${1:-"local_sdql_sciknoweval_all"}
 
 export PROJECT_ROOT
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
@@ -133,11 +135,11 @@ export TASK="${TASK:-$DATA_PATH}"
 ICL_VALIDATION=${ICL_VALIDATION:-True}
 ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-teacher}
 LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
-OUTPUT_DIR="${WORK}/output/SDQL-test"
+OUTPUT_DIR="${WORK}/output/SDPO-nofulllogit-test"
 CKPT_DIR="${OUTPUT_DIR}/checkpoints"
 mkdir -p "$OUTPUT_DIR" "$CKPT_DIR"
 
-EXP_NAME="${EXP_NAME:-SMOKE-SDQL-$(date +%Y%m%d-%H%M%S)}"
+EXP_NAME="${EXP_NAME:-SMOKE-SDPO-nofulllogit-a${ALPHA}-$(date +%Y%m%d-%H%M%S)}"
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
 data.val_batch_size=$TRAIN_BATCH_SIZE \
 trainer.experiment_name=$EXP_NAME \
@@ -148,19 +150,22 @@ max_model_len=$MAX_MODEL_LEN \
 vars.dir=$PROJECT_ROOT \
 vars.log_dir=$OUTPUT_DIR \
 vars.ckpt_dir=$CKPT_DIR \
-trainer.group_name=SDQL-test \
+trainer.group_name=SDPO-nofulllogit-test \
 trainer.nnodes=$SLURM_JOB_NUM_NODES \
 trainer.n_gpus_per_node=1 \
 actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.max_model_len=$MAX_MODEL_LEN \
 actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
-actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=16 \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=4 \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=8 \
 actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
 actor_rollout_ref.actor.optim.lr=$LR \
-actor_rollout_ref.actor.self_distillation.distillation_topk=50 \
+actor_rollout_ref.actor.self_distillation.full_logit_distillation=False \
+actor_rollout_ref.actor.self_distillation.distillation_topk=null \
+actor_rollout_ref.actor.self_distillation.clamp_high=$CLAMP_HIGH \
+actor_rollout_ref.actor.self_distillation.clamp_low=$CLAMP_LOW \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=$DONT_REPROMPT_ON_SELF_SUCCESS \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
@@ -178,9 +183,12 @@ actor_rollout_ref.rollout.max_num_seqs=32 \
 trainer.val_before_train=False \
 custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__init__.py"
 
-echo "Starting SDQL smoke-test training run..."
+echo "Starting SDPO no-full-logit smoke-test training run..."
 echo "Experiment: $EXP_NAME"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
+echo "Alpha: $ALPHA"
+echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH]"
+echo "full_logit_distillation: False"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS
