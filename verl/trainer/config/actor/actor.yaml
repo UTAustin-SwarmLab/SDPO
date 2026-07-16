@@ -101,6 +101,9 @@ self_distillation:
   # If true, apply target-aware ROVER clipping in log-importance space.
   use_rover_clip: false
 
+  # If true, clamp sampled-token distillation rewards to [clamp_low, clamp_high].
+  use_reward_clamp: true
+
   # If true, compute ROVER loss at response level instead of token level.
   response_level_rover_loss: false
 
@@ -111,7 +114,11 @@ self_distillation:
   distillation_add_tail: True
 
   # KL interpolation coefficient: 0.0=forward KL, 1.0=reverse KL, in-between=JSD
-  alpha: 0.5 
+  alpha: 0.5
+
+  # Reward clamp for sampled-token (non-full-logit) distillation advantages
+  clamp_high: 2.0
+  clamp_low: -2.0
 
   # Minimum sequence reward to be considered successful
   success_reward_threshold: 0.5

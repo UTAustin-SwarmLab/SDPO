@@ -133,6 +133,7 @@ TEACHER_UPDATE_RATE=${11:-0.05}
 ENABLE_ICL=${12:-False}
 CLAMP_HIGH=${13:-2.0}
 CLAMP_LOW=${14:--2.0}
+USE_REWARD_CLAMP=${15:-True}
 
 if [[ "${ENABLE_ICL}" == "True" || "${ENABLE_ICL}" == "true" || "${ENABLE_ICL}" == "1" ]]; then
     CONFIG_NAME="sdpo_icl"
@@ -189,6 +190,7 @@ actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
 actor_rollout_ref.actor.self_distillation.full_logit_distillation=False \
 actor_rollout_ref.actor.self_distillation.distillation_topk=$TOPK \
+actor_rollout_ref.actor.self_distillation.use_reward_clamp=$USE_REWARD_CLAMP \
 actor_rollout_ref.actor.self_distillation.clamp_high=$CLAMP_HIGH \
 actor_rollout_ref.actor.self_distillation.clamp_low=$CLAMP_LOW \
 algorithm.rollout_correction.rollout_is=token \
@@ -215,7 +217,7 @@ echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
 echo "full_logit_distillation: False"
-echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH]"
+echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP)"
 echo "----------------------------------------------------------------"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS
