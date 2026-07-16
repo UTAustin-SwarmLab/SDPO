@@ -129,6 +129,12 @@ TEMPLATE_LENGTH=512
 MAX_FEEDBACK_LENGTH=$((MAX_RESPONSE_LENGTH + 512))
 MAX_MODEL_LEN=$((TEMPLATE_LENGTH + MAX_PROMPT_LENGTH + MAX_FEEDBACK_LENGTH + MAX_RESPONSE_LENGTH))
 
+if [[ "${USE_REWARD_CLAMP}" == "True" || "${USE_REWARD_CLAMP}" == "true" || "${USE_REWARD_CLAMP}" == "1" ]]; then
+    CLAMP_TAG="clamp${CLAMP_LOW}_${CLAMP_HIGH}"
+else
+    CLAMP_TAG="noclamp"
+fi
+
 export PROJECT_ROOT
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 export USER="${USER:-$(whoami)}"
@@ -140,7 +146,7 @@ OUTPUT_DIR="${WORK}/output/SDPO-nofulllogit-test"
 CKPT_DIR="${OUTPUT_DIR}/checkpoints"
 mkdir -p "$OUTPUT_DIR" "$CKPT_DIR"
 
-EXP_NAME="${EXP_NAME:-SMOKE-SDPO-nofulllogit-a${ALPHA}-$(date +%Y%m%d-%H%M%S)}"
+EXP_NAME="${EXP_NAME:-SMOKE-SDPO-nofulllogit-${CLAMP_TAG}-a${ALPHA}-$(date +%Y%m%d-%H%M%S)}"
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
 data.val_batch_size=$TRAIN_BATCH_SIZE \
 trainer.experiment_name=$EXP_NAME \
@@ -190,7 +196,7 @@ echo "Experiment: $EXP_NAME"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
-echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP)"
+echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP, tag=$CLAMP_TAG)"
 echo "full_logit_distillation: False"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

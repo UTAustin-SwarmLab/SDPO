@@ -135,6 +135,12 @@ CLAMP_HIGH=${13:-2.0}
 CLAMP_LOW=${14:--2.0}
 USE_REWARD_CLAMP=${15:-True}
 
+if [[ "${USE_REWARD_CLAMP}" == "True" || "${USE_REWARD_CLAMP}" == "true" || "${USE_REWARD_CLAMP}" == "1" ]]; then
+    CLAMP_TAG="clamp${CLAMP_LOW}_${CLAMP_HIGH}"
+else
+    CLAMP_TAG="noclamp"
+fi
+
 if [[ "${ENABLE_ICL}" == "True" || "${ENABLE_ICL}" == "true" || "${ENABLE_ICL}" == "1" ]]; then
     CONFIG_NAME="sdpo_icl"
     # ICL training needs env feedback strings in the teacher prompt (use_feedback=True).
@@ -217,7 +223,7 @@ echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
 echo "full_logit_distillation: False"
-echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP)"
+echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP, tag=$CLAMP_TAG)"
 echo "----------------------------------------------------------------"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS
