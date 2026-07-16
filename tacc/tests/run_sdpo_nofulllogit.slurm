@@ -120,6 +120,7 @@ LR="${LR:-1e-5}"
 ALPHA="${ALPHA:-1.0}"
 CLAMP_HIGH="${CLAMP_HIGH:-2.0}"
 CLAMP_LOW="${CLAMP_LOW:--2.0}"
+USE_REWARD_CLAMP="${USE_REWARD_CLAMP:-True}"
 DONT_REPROMPT_ON_SELF_SUCCESS="${DONT_REPROMPT_ON_SELF_SUCCESS:-True}"
 MODEL_PATH="${MODEL_PATH:-Qwen/Qwen3-4B}"
 MAX_PROMPT_LENGTH="${MAX_PROMPT_LENGTH:-1024}"
@@ -164,6 +165,7 @@ actor_rollout_ref.model.path=$MODEL_PATH \
 actor_rollout_ref.actor.optim.lr=$LR \
 actor_rollout_ref.actor.self_distillation.full_logit_distillation=False \
 actor_rollout_ref.actor.self_distillation.distillation_topk=null \
+actor_rollout_ref.actor.self_distillation.use_reward_clamp=$USE_REWARD_CLAMP \
 actor_rollout_ref.actor.self_distillation.clamp_high=$CLAMP_HIGH \
 actor_rollout_ref.actor.self_distillation.clamp_low=$CLAMP_LOW \
 algorithm.rollout_correction.rollout_is=token \
@@ -188,7 +190,7 @@ echo "Experiment: $EXP_NAME"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
-echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH]"
+echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP)"
 echo "full_logit_distillation: False"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

@@ -1161,9 +1161,19 @@ def compute_self_distillation_loss(
 
         per_token_loss = kl_loss.sum(-1)
     else:
-        assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
-        log_ratio = student_log_probs - teacher_log_probs
-        per_token_loss = log_ratio.detach() * student_log_probs
+        
+        if self_distillation_config.alpha == 0.0:
+            reward = (teacher_log_probs.exp() / student_log_probs.exp()).detach()
+        elif self_distillation_config.alpha == 1.0:
+            reward = (teacher_log_probs - student_log_probs).detach()
+        else:
+            mixed_logits = (1-self_distillation_config.alpha) * teacher_log_probs.exp() + self_distillation_config.alpha * student_log_probs.exp()
+            mixed_logits_log = torch.log(mixed_logits) 
+            reward = mixed_logits_log - student_log_probs
+        
+        if self_distillation_config.use_reward_clamp:
+            reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
+        per_token_loss = reward.detach() * student_log_probs
 
     is_clip = self_distillation_config.is_clip
     if is_clip is not None:
@@ -1326,9 +1336,19 @@ def compute_distil_self_distillation_loss(
 
         per_token_loss = ce_per_token + pg_per_token
     else:
-        assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
-        log_ratio = student_log_probs - teacher_log_probs
-        per_token_loss = log_ratio.detach() * student_log_probs
+        # Non-full-logit path only has chosen-token logprobs: [B, T].
+        # Full/top-k distill tensors are not available here (see dp_actor return_all_logps).
+        if self_distillation_config.alpha == 0.0:
+            reward = (teacher_log_probs.exp() / student_log_probs.exp()).detach()
+        elif self_distillation_config.alpha == 1.0:
+            reward = (teacher_log_probs - student_log_probs).detach()
+        else:
+            mixed_logits = (1 - self_distillation_config.alpha) * teacher_log_probs.exp() + self_distillation_config.alpha * student_log_probs.exp()
+            mixed_logits_log = torch.log(mixed_logits)
+            reward = mixed_logits_log - student_log_probs
+        if self_distillation_config.use_reward_clamp:
+            reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
+        per_token_loss = reward.detach() * student_log_probs
 
     is_clip = self_distillation_config.is_clip
     if is_clip is not None:
@@ -1571,17 +1591,14 @@ def compute_self_distillation_q_loss(
         # 
         # 
         if self_distillation_config.alpha == 0.0:
-            reward_forward = (teacher_distill_log_probs - student_distill_log_probs).exp().detach()
-            reward = torch.clamp(reward_forward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
+            reward = (teacher_distill_log_probs - student_distill_log_probs).exp().detach()
         elif self_distillation_config.alpha == 1.0:
-            reward_reverse = (teacher_distill_log_probs - student_distill_log_probs).detach()
-            reward = torch.clamp(reward_reverse, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
+            reward = (teacher_distill_log_probs - student_distill_log_probs).detach()
         else:
             mixed_logits = (1-self_distillation_config.alpha) * teacher_distill_log_probs.exp() + self_distillation_config.alpha * student_distill_log_probs.exp()
             mixed_logits_log = torch.log(mixed_logits) 
             mixed_logits_log = renorm_topk_log_probs(mixed_logits_log)
             reward = (mixed_logits_log - student_distill_log_probs).detach()
-            reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
             #raise ValueError("Only forward KL and reverse KL are supported for non-full-logit distillation")
             # # Compute the log of the mixture distribution
             # # log(a + b) = log(exp(log(a)) + exp(log(b))) -> for mixture
@@ -1597,6 +1614,8 @@ def compute_self_distillation_q_loss(
             # kl_teacher = F.kl_div(mixture_log_probs, teacher_distill_log_probs, reduction="none", log_target=True)
             # kl_student = F.kl_div(mixture_log_probs, student_distill_log_probs, reduction="none", log_target=True)
             # reward = torch.lerp(kl_student, kl_teacher, alpha)  # Compute the Generalized Jensen-Shannon Divergence
+        if self_distillation_config.use_reward_clamp:
+            reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
 
         zero_tail = torch.zeros_like(q_vals[:, :1, :])
         next_q_vals = torch.cat([q_vals[:, 1:, :], zero_tail], dim=1)
@@ -1655,6 +1674,9 @@ def compute_self_distillation_q_loss(
             mixed_logits = (1-self_distillation_config.alpha) * teacher_log_probs.exp() + self_distillation_config.alpha * student_log_probs.exp()
             mixed_logits_log = torch.log(mixed_logits) 
             reward = mixed_logits_log - student_log_probs
+        
+        if self_distillation_config.use_reward_clamp:
+            reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
 
         use_topk = self_distillation_config.distillation_topk is not None
         if use_topk:

@@ -56,6 +56,7 @@ class SelfDistillationConfig(BaseConfig):
         rover_t (float): ROVER log-importance scale. Defaults to gamma-compatible 1.0.
         target_adv_only (bool): If True, use advantages directly as the ROVER target.
         use_rover_clip (bool): If True, apply target-aware ROVER clipping in log-IS space.
+        use_reward_clamp (bool): If True, clamp sampled-token distillation rewards to [clamp_low, clamp_high].
         response_level_rover_loss (bool): If True, compute ROVER MSE after averaging each response.
         next_q_scale_factor (Optional[float]): Optional multiplier for the bootstrapped next-Q term.
         use_env_reward (bool): If True, inject environment advantages only at sampled token actions.
@@ -84,6 +85,7 @@ class SelfDistillationConfig(BaseConfig):
     rover_t: float = 1.0
     target_adv_only: bool = False
     use_rover_clip: bool = False
+    use_reward_clamp: bool = True
     response_level_rover_loss: bool = False
     use_solution: bool = True
     use_feedback: bool = True
