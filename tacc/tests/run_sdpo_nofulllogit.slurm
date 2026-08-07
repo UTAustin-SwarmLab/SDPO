@@ -121,6 +121,7 @@ ALPHA="${ALPHA:-1.0}"
 CLAMP_HIGH="${CLAMP_HIGH:-2.0}"
 CLAMP_LOW="${CLAMP_LOW:--2.0}"
 USE_REWARD_CLAMP="${USE_REWARD_CLAMP:-True}"
+IS_CLIP="${IS_CLIP:-0.2}"
 DONT_REPROMPT_ON_SELF_SUCCESS="${DONT_REPROMPT_ON_SELF_SUCCESS:-True}"
 MODEL_PATH="${MODEL_PATH:-Qwen/Qwen3-4B}"
 MAX_PROMPT_LENGTH="${MAX_PROMPT_LENGTH:-1024}"
@@ -174,6 +175,7 @@ actor_rollout_ref.actor.self_distillation.distillation_topk=null \
 actor_rollout_ref.actor.self_distillation.use_reward_clamp=$USE_REWARD_CLAMP \
 actor_rollout_ref.actor.self_distillation.clamp_high=$CLAMP_HIGH \
 actor_rollout_ref.actor.self_distillation.clamp_low=$CLAMP_LOW \
+actor_rollout_ref.actor.self_distillation.is_clip=$IS_CLIP \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=$DONT_REPROMPT_ON_SELF_SUCCESS \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
@@ -197,6 +199,7 @@ echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
 echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP, tag=$CLAMP_TAG)"
+echo "is_clip: $IS_CLIP"
 echo "full_logit_distillation: False"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

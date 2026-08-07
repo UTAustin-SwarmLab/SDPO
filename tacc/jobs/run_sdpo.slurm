@@ -131,6 +131,7 @@ SUFFIX=${9:-"local_sdpo"}
 TOPK=${10:-50}
 TEACHER_UPDATE_RATE=${11:-0.05}
 ENABLE_ICL=${12:-False}
+IS_CLIP=${13:-2.0}
 
 if [[ "${ENABLE_ICL}" == "True" || "${ENABLE_ICL}" == "true" || "${ENABLE_ICL}" == "1" ]]; then
     CONFIG_NAME="sdpo_icl"
@@ -191,6 +192,7 @@ actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_R
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.include_environment_feedback=${INCLUDE_ENVIRONMENT_FEEDBACK} \
 actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
+actor_rollout_ref.actor.self_distillation.is_clip=$IS_CLIP \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
 trainer.icl_validation.enable=$ICL_VALIDATION \
@@ -209,6 +211,7 @@ echo "Config: $CONFIG_NAME (enable_icl=$ENABLE_ICL, include_environment_feedback
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
+echo "is_clip: $IS_CLIP"
 echo "----------------------------------------------------------------"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

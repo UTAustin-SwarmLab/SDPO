@@ -35,34 +35,34 @@ Create a train/test split of the data by running:
 ```bash
 python data/split_tasks.py \
     --json_path datasets/sciknoweval/biology/biology.json \
-    --output_dir datasets/sciknoweval/biology \
-    --test_ratio 0.5 \
+    --output_dir datasets/sciknoweval2/biology \
+    --test_ratio 0.2 \
     --seed 42
 
 python data/split_tasks.py \
     --json_path datasets/sciknoweval/chemistry/chemistry.json \
-    --output_dir datasets/sciknoweval/chemistry \
-    --test_ratio 0.5 \
+    --output_dir datasets/sciknoweval2/chemistry \
+    --test_ratio 0.2 \
     --seed 42
 
 python data/split_tasks.py \
     --json_path datasets/sciknoweval/material/material.json \
-    --output_dir datasets/sciknoweval/material \
-    --test_ratio 0.5 \
+    --output_dir datasets/sciknoweval2/material \
+    --test_ratio 0.2 \
     --seed 42
 
 python data/split_tasks.py \
     --json_path datasets/sciknoweval/physics/physics.json \
-    --output_dir datasets/sciknoweval/physics \
-    --test_ratio 0.5 \
+    --output_dir datasets/sciknoweval2/physics \
+    --test_ratio 0.2 \
     --seed 42
 ```
 
 Merge all SciKnowEval partitions into a single train/test split:
 ```bash
 python data/merge_sciknoweval_partitions.py \
-    --input_dir datasets/sciknoweval \
-    --output_dir datasets/sciknoweval/all
+    --input_dir datasets/sciknoweval2 \
+    --output_dir datasets/sciknoweval2/all
 ```
 Each example's `dataset` field is set to `sciknoweval_{partition}` (e.g. `sciknoweval_biology`).
 

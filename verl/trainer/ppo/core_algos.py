@@ -1180,10 +1180,17 @@ def compute_self_distillation_loss(
         if old_log_probs is None:
             raise ValueError("old_log_probs is required for distillation IS ratio.")
 
-        negative_approx_kl = (student_log_probs - old_log_probs).detach()
-        negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
-        ratio = torch.exp(negative_approx_kl).clamp(max=is_clip)
-        per_token_loss = per_token_loss * ratio
+        if self_distillation_config.full_logit_distillation:
+            negative_approx_kl = (student_log_probs - old_log_probs).detach()
+            negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
+            ratio = torch.exp(negative_approx_kl).clamp(max=is_clip)
+            per_token_loss = per_token_loss * ratio
+        else:
+            # PPO-style symmetric IS clip around 1: ratio ∈ [1 - is_clip, 1 + is_clip]
+            negative_approx_kl = (student_log_probs - old_log_probs).detach()
+            negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
+            ratio = torch.exp(negative_approx_kl).clamp(max=1 + is_clip, min=1 - is_clip)
+            per_token_loss = per_token_loss * ratio
 
     # Apply rollout correction weights if provided
     if rollout_is_weights is not None:

@@ -134,6 +134,7 @@ ENABLE_ICL=${12:-False}
 CLAMP_HIGH=${13:-2.0}
 CLAMP_LOW=${14:--2.0}
 USE_REWARD_CLAMP=${15:-True}
+IS_CLIP=${16:-0.2}
 
 if [[ "${USE_REWARD_CLAMP}" == "True" || "${USE_REWARD_CLAMP}" == "true" || "${USE_REWARD_CLAMP}" == "1" ]]; then
     CLAMP_TAG="clamp${CLAMP_LOW}_${CLAMP_HIGH}"
@@ -199,6 +200,7 @@ actor_rollout_ref.actor.self_distillation.distillation_topk=$TOPK \
 actor_rollout_ref.actor.self_distillation.use_reward_clamp=$USE_REWARD_CLAMP \
 actor_rollout_ref.actor.self_distillation.clamp_high=$CLAMP_HIGH \
 actor_rollout_ref.actor.self_distillation.clamp_low=$CLAMP_LOW \
+actor_rollout_ref.actor.self_distillation.is_clip=$IS_CLIP \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
@@ -223,6 +225,7 @@ echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
 echo "full_logit_distillation: False"
+echo "is_clip: $IS_CLIP"
 echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP, tag=$CLAMP_TAG)"
 echo "----------------------------------------------------------------"
 
