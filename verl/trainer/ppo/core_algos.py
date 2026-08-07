@@ -1173,7 +1173,7 @@ def compute_self_distillation_loss(
         
         if self_distillation_config.use_reward_clamp:
             reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
-        per_token_loss = reward.detach() * student_log_probs
+        per_token_loss = - reward.detach() * student_log_probs
 
     is_clip = self_distillation_config.is_clip
     if is_clip is not None:

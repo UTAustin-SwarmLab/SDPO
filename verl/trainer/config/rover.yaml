@@ -20,7 +20,7 @@ actor_rollout_ref:
       is_clip: null
       rover_t: 1.0
       target_adv_only: False
-      use_rover_clip: True
+      use_rover_clip: False
       response_level_rover_loss: False
       next_q_scale_factor: null
       use_env_reward: False
@@ -29,6 +29,7 @@ actor_rollout_ref:
       target_q_mode: "uniform" # "uniform" or "max"
       clamp_high: 2.0
       clamp_low: -2.0
+      
     optim:
       lr: 1e-5
   rollout:
@@ -37,7 +38,7 @@ actor_rollout_ref:
 
 algorithm:
   adv_estimator: grpo # disables critic
-  norm_adv_by_std_in_grpo: False
+  norm_adv_by_std_in_grpo: True
   rollout_correction:
     rollout_is: token
     rollout_is_threshold: 2.0
