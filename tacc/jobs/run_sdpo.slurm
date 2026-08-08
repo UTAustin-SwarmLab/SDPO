@@ -132,6 +132,8 @@ TOPK=${10:-50}
 TEACHER_UPDATE_RATE=${11:-0.05}
 ENABLE_ICL=${12:-False}
 IS_CLIP=${13:-2.0}
+USE_GAE=${14:-False}
+GAMMA=${15:-1.0}
 
 if [[ "${ENABLE_ICL}" == "True" || "${ENABLE_ICL}" == "true" || "${ENABLE_ICL}" == "1" ]]; then
     CONFIG_NAME="sdpo_icl"
@@ -193,6 +195,8 @@ actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.include_environment_feedback=${INCLUDE_ENVIRONMENT_FEEDBACK} \
 actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.self_distillation.is_clip=$IS_CLIP \
+actor_rollout_ref.actor.self_distillation.use_gae=$USE_GAE \
+actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
 trainer.icl_validation.enable=$ICL_VALIDATION \
@@ -212,6 +216,7 @@ echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
 echo "is_clip: $IS_CLIP"
+echo "use_gae: $USE_GAE (gamma=$GAMMA)"
 echo "----------------------------------------------------------------"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS
