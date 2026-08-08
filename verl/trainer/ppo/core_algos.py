@@ -1082,6 +1082,28 @@ def agg_loss(
     return loss
 
 
+def discounted_cumsum(xs: torch.Tensor, gamma: float) -> torch.Tensor:
+    """Discounted cumulative sum along time (dim=1).
+
+    For a (possibly time-reversed) sequence ``xs``:
+        out[:, 0] = xs[:, 0]
+        out[:, t] = xs[:, t] + gamma * out[:, t - 1]
+
+    When ``xs`` is time-reversed future rewards, flipping ``out`` yields
+    ``G_t = r_t + gamma * r_{t+1} + gamma^2 * r_{t+2} + ...``.
+    """
+    if xs.shape[1] == 0:
+        return xs
+    if gamma == 1.0:
+        return torch.cumsum(xs, dim=1)
+
+    out = torch.empty_like(xs)
+    out[:, 0] = xs[:, 0]
+    for t in range(1, xs.shape[1]):
+        out[:, t] = xs[:, t] + gamma * out[:, t - 1]
+    return out
+
+
 def compute_self_distillation_loss(
     student_log_probs: torch.Tensor,
     teacher_log_probs: torch.Tensor,
@@ -1160,6 +1182,21 @@ def compute_self_distillation_loss(
             kl_loss = torch.lerp(kl_student, kl_teacher, alpha)  # Compute the Generalized Jensen-Shannon Divergence
 
         per_token_loss = kl_loss.sum(-1)
+        
+        if self_distillation_config.use_gae:
+            # Future discounted returns of next-token KL rewards:
+            # G_t = r_{t+1} + gamma * r_{t+2} + gamma^2 * r_{t+3} + ...
+            reward = kl_loss.sum(-1).detach()*loss_mask
+            reward_shifted = torch.concat([reward[:, 1:], torch.zeros_like(reward[:, :1])], dim=1)
+            reward_reversed = torch.flip(reward_shifted, dims=[1])
+            reward_cumsum = torch.flip(
+                discounted_cumsum(reward_reversed, self_distillation_config.gamma),
+                dims=[1],
+            )
+            future_kl_token_loss = reward_cumsum * student_log_probs
+            metrics["self_distillation/future_kl_token_loss"] = future_kl_token_loss.mean().item()
+            per_token_loss = per_token_loss + future_kl_token_loss
+            
     else:
         
         if self_distillation_config.alpha == 0.0:
@@ -1169,11 +1206,20 @@ def compute_self_distillation_loss(
         else:
             mixed_logits = (1-self_distillation_config.alpha) * teacher_log_probs.exp() + self_distillation_config.alpha * student_log_probs.exp()
             mixed_logits_log = torch.log(mixed_logits) 
-            reward = mixed_logits_log - student_log_probs
-        
+            reward = (mixed_logits_log - student_log_probs).detach()
+
         if self_distillation_config.use_reward_clamp:
             reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
-        per_token_loss = - reward.detach() * student_log_probs
+        
+        if self_distillation_config.use_gae:
+            reward = reward*loss_mask
+            reward_reversed = torch.flip(reward, dims=[1])
+            reward = torch.flip(
+                discounted_cumsum(reward_reversed, self_distillation_config.gamma),
+                dims=[1],
+            )
+        per_token_loss = -reward.detach() * student_log_probs
+        # Expecation of reward 1024 tokens from the student [reward - reward.mean(-1)] - add ablation? 
 
     is_clip = self_distillation_config.is_clip
     if is_clip is not None:
@@ -1186,7 +1232,7 @@ def compute_self_distillation_loss(
             ratio = torch.exp(negative_approx_kl).clamp(max=is_clip)
             per_token_loss = per_token_loss * ratio
         else:
-            # PPO-style symmetric IS clip around 1: ratio ∈ [1 - is_clip, 1 + is_clip]
+            # CISPO-style symmetric IS clip around 1: ratio ∈ [1 - is_clip, 1 + is_clip]
             negative_approx_kl = (student_log_probs - old_log_probs).detach()
             negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
             ratio = torch.exp(negative_approx_kl).clamp(max=1 + is_clip, min=1 - is_clip)
@@ -1647,6 +1693,7 @@ def compute_self_distillation_q_loss(
                 #     tail_mask = (~in_topk).to(reward.dtype)
                 #     sampled_mask = torch.cat([sampled_mask, tail_mask], dim=-1)
 
+                # Might need to do normalization 
                 reward = reward + env_adv * sampled_mask * self_distillation_config.env_reward_scale
             else:
                 reward = reward.scatter_add(-1, sampled_token_ids.unsqueeze(-1), env_adv)

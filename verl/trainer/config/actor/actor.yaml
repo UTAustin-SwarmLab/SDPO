@@ -101,6 +101,9 @@ self_distillation:
   # If true, apply target-aware ROVER clipping in log-importance space.
   use_rover_clip: false
 
+  # If true, use gamma-discounted future KL returns as PG advantages.
+  use_gae: false
+
   # If true, clamp sampled-token distillation rewards to [clamp_low, clamp_high].
   use_reward_clamp: true
 

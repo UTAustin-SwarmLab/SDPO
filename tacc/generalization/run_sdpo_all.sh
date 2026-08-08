@@ -1,10 +1,11 @@
 #!/bin/bash
 
-# Usage: ENABLE_ICL=True ./run_sdpo_all.sh [--dry-run]
+# Usage: USE_GAE=True GAMMA=1.0 ENABLE_ICL=True ./run_sdpo_all.sh [--dry-run]
 #
 # TACC generalization sweep for SDPO baseline.
 # Mirrors experiments/generalization/run_sdpo_all.sh.
 # Set ENABLE_ICL=True to use sdpo_icl config (default: False → sdpo).
+# Set USE_GAE=True to enable discounted future-KL returns (default: False).
 
 DRY_RUN=false
 if [[ "${1:-}" == "--dry-run" ]]; then
@@ -20,6 +21,8 @@ DATA_PATHS=(
 )
 
 ENABLE_ICL="${ENABLE_ICL:-False}"
+USE_GAE="${USE_GAE:-False}"
+GAMMA="${GAMMA:-1.0}"
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
 MINI_BATCH_SIZES=(16)
@@ -41,6 +44,12 @@ else
     ICL_TAG="noicl"
 fi
 
+if [[ "${USE_GAE}" == "True" || "${USE_GAE}" == "true" || "${USE_GAE}" == "1" ]]; then
+    GAE_TAG="gae${GAMMA}"
+else
+    GAE_TAG="nogae"
+fi
+
 for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
     for ROLLOUT_BATCH_SIZE in "${ROLLOUT_BATCH_SIZES[@]}"; do
         for LR in "${LRS[@]}"; do
@@ -50,8 +59,8 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                         for DONTS_REPROMPT_ON_SELF_SUCCESS in "${DONTS_REPROMPT_ON_SELF_SUCCESSS[@]}"; do
                             for IS_CLIP in "${IS_CLIPS[@]}"; do
                                 for DATA_PATH in "${DATA_PATHS[@]}"; do
-                                    EXP_NAME="FINAL-SDPO-${ICL_TAG}-isclip${IS_CLIP}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
-                                    CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdpo.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}" "${TEACHER_UPDATE_RATE}" "${ENABLE_ICL}" "${IS_CLIP}")
+                                    EXP_NAME="FINAL-SDPO-${ICL_TAG}-${GAE_TAG}-isclip${IS_CLIP}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
+                                    CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdpo.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}" "${TEACHER_UPDATE_RATE}" "${ENABLE_ICL}" "${IS_CLIP}" "${USE_GAE}" "${GAMMA}")
                                     if [[ "$DRY_RUN" == true ]]; then
                                         printf '%q ' "${CMD[@]}"
                                         echo
