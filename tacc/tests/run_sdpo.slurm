@@ -139,7 +139,8 @@ LR=${LR:-1e-5}
 ALPHA=${ALPHA:-0.5}
 DONT_REPROMPT_ON_SELF_SUCCESS=${DONT_REPROMPT_ON_SELF_SUCCESS:-True}
 MODEL_PATH=${MODEL_PATH:-"Qwen/Qwen3-4B"}
-USE_GAE=${USE_GAE:-False}
+USE_FUTURE_RETURNS=${USE_FUTURE_RETURNS:-False}
+USE_FUTURE_RETURNS_BASELINE=${USE_FUTURE_RETURNS_BASELINE:-False}
 GAMMA=${GAMMA:-1.0}
 RAY_DASHBOARD_PORT=${RAY_DASHBOARD_PORT:-8170}
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
@@ -187,8 +188,9 @@ actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
-actor_rollout_ref.actor.self_distillation.use_gae=$USE_GAE \
+actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
+actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.55 \
 actor_rollout_ref.rollout.val_kwargs.n=4 \
@@ -210,7 +212,7 @@ echo "Data: $DATA_PATH"
 echo "Task: $TASK"
 echo "Model: $MODEL_PATH"
 echo "Ray dashboard port: $RAY_DASHBOARD_PORT"
-echo "use_gae: $USE_GAE (gamma=$GAMMA)"
+echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE)"
 echo "GPUs per node: 1"
 echo "----------------------------------------------------------------"
 

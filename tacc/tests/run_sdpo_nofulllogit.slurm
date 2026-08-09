@@ -122,7 +122,8 @@ CLAMP_HIGH="${CLAMP_HIGH:-2.0}"
 CLAMP_LOW="${CLAMP_LOW:--2.0}"
 USE_REWARD_CLAMP="${USE_REWARD_CLAMP:-True}"
 IS_CLIP="${IS_CLIP:-0.2}"
-USE_GAE="${USE_GAE:-False}"
+USE_FUTURE_RETURNS="${USE_FUTURE_RETURNS:-False}"
+USE_FUTURE_RETURNS_BASELINE="${USE_FUTURE_RETURNS_BASELINE:-False}"
 GAMMA="${GAMMA:-1.0}"
 DONT_REPROMPT_ON_SELF_SUCCESS="${DONT_REPROMPT_ON_SELF_SUCCESS:-True}"
 MODEL_PATH="${MODEL_PATH:-Qwen/Qwen3-4B}"
@@ -181,8 +182,9 @@ actor_rollout_ref.actor.self_distillation.is_clip=$IS_CLIP \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=$DONT_REPROMPT_ON_SELF_SUCCESS \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
-actor_rollout_ref.actor.self_distillation.use_gae=$USE_GAE \
+actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
+actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=2 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.5 \
 actor_rollout_ref.rollout.val_kwargs.n=2 \
@@ -205,6 +207,6 @@ echo "Alpha: $ALPHA"
 echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP, tag=$CLAMP_TAG)"
 echo "is_clip: $IS_CLIP"
 echo "full_logit_distillation: False"
-echo "use_gae: $USE_GAE (gamma=$GAMMA)"
+echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE)"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

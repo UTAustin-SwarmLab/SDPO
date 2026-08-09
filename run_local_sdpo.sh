@@ -20,7 +20,8 @@ LAMBDA=0.0
 CLIP_ADV_HIGH=null
 DONTS_REPROMPT_ON_SELF_SUCCESS=True
 ALPHA=0.5
-USE_GAE=${USE_GAE:-False}
+USE_FUTURE_RETURNS=${USE_FUTURE_RETURNS:-False}
+USE_FUTURE_RETURNS_BASELINE=${USE_FUTURE_RETURNS_BASELINE:-False}
 GAMMA=${GAMMA:-1.0}
 MODEL_PATH="Qwen/Qwen3-4B"
 RAY_DASHBOARD_PORT=8170
@@ -76,8 +77,9 @@ actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONTS_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
-actor_rollout_ref.actor.self_distillation.use_gae=$USE_GAE \
+actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
+actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.55 \
 actor_rollout_ref.rollout.val_kwargs.n=4 \
@@ -92,7 +94,7 @@ echo "Starting Local SDPO Training"
 echo "Experiment: $EXP_NAME"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
-echo "use_gae: $USE_GAE (gamma=$GAMMA)"
+echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA)"
 echo "----------------------------------------------------------------"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# Usage: USE_GAE=True GAMMA=1.0 ENABLE_ICL=True ./run_sdpo_nofulllogit_all.sh [--dry-run]
+# Usage: USE_FUTURE_RETURNS=True USE_FUTURE_RETURNS_BASELINE=True GAMMA=1.0 ENABLE_ICL=True ./run_sdpo_nofulllogit_all.sh [--dry-run]
 #
 # TACC generalization sweep for SDPO with sampled-token (non-full-logit) distillation.
 # Mirrors tacc/generalization/run_sdpo_all.sh.
 # Set ENABLE_ICL=True to use sdpo_icl config (default: False → sdpo).
-# Set USE_GAE=True to enable discounted future returns (default: False).
+# Set USE_FUTURE_RETURNS=True to enable discounted future returns (default: False).
+# Set USE_FUTURE_RETURNS_BASELINE=True to subtract leave-one-out baseline (default: False;
+# only applied when USE_FUTURE_RETURNS is enabled; appends -baseline to the gae tag).
 
 DRY_RUN=false
 if [[ "${1:-}" == "--dry-run" ]]; then
@@ -21,7 +23,8 @@ DATA_PATHS=(
 )
 
 ENABLE_ICL="${ENABLE_ICL:-False}"
-USE_GAE="${USE_GAE:-False}"
+USE_FUTURE_RETURNS="${USE_FUTURE_RETURNS:-False}"
+USE_FUTURE_RETURNS_BASELINE="${USE_FUTURE_RETURNS_BASELINE:-False}"
 GAMMA="${GAMMA:-1.0}"
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
@@ -54,10 +57,13 @@ else
     CLAMP_TAG="noclamp"
 fi
 
-if [[ "${USE_GAE}" == "True" || "${USE_GAE}" == "true" || "${USE_GAE}" == "1" ]]; then
-    GAE_TAG="gae${GAMMA}"
+if [[ "${USE_FUTURE_RETURNS}" == "True" || "${USE_FUTURE_RETURNS}" == "true" || "${USE_FUTURE_RETURNS}" == "1" ]]; then
+    RETURNS_TAG="gae${GAMMA}"
+    if [[ "${USE_FUTURE_RETURNS_BASELINE}" == "True" || "${USE_FUTURE_RETURNS_BASELINE}" == "true" || "${USE_FUTURE_RETURNS_BASELINE}" == "1" ]]; then
+        RETURNS_TAG="${RETURNS_TAG}-baseline"
+    fi
 else
-    GAE_TAG="nogae"
+    RETURNS_TAG="nogae"
 fi
 
 for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
@@ -69,8 +75,8 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                         for DONTS_REPROMPT_ON_SELF_SUCCESS in "${DONTS_REPROMPT_ON_SELF_SUCCESSS[@]}"; do
                             for IS_CLIP in "${IS_CLIPS[@]}"; do
                                 for DATA_PATH in "${DATA_PATHS[@]}"; do
-                                    EXP_NAME="FINAL-SDPO-nofulllogit-${ICL_TAG}-${GAE_TAG}-${CLAMP_TAG}-isclip${IS_CLIP}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
-                                    CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdpo_nofulllogit.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}" "${TEACHER_UPDATE_RATE}" "${ENABLE_ICL}" "${CLAMP_HIGH}" "${CLAMP_LOW}" "${USE_REWARD_CLAMP}" "${IS_CLIP}" "${USE_GAE}" "${GAMMA}")
+                                    EXP_NAME="FINAL-SDPO-nofulllogit-${ICL_TAG}-${RETURNS_TAG}-${CLAMP_TAG}-isclip${IS_CLIP}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
+                                    CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdpo_nofulllogit.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}" "${TEACHER_UPDATE_RATE}" "${ENABLE_ICL}" "${CLAMP_HIGH}" "${CLAMP_LOW}" "${USE_REWARD_CLAMP}" "${IS_CLIP}" "${USE_FUTURE_RETURNS}" "${GAMMA}" "${USE_FUTURE_RETURNS_BASELINE}")
                                     if [[ "$DRY_RUN" == true ]]; then
                                         printf '%q ' "${CMD[@]}"
                                         echo
