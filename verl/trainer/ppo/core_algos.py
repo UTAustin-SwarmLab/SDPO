@@ -1104,6 +1104,26 @@ def discounted_cumsum(xs: torch.Tensor, gamma: float) -> torch.Tensor:
     return out
 
 
+def masked_leave_one_out_baseline(values: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    """Position-wise leave-one-out mean of ``values`` over the batch.
+
+    Excluding a row from its own baseline keeps the policy-gradient term unbiased at
+    any batch size. When a position has a single valid row the baseline is zero, so
+    the raw return survives instead of cancelling itself out.
+
+    Args:
+        values: ``[B, T]`` returns / advantages.
+        mask: ``[B, T]`` response mask.
+
+    Returns:
+        ``[B, T]`` per-row baseline.
+    """
+    masked = values * mask
+    others_sum = masked.sum(dim=0, keepdim=True) - masked
+    others_count = (mask.sum(dim=0, keepdim=True) - mask).clamp_min(1.0)
+    return others_sum / others_count
+
+
 def compute_self_distillation_loss(
     student_log_probs: torch.Tensor,
     teacher_log_probs: torch.Tensor,
@@ -1183,7 +1203,7 @@ def compute_self_distillation_loss(
 
         per_token_loss = kl_loss.sum(-1)
         
-        if self_distillation_config.use_gae:
+        if self_distillation_config.use_future_returns:
             # Future discounted returns of next-token KL rewards:
             # G_t = r_{t+1} + gamma * r_{t+2} + gamma^2 * r_{t+3} + ...
             reward = kl_loss.sum(-1).detach()*loss_mask
@@ -1211,15 +1231,20 @@ def compute_self_distillation_loss(
         if self_distillation_config.use_reward_clamp:
             reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
         
-        if self_distillation_config.use_gae:
+        if self_distillation_config.use_future_returns:
             reward = reward*loss_mask
             reward_reversed = torch.flip(reward, dims=[1])
             reward = torch.flip(
                 discounted_cumsum(reward_reversed, self_distillation_config.gamma),
                 dims=[1],
             )
+            if getattr(self_distillation_config, "use_future_returns_baseline", True):
+                baseline = masked_leave_one_out_baseline(reward, loss_mask)
+                metrics["self_distillation/future_returns_baseline"] = (
+                    (baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
+                ).item()
+                reward = reward - baseline
         per_token_loss = -reward.detach() * student_log_probs
-        # Expecation of reward 1024 tokens from the student [reward - reward.mean(-1)] - add ablation? 
 
     is_clip = self_distillation_config.is_clip
     if is_clip is not None:

@@ -101,8 +101,13 @@ self_distillation:
   # If true, apply target-aware ROVER clipping in log-importance space.
   use_rover_clip: false
 
-  # If true, use gamma-discounted future KL returns as PG advantages.
-  use_gae: false
+  # If true, credit each token with the gamma-discounted Monte-Carlo return of future
+  # distillation rewards via an extra policy-gradient term.
+  use_future_returns: false
+
+  # If true, subtract a position-wise leave-one-out batch mean of the future returns
+  # before the PG term. Unbiased variance reduction; only applied when use_future_returns.
+  use_future_returns_baseline: true
 
   # If true, clamp sampled-token distillation rewards to [clamp_low, clamp_high].
   use_reward_clamp: true
