@@ -1213,6 +1213,12 @@ def compute_self_distillation_loss(
                 discounted_cumsum(reward_reversed, self_distillation_config.gamma),
                 dims=[1],
             )
+            if getattr(self_distillation_config, "use_future_returns_baseline", True):
+                baseline = masked_leave_one_out_baseline(reward_cumsum, loss_mask)
+                metrics["self_distillation/future_returns_baseline"] = (
+                    (baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
+                ).item()
+                reward_cumsum = reward_cumsum - baseline
             future_kl_token_loss = reward_cumsum * student_log_probs
             metrics["self_distillation/future_kl_token_loss"] = future_kl_token_loss.mean().item()
             per_token_loss = per_token_loss + future_kl_token_loss
