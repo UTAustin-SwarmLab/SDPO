@@ -53,6 +53,9 @@ class SelfDistillationConfig(BaseConfig):
         dont_reprompt_on_self_success (bool): Whether to not reprompt on self-success.
         remove_thinking_from_demonstration (bool): Whether to remove <think>...</think> tags from successful demonstrations before reprompting.
         is_clip (Optional[float]): Clip value for distillation IS ratio; None disables IS weighting.
+            Full-logit distill KL uses one-sided clamp(max=is_clip). With use_future_returns, the
+            future-returns PG term instead uses CISPO-style symmetric clip in [1-is_clip, 1+is_clip].
+            Sampled-token path always uses the CISPO-style symmetric clip.
         rover_t (float): ROVER log-importance scale. Defaults to gamma-compatible 1.0.
         target_adv_only (bool): If True, use advantages directly as the ROVER target.
         use_rover_clip (bool): If True, apply target-aware ROVER clipping in log-IS space.
@@ -66,6 +69,9 @@ class SelfDistillationConfig(BaseConfig):
         use_reward_clamp (bool): If True, clamp sampled-token distillation rewards to [clamp_low, clamp_high].
         response_level_rover_loss (bool): If True, compute ROVER MSE after averaging each response.
         next_q_scale_factor (Optional[float]): Optional multiplier for the bootstrapped next-Q term.
+        target_q_mode (str): How to aggregate bootstrapped next-Q in SDQL / ROVER targets.
+            One of ``"uniform"`` (mean), ``"max"``, or ``"on-policy"`` (next-Q * next student
+            log-probs; full-logit SDQL).
         use_env_reward (bool): If True, inject environment advantages only at sampled token actions.
         reprompt_template (str): Template for reprompting. Uses {prompt}, {solution}, {response}, {feedback} placeholders.
         solution_template (str): Template for formatting solution section. Uses {successful_previous_attempt} placeholder.
@@ -104,7 +110,7 @@ class SelfDistillationConfig(BaseConfig):
     clamp_low: float = -2.0
     env_reward_scale: float = 1.0
     use_env_reward: bool = False
-    target_q_mode: str = "uniform" # "uniform" or "max"
+    target_q_mode: str = "uniform"  # "uniform", "max", or "on-policy"
     reprompt_template: str = (
         "{prompt}{solution}{response}{feedback}\n\n"
         "Correctly solve the original question.\n"
@@ -153,9 +159,9 @@ class SelfDistillationConfig(BaseConfig):
                 "self_distillation.next_q_scale_factor must be non-negative when set, "
                 f"got {self.next_q_scale_factor}"
             )
-        if self.target_q_mode not in {"uniform", "max"}:
+        if self.target_q_mode not in {"uniform", "max", "on-policy"}:
             raise ValueError(
-                "self_distillation.target_q_mode must be one of {'uniform', 'max'}, "
+                "self_distillation.target_q_mode must be one of {'uniform', 'max', 'on-policy'}, "
                 f"got {self.target_q_mode}"
             )
 
