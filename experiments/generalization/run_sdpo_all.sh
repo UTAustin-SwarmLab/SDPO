@@ -43,6 +43,9 @@ DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
 
 # 0: forward KL, 0.5: Jensen-Shannon divergence, 1: reverse KL
 ALPHAS=(0.5)
+USE_FUTURE_RETURNS="${USE_FUTURE_RETURNS:-False}"
+USE_FUTURE_RETURNS_BASELINE="${USE_FUTURE_RETURNS_BASELINE:-False}"
+GAMMA="${GAMMA:-1.0}"
 
 MODEL_PATHS=(
     "Qwen/Qwen3-8B"
@@ -108,7 +111,15 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                         for DATA_PATH in "${DATA_PATHS[@]}"; do
                             # 1. Construct the experiment name (must be unique)
                             MODEL_NAME=$(echo "$MODEL_PATH" | tr '/' '-')
-                            EXP_NAME="FINAL-SDPO-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}"
+                            if [[ "${USE_FUTURE_RETURNS}" == "True" || "${USE_FUTURE_RETURNS}" == "true" || "${USE_FUTURE_RETURNS}" == "1" ]]; then
+                                RETURNS_TAG="gae${GAMMA}"
+                                if [[ "${USE_FUTURE_RETURNS_BASELINE}" == "True" || "${USE_FUTURE_RETURNS_BASELINE}" == "true" || "${USE_FUTURE_RETURNS_BASELINE}" == "1" ]]; then
+                                    RETURNS_TAG="${RETURNS_TAG}-baseline"
+                                fi
+                            else
+                                RETURNS_TAG="nogae"
+                            fi
+                            EXP_NAME="FINAL-SDPO-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${RETURNS_TAG}-${MODEL_NAME}"
 
                             # 2. Construct the arguments string to pass to the training script
                             # Format: key=value key2=value2 ...
@@ -122,6 +133,9 @@ actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONTS_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
+actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
+actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
+actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
 actor_rollout_ref.actor.self_distillation.include_environment_feedback=False \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16"
