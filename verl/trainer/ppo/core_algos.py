@@ -1202,7 +1202,9 @@ def compute_self_distillation_loss(
             kl_loss = torch.lerp(kl_student, kl_teacher, alpha)  # Compute the Generalized Jensen-Shannon Divergence
 
         per_token_loss = kl_loss.sum(-1)
-        
+        # Kept separate so distill KL can keep one-sided IS while the PG term gets CISPO.
+        future_pg_loss = None
+
         if self_distillation_config.use_future_returns:
             # Future discounted returns of next-token KL rewards:
             # G_t = r_{t+1} + gamma * r_{t+2} + gamma^2 * r_{t+3} + ...
@@ -1219,12 +1221,12 @@ def compute_self_distillation_loss(
                     (baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
                 ).item()
                 reward_cumsum = reward_cumsum - baseline
-            future_kl_token_loss = reward_cumsum * student_log_probs
-            metrics["self_distillation/future_kl_token_loss"] = future_kl_token_loss.mean().item()
-            per_token_loss = per_token_loss + future_kl_token_loss
-            
+            future_pg_loss = reward_cumsum * student_log_probs
+            metrics["self_distillation/future_kl_token_loss"] = future_pg_loss.mean().item()
+
     else:
-        
+        future_pg_loss = None
+
         if self_distillation_config.alpha == 0.0:
             reward = (teacher_log_probs.exp() / student_log_probs.exp()).detach()
         elif self_distillation_config.alpha == 1.0:
@@ -1250,6 +1252,7 @@ def compute_self_distillation_loss(
                     (baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
                 ).item()
                 reward = reward - baseline
+        # Sampled-token path is already a PG objective; CISPO below covers future returns too.
         per_token_loss = -reward.detach() * student_log_probs
 
     is_clip = self_distillation_config.is_clip
@@ -1257,17 +1260,30 @@ def compute_self_distillation_loss(
         if old_log_probs is None:
             raise ValueError("old_log_probs is required for distillation IS ratio.")
 
+        negative_approx_kl = (student_log_probs - old_log_probs).detach()
+        negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
+        ratio = torch.exp(negative_approx_kl)
+
         if self_distillation_config.full_logit_distillation:
-            negative_approx_kl = (student_log_probs - old_log_probs).detach()
-            negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
-            ratio = torch.exp(negative_approx_kl).clamp(max=is_clip)
-            per_token_loss = per_token_loss * ratio
+            # Original SDPO: one-sided IS on the distillation KL term.
+            distill_ratio = ratio.clamp(max=is_clip)
+            per_token_loss = per_token_loss * distill_ratio
+            if future_pg_loss is not None:
+                # CISPO-style symmetric clip on the future-returns PG term only:
+                # ratio ∈ [1 - is_clip, 1 + is_clip], stop-grad via detached ratio.
+                cispo_ratio = ratio.clamp(min=1.0 - is_clip, max=1.0 + is_clip)
+                per_token_loss = per_token_loss + future_pg_loss * cispo_ratio
+                with torch.no_grad():
+                    clipfrac = ((ratio - cispo_ratio).abs() > 0).float()
+                    metrics["self_distillation/future_returns_cispo_clipfrac"] = (
+                        (clipfrac * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
+                    ).item()
         else:
             # CISPO-style symmetric IS clip around 1: ratio ∈ [1 - is_clip, 1 + is_clip]
-            negative_approx_kl = (student_log_probs - old_log_probs).detach()
-            negative_approx_kl = torch.clamp(negative_approx_kl, min=-20.0, max=20.0)
-            ratio = torch.exp(negative_approx_kl).clamp(max=1 + is_clip, min=1 - is_clip)
-            per_token_loss = per_token_loss * ratio
+            cispo_ratio = ratio.clamp(min=1.0 - is_clip, max=1.0 + is_clip)
+            per_token_loss = per_token_loss * cispo_ratio
+    elif future_pg_loss is not None:
+        per_token_loss = per_token_loss + future_pg_loss
 
     # Apply rollout correction weights if provided
     if rollout_is_weights is not None:
@@ -1733,6 +1749,13 @@ def compute_self_distillation_q_loss(
             target_q_vals = reward.detach() + gamma * next_q_vals.mean(-1, keepdim=True)
         elif self_distillation_config.target_q_mode == "max":
             target_q_vals = reward.detach() + gamma * next_q_vals.max(-1, keepdim=True).values
+        elif self_distillation_config.target_q_mode == "on-policy":
+            # Align student log-probs with next_q_vals (shift by one token; pad last step with 0).
+            zero_tail_logp = torch.zeros_like(student_distill_log_probs[:, :1, :])
+            next_student_log_probs = torch.cat(
+                [student_distill_log_probs[:, 1:, :], zero_tail_logp], dim=1
+            )
+            target_q_vals = reward.detach() + gamma * next_q_vals * next_student_log_probs.detach()
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
@@ -1785,6 +1808,10 @@ def compute_self_distillation_q_loss(
             target_q_vals = reward + gamma * next_q_vals.mean(-1)
         elif self_distillation_config.target_q_mode == "max":
             target_q_vals = reward + gamma * next_q_vals.max(-1).values
+        elif self_distillation_config.target_q_mode == "on-policy":
+            raise ValueError(
+                "self_distillation.target_q_mode='on-policy' requires full_logit_distillation=True"
+            )
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2

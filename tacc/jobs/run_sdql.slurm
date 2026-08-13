@@ -139,8 +139,16 @@ SUFFIX=${9:-"local_sdql"}
 TOPK=${10:-100}
 FULL_LOGIT_DISTILLATION=${11:-True}
 CLAMP_HIGH=${12:-5.0}
-CLAMP_LOW=${13:-5.0}
+CLAMP_LOW=${13:--5.0}
 TEACHER_UPDATE_RATE=${14:-0.05}
+TARGET_Q_MODE=${15:-uniform}
+IS_CLIP=${16:-null}
+USE_ENV_REWARD=${17:-False}
+ENV_REWARD_SCALE=${18:-1.0}
+USE_REWARD_CLAMP=${19:-False}
+DISTILLATION_ADD_TAIL=${20:-False}
+GAMMA=${21:-1.0}
+INCLUDE_ENVIRONMENT_FEEDBACK=${22:-True}
 
 
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
@@ -187,12 +195,19 @@ actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
 actor_rollout_ref.actor.self_distillation.distillation_topk=$TOPK \
 actor_rollout_ref.actor.self_distillation.full_logit_distillation=$FULL_LOGIT_DISTILLATION \
+actor_rollout_ref.actor.self_distillation.distillation_add_tail=$DISTILLATION_ADD_TAIL \
 actor_rollout_ref.actor.self_distillation.clamp_high=$CLAMP_HIGH \
 actor_rollout_ref.actor.self_distillation.clamp_low=$CLAMP_LOW \
+actor_rollout_ref.actor.self_distillation.use_reward_clamp=$USE_REWARD_CLAMP \
+actor_rollout_ref.actor.self_distillation.is_clip=$IS_CLIP \
+actor_rollout_ref.actor.self_distillation.target_q_mode=$TARGET_Q_MODE \
+actor_rollout_ref.actor.self_distillation.use_env_reward=$USE_ENV_REWARD \
+actor_rollout_ref.actor.self_distillation.env_reward_scale=$ENV_REWARD_SCALE \
+actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
-actor_rollout_ref.actor.self_distillation.include_environment_feedback=True \
+actor_rollout_ref.actor.self_distillation.include_environment_feedback=${INCLUDE_ENVIRONMENT_FEEDBACK} \
 actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
@@ -211,6 +226,14 @@ echo "Experiment: $EXP_NAME"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
+echo "target_q_mode: $TARGET_Q_MODE"
+echo "is_clip: $IS_CLIP"
+echo "use_env_reward: $USE_ENV_REWARD (scale=$ENV_REWARD_SCALE)"
+echo "use_reward_clamp: $USE_REWARD_CLAMP [$CLAMP_LOW, $CLAMP_HIGH]"
+echo "distillation_add_tail: $DISTILLATION_ADD_TAIL"
+echo "gamma: $GAMMA"
+echo "full_logit_distillation: $FULL_LOGIT_DISTILLATION (topk=$TOPK)"
+echo "include_environment_feedback: $INCLUDE_ENVIRONMENT_FEEDBACK"
 echo "----------------------------------------------------------------"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

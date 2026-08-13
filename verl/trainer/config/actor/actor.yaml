@@ -118,6 +118,12 @@ self_distillation:
   # Optional multiplier for the bootstrapped next-Q term; null disables extra scaling.
   next_q_scale_factor: null
 
+  # How to form the bootstrapped next-Q target in SDQL / ROVER:
+  #   "uniform"   – mean over next-token action Qs
+  #   "max"       – max over next-token action Qs
+  #   "on-policy" – elementwise next-Q * next student log-probs (full-logit SDQL)
+  target_q_mode: uniform
+
   # Whether to add a tail bucket when using distillation_topk
   distillation_add_tail: True
 
@@ -166,7 +172,9 @@ self_distillation:
   # Whether to include the student's own prior response in the teacher reprompt
   use_response: False
 
-  # IS clip for loss; null disables IS weighting
+  # IS clip for loss; null disables IS weighting.
+  # Full-logit distill KL: one-sided clamp(max=is_clip).
+  # Future-returns PG (full-logit) and sampled-token path: CISPO-style [1-is_clip, 1+is_clip].
   is_clip: 2
 
   # Reprompting template - available variables: prompt, solution, response, feedback

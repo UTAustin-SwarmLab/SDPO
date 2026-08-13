@@ -117,6 +117,19 @@ LR="${LR:-1e-5}"
 ALPHA="${ALPHA:-0.0}"
 DONT_REPROMPT_ON_SELF_SUCCESS="${DONT_REPROMPT_ON_SELF_SUCCESS:-True}"
 MODEL_PATH="${MODEL_PATH:-Qwen/Qwen3-4B}"
+TOPK="${TOPK:-50}"
+FULL_LOGIT_DISTILLATION="${FULL_LOGIT_DISTILLATION:-True}"
+CLAMP_HIGH="${CLAMP_HIGH:-5.0}"
+CLAMP_LOW="${CLAMP_LOW:--5.0}"
+TEACHER_UPDATE_RATE="${TEACHER_UPDATE_RATE:-0.05}"
+TARGET_Q_MODE="${TARGET_Q_MODE:-uniform}"
+IS_CLIP="${IS_CLIP:-null}"
+USE_ENV_REWARD="${USE_ENV_REWARD:-False}"
+ENV_REWARD_SCALE="${ENV_REWARD_SCALE:-1.0}"
+USE_REWARD_CLAMP="${USE_REWARD_CLAMP:-False}"
+DISTILLATION_ADD_TAIL="${DISTILLATION_ADD_TAIL:-False}"
+GAMMA="${GAMMA:-1.0}"
+INCLUDE_ENVIRONMENT_FEEDBACK="${INCLUDE_ENVIRONMENT_FEEDBACK:-True}"
 RAY_DASHBOARD_PORT=${RAY_DASHBOARD_PORT:-8170}
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
@@ -160,10 +173,22 @@ actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
 actor_rollout_ref.actor.optim.lr=$LR \
-actor_rollout_ref.actor.self_distillation.distillation_topk=50 \
+actor_rollout_ref.actor.self_distillation.distillation_topk=$TOPK \
+actor_rollout_ref.actor.self_distillation.full_logit_distillation=$FULL_LOGIT_DISTILLATION \
+actor_rollout_ref.actor.self_distillation.distillation_add_tail=$DISTILLATION_ADD_TAIL \
+actor_rollout_ref.actor.self_distillation.clamp_high=$CLAMP_HIGH \
+actor_rollout_ref.actor.self_distillation.clamp_low=$CLAMP_LOW \
+actor_rollout_ref.actor.self_distillation.use_reward_clamp=$USE_REWARD_CLAMP \
+actor_rollout_ref.actor.self_distillation.is_clip=$IS_CLIP \
+actor_rollout_ref.actor.self_distillation.target_q_mode=$TARGET_Q_MODE \
+actor_rollout_ref.actor.self_distillation.use_env_reward=$USE_ENV_REWARD \
+actor_rollout_ref.actor.self_distillation.env_reward_scale=$ENV_REWARD_SCALE \
+actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=$DONT_REPROMPT_ON_SELF_SUCCESS \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
+actor_rollout_ref.actor.self_distillation.include_environment_feedback=$INCLUDE_ENVIRONMENT_FEEDBACK \
+actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=2 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.5 \
 actor_rollout_ref.rollout.val_kwargs.n=2 \
@@ -182,5 +207,11 @@ echo "Starting SDQL smoke-test training run..."
 echo "Experiment: $EXP_NAME"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
+echo "target_q_mode: $TARGET_Q_MODE"
+echo "is_clip: $IS_CLIP"
+echo "use_env_reward: $USE_ENV_REWARD (scale=$ENV_REWARD_SCALE)"
+echo "use_reward_clamp: $USE_REWARD_CLAMP [$CLAMP_LOW, $CLAMP_HIGH]"
+echo "gamma: $GAMMA"
+echo "include_environment_feedback: $INCLUDE_ENVIRONMENT_FEEDBACK"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

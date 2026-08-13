@@ -412,3 +412,86 @@ class TestFutureReturnsBaseline:
         )
         assert torch.isfinite(loss)
         assert "self_distillation/future_returns_baseline" in metrics
+
+
+class TestFutureReturnsCispoSplit:
+    """Full-logit + future returns: one-sided IS on KL, CISPO on the PG term."""
+
+    def test_split_differs_from_joint_onesided_and_matches_manual(self):
+        torch.manual_seed(0)
+        B, T, V = 2, 4, 5
+        is_clip = 0.2
+        s_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        t_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        old_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        actions = torch.randint(0, V, (B, T))
+        s_tok = s_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1).requires_grad_(True)
+        t_tok = t_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        old_tok = old_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        mask = torch.ones(B, T, dtype=torch.float64)
+
+        cfg = _base_cfg(
+            use_future_returns=True,
+            use_future_returns_baseline=False,
+            gamma=1.0,
+            is_clip=is_clip,
+        )
+        loss, metrics = compute_self_distillation_loss(
+            student_log_probs=s_tok,
+            teacher_log_probs=t_tok,
+            response_mask=mask,
+            self_distillation_config=cfg,
+            old_log_probs=old_tok,
+            student_all_log_probs=s_all,
+            teacher_all_log_probs=t_all,
+            loss_agg_mode="token-mean",
+        )
+        assert "self_distillation/future_returns_cispo_clipfrac" in metrics
+
+        with torch.no_grad():
+            kl = F.kl_div(s_all, t_all, reduction="none", log_target=True).sum(-1)
+            reward = kl * mask
+            shifted = torch.cat([reward[:, 1:], torch.zeros_like(reward[:, :1])], dim=1)
+            G = torch.flip(discounted_cumsum(torch.flip(shifted, dims=[1]), 1.0), dims=[1])
+            ratio = torch.exp((s_tok.detach() - old_tok).clamp(-20.0, 20.0))
+            distill_ratio = ratio.clamp(max=is_clip)
+            cispo_ratio = ratio.clamp(min=1.0 - is_clip, max=1.0 + is_clip)
+            expected = (kl * distill_ratio + G * s_tok * cispo_ratio) * mask
+            expected_loss = expected.sum() / mask.sum()
+
+            # Old joint one-sided weighting of (KL + PG) should differ once any ratio is clipped.
+            joint_onesided = ((kl + G * s_tok.detach()) * distill_ratio * mask).sum() / mask.sum()
+
+        assert torch.allclose(loss, expected_loss)
+        assert not torch.allclose(loss.detach(), joint_onesided)
+
+    def test_no_future_returns_keeps_onesided_is(self):
+        torch.manual_seed(1)
+        B, T, V = 2, 3, 4
+        is_clip = 0.5
+        s_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        t_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        old_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        actions = torch.randint(0, V, (B, T))
+        s_tok = s_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        t_tok = t_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        old_tok = old_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        mask = torch.ones(B, T, dtype=torch.float64)
+
+        loss, metrics = compute_self_distillation_loss(
+            student_log_probs=s_tok,
+            teacher_log_probs=t_tok,
+            response_mask=mask,
+            self_distillation_config=_base_cfg(use_future_returns=False, is_clip=is_clip),
+            old_log_probs=old_tok,
+            student_all_log_probs=s_all,
+            teacher_all_log_probs=t_all,
+            loss_agg_mode="token-mean",
+        )
+        assert "self_distillation/future_returns_cispo_clipfrac" not in metrics
+
+        with torch.no_grad():
+            kl = F.kl_div(s_all, t_all, reduction="none", log_target=True).sum(-1)
+            ratio = torch.exp((s_tok - old_tok).clamp(-20.0, 20.0)).clamp(max=is_clip)
+            expected = (kl * ratio * mask).sum() / mask.sum()
+        assert torch.allclose(loss, expected)

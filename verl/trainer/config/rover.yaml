@@ -26,7 +26,7 @@ actor_rollout_ref:
       use_env_reward: False
       env_reward_scale: 1.0
       distillation_add_tail: False
-      target_q_mode: "uniform" # "uniform" or "max"
+      target_q_mode: uniform  # uniform | max | on-policy
       clamp_high: 2.0
       clamp_low: -2.0
       
