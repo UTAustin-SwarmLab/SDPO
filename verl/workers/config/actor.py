@@ -66,6 +66,9 @@ class SelfDistillationConfig(BaseConfig):
         use_future_returns_baseline (bool): If True (default), subtract a position-wise leave-one-out
             batch mean of the future returns before the policy-gradient term. Unbiased variance
             reduction; required for usable SNR at typical micro-batch sizes.
+        use_reward_baseline (bool): If True, subtract a position-wise leave-one-out batch mean of the
+            distillation reward before forming SDQL Bellman targets (``r + gamma * next_q``).
+            Same variance-reduction idea as ``use_future_returns_baseline`` for SDPO.
         use_reward_clamp (bool): If True, clamp sampled-token distillation rewards to [clamp_low, clamp_high].
         response_level_rover_loss (bool): If True, compute ROVER MSE after averaging each response.
         next_q_scale_factor (Optional[float]): Optional multiplier for the bootstrapped next-Q term.
@@ -100,6 +103,7 @@ class SelfDistillationConfig(BaseConfig):
     use_rover_clip: bool = False
     use_future_returns: bool = False
     use_future_returns_baseline: bool = False
+    use_reward_baseline: bool = False
     use_reward_clamp: bool = True
     response_level_rover_loss: bool = False
     use_solution: bool = True

@@ -130,6 +130,7 @@ USE_REWARD_CLAMP="${USE_REWARD_CLAMP:-False}"
 DISTILLATION_ADD_TAIL="${DISTILLATION_ADD_TAIL:-False}"
 GAMMA="${GAMMA:-1.0}"
 INCLUDE_ENVIRONMENT_FEEDBACK="${INCLUDE_ENVIRONMENT_FEEDBACK:-True}"
+USE_REWARD_BASELINE="${USE_REWARD_BASELINE:-True}"
 RAY_DASHBOARD_PORT=${RAY_DASHBOARD_PORT:-8170}
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
 MAX_RESPONSE_LENGTH=${MAX_RESPONSE_LENGTH:-6144}
@@ -167,7 +168,7 @@ trainer.n_gpus_per_node=1 \
 actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.max_model_len=$MAX_MODEL_LEN \
 actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
-actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=16 \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=8 \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=8 \
 actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
@@ -184,13 +185,14 @@ actor_rollout_ref.actor.self_distillation.target_q_mode=$TARGET_Q_MODE \
 actor_rollout_ref.actor.self_distillation.use_env_reward=$USE_ENV_REWARD \
 actor_rollout_ref.actor.self_distillation.env_reward_scale=$ENV_REWARD_SCALE \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
+actor_rollout_ref.actor.self_distillation.use_reward_baseline=$USE_REWARD_BASELINE \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=$DONT_REPROMPT_ON_SELF_SUCCESS \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.include_environment_feedback=$INCLUDE_ENVIRONMENT_FEEDBACK \
 actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=2 \
-actor_rollout_ref.rollout.gpu_memory_utilization=0.5 \
+actor_rollout_ref.rollout.gpu_memory_utilization=0.6 \
 actor_rollout_ref.rollout.val_kwargs.n=2 \
 trainer.icl_validation.enable=$ICL_VALIDATION \
 trainer.icl_validation.policy=$ICL_VALIDATION_POLICY \
@@ -213,5 +215,6 @@ echo "use_env_reward: $USE_ENV_REWARD (scale=$ENV_REWARD_SCALE)"
 echo "use_reward_clamp: $USE_REWARD_CLAMP [$CLAMP_LOW, $CLAMP_HIGH]"
 echo "gamma: $GAMMA"
 echo "include_environment_feedback: $INCLUDE_ENVIRONMENT_FEEDBACK"
+echo "use_reward_baseline: $USE_REWARD_BASELINE"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

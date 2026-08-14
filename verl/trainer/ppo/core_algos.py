@@ -1112,15 +1112,19 @@ def masked_leave_one_out_baseline(values: torch.Tensor, mask: torch.Tensor) -> t
     the raw return survives instead of cancelling itself out.
 
     Args:
-        values: ``[B, T]`` returns / advantages.
-        mask: ``[B, T]`` response mask.
+        values: ``[B, T]`` or ``[B, T, ...]`` returns / rewards / advantages.
+        mask: ``[B, T]`` response mask (broadcast over trailing dims).
 
     Returns:
-        ``[B, T]`` per-row baseline.
+        Tensor with the same shape as ``values``.
     """
-    masked = values * mask
+    expanded_mask = mask.to(values.dtype)
+    while expanded_mask.dim() < values.dim():
+        expanded_mask = expanded_mask.unsqueeze(-1)
+
+    masked = values * expanded_mask
     others_sum = masked.sum(dim=0, keepdim=True) - masked
-    others_count = (mask.sum(dim=0, keepdim=True) - mask).clamp_min(1.0)
+    others_count = (expanded_mask.sum(dim=0, keepdim=True) - expanded_mask).clamp_min(1.0)
     return others_sum / others_count
 
 
@@ -1744,6 +1748,14 @@ def compute_self_distillation_q_loss(
                 reward = reward + env_adv * sampled_mask * self_distillation_config.env_reward_scale
             else:
                 reward = reward.scatter_add(-1, sampled_token_ids.unsqueeze(-1), env_adv)
+
+        if getattr(self_distillation_config, "use_reward_baseline", False):
+            # Leave-one-out batch mean over sequences (SDPO-style variance reduction).
+            baseline = masked_leave_one_out_baseline(reward, loss_mask)
+            with torch.no_grad():
+                baseline_mean, _ = masked_mean_std(baseline.detach(), loss_mask)
+                metrics["sdql/reward_baseline"] = baseline_mean.item()
+            reward = reward - baseline
         
         if self_distillation_config.target_q_mode == "uniform":
             target_q_vals = reward.detach() + gamma * next_q_vals.mean(-1, keepdim=True)
@@ -1803,6 +1815,14 @@ def compute_self_distillation_q_loss(
 
             env_adv = advantages.to(reward.dtype).unsqueeze(-1)  # [bs, seq, 1]
             reward = reward + env_adv *  self_distillation_config.env_reward_scale
+
+        if getattr(self_distillation_config, "use_reward_baseline", False):
+            baseline = masked_leave_one_out_baseline(reward, loss_mask)
+            metrics["sdql/reward_baseline"] = (
+                (baseline.detach() * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
+            ).item()
+            reward = reward - baseline
+
         # compute target Q values
         if self_distillation_config.target_q_mode == "uniform":
             target_q_vals = reward + gamma * next_q_vals.mean(-1)
