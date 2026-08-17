@@ -46,6 +46,7 @@ def _base_cfg(**overrides):
         use_future_returns_baseline=False,
         gamma=1.0,
         is_clip=None,
+        cispo_clip=0.2,
         use_reward_clamp=False,
         clamp_low=-10.0,
         clamp_high=10.0,
@@ -420,7 +421,8 @@ class TestFutureReturnsCispoSplit:
     def test_split_differs_from_joint_onesided_and_matches_manual(self):
         torch.manual_seed(0)
         B, T, V = 2, 4, 5
-        is_clip = 0.2
+        is_clip = 2.0
+        cispo_clip = 0.2
         s_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
         t_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
         old_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
@@ -435,6 +437,7 @@ class TestFutureReturnsCispoSplit:
             use_future_returns_baseline=False,
             gamma=1.0,
             is_clip=is_clip,
+            cispo_clip=cispo_clip,
         )
         loss, metrics = compute_self_distillation_loss(
             student_log_probs=s_tok,
@@ -455,15 +458,56 @@ class TestFutureReturnsCispoSplit:
             G = torch.flip(discounted_cumsum(torch.flip(shifted, dims=[1]), 1.0), dims=[1])
             ratio = torch.exp((s_tok.detach() - old_tok).clamp(-20.0, 20.0))
             distill_ratio = ratio.clamp(max=is_clip)
-            cispo_ratio = ratio.clamp(min=1.0 - is_clip, max=1.0 + is_clip)
+            cispo_ratio = ratio.clamp(min=1.0 - cispo_clip, max=1.0 + cispo_clip)
             expected = (kl * distill_ratio + G * s_tok * cispo_ratio) * mask
             expected_loss = expected.sum() / mask.sum()
 
+            # Coupled clips (both is_clip) should differ from the split.
+            coupled_cispo = ratio.clamp(min=1.0 - is_clip, max=1.0 + is_clip)
+            coupled_loss = ((kl * distill_ratio + G * s_tok.detach() * coupled_cispo) * mask).sum() / mask.sum()
             # Old joint one-sided weighting of (KL + PG) should differ once any ratio is clipped.
             joint_onesided = ((kl + G * s_tok.detach()) * distill_ratio * mask).sum() / mask.sum()
 
         assert torch.allclose(loss, expected_loss)
+        assert not torch.allclose(loss.detach(), coupled_loss)
         assert not torch.allclose(loss.detach(), joint_onesided)
+
+    def test_sampled_token_uses_cispo_clip_not_is_clip(self):
+        torch.manual_seed(2)
+        B, T = 2, 4
+        is_clip = 2.0
+        cispo_clip = 0.2
+        s_tok = (torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0).requires_grad_(True)
+        t_tok = torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0
+        old_tok = torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0
+        mask = torch.ones(B, T, dtype=torch.float64)
+
+        cfg = _base_cfg(
+            full_logit_distillation=False,
+            alpha=1.0,
+            use_future_returns=False,
+            is_clip=is_clip,
+            cispo_clip=cispo_clip,
+        )
+        loss, _ = compute_self_distillation_loss(
+            student_log_probs=s_tok,
+            teacher_log_probs=t_tok,
+            response_mask=mask,
+            self_distillation_config=cfg,
+            old_log_probs=old_tok,
+            loss_agg_mode="token-mean",
+        )
+
+        with torch.no_grad():
+            reward = (t_tok - s_tok).detach()
+            ratio = torch.exp((s_tok.detach() - old_tok).clamp(-20.0, 20.0))
+            cispo_ratio = ratio.clamp(min=1.0 - cispo_clip, max=1.0 + cispo_clip)
+            expected = (-reward * s_tok * cispo_ratio * mask).sum() / mask.sum()
+            wrong_is_clip = ratio.clamp(min=1.0 - is_clip, max=1.0 + is_clip)
+            wrong_loss = (-reward * s_tok.detach() * wrong_is_clip * mask).sum() / mask.sum()
+
+        assert torch.allclose(loss, expected)
+        assert not torch.allclose(loss.detach(), wrong_loss)
 
     def test_no_future_returns_keeps_onesided_is(self):
         torch.manual_seed(1)

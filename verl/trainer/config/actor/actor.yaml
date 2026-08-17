@@ -178,8 +178,10 @@ self_distillation:
 
   # IS clip for loss; null disables IS weighting.
   # Full-logit distill KL: one-sided clamp(max=is_clip).
-  # Future-returns PG (full-logit) and sampled-token path: CISPO-style [1-is_clip, 1+is_clip].
   is_clip: 2
+  # CISPO-style symmetric clip for future-returns PG (full-logit) and sampled-token path:
+  # ratio ∈ [1-cispo_clip, 1+cispo_clip].
+  cispo_clip: 0.2
 
   # Reprompting template - available variables: prompt, solution, response, feedback
   reprompt_template: |-

@@ -1260,6 +1260,7 @@ def compute_self_distillation_loss(
         per_token_loss = -reward.detach() * student_log_probs
 
     is_clip = self_distillation_config.is_clip
+    cispo_clip = getattr(self_distillation_config, "cispo_clip", 0.2)
     if is_clip is not None:
         if old_log_probs is None:
             raise ValueError("old_log_probs is required for distillation IS ratio.")
@@ -1274,8 +1275,8 @@ def compute_self_distillation_loss(
             per_token_loss = per_token_loss * distill_ratio
             if future_pg_loss is not None:
                 # CISPO-style symmetric clip on the future-returns PG term only:
-                # ratio ∈ [1 - is_clip, 1 + is_clip], stop-grad via detached ratio.
-                cispo_ratio = ratio.clamp(min=1.0 - is_clip, max=1.0 + is_clip)
+                # ratio ∈ [1 - cispo_clip, 1 + cispo_clip], stop-grad via detached ratio.
+                cispo_ratio = ratio.clamp(min=1.0 - cispo_clip, max=1.0 + cispo_clip)
                 per_token_loss = per_token_loss + future_pg_loss * cispo_ratio
                 with torch.no_grad():
                     clipfrac = ((ratio - cispo_ratio).abs() > 0).float()
@@ -1283,8 +1284,8 @@ def compute_self_distillation_loss(
                         (clipfrac * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
                     ).item()
         else:
-            # CISPO-style symmetric IS clip around 1: ratio ∈ [1 - is_clip, 1 + is_clip]
-            cispo_ratio = ratio.clamp(min=1.0 - is_clip, max=1.0 + is_clip)
+            # CISPO-style symmetric IS clip around 1: ratio ∈ [1 - cispo_clip, 1 + cispo_clip]
+            cispo_ratio = ratio.clamp(min=1.0 - cispo_clip, max=1.0 + cispo_clip)
             per_token_loss = per_token_loss * cispo_ratio
     elif future_pg_loss is not None:
         per_token_loss = per_token_loss + future_pg_loss

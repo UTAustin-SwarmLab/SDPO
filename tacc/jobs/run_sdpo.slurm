@@ -135,6 +135,7 @@ IS_CLIP=${13:-2.0}
 USE_FUTURE_RETURNS=${14:-False}
 GAMMA=${15:-1.0}
 USE_FUTURE_RETURNS_BASELINE=${16:-False}
+CISPO_CLIP=${17:-0.2}
 
 if [[ "${ENABLE_ICL}" == "True" || "${ENABLE_ICL}" == "true" || "${ENABLE_ICL}" == "1" ]]; then
     CONFIG_NAME="sdpo_icl"
@@ -196,6 +197,7 @@ actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.include_environment_feedback=${INCLUDE_ENVIRONMENT_FEEDBACK} \
 actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RATE \
 actor_rollout_ref.actor.self_distillation.is_clip=$IS_CLIP \
+actor_rollout_ref.actor.self_distillation.cispo_clip=$CISPO_CLIP \
 actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
 actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
@@ -218,6 +220,7 @@ echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
 echo "Alpha: $ALPHA"
 echo "is_clip: $IS_CLIP"
+echo "cispo_clip: $CISPO_CLIP"
 echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE)"
 echo "----------------------------------------------------------------"
 
