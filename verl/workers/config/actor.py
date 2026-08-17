@@ -53,9 +53,9 @@ class SelfDistillationConfig(BaseConfig):
         dont_reprompt_on_self_success (bool): Whether to not reprompt on self-success.
         remove_thinking_from_demonstration (bool): Whether to remove <think>...</think> tags from successful demonstrations before reprompting.
         is_clip (Optional[float]): Clip value for distillation IS ratio; None disables IS weighting.
-            Full-logit distill KL uses one-sided clamp(max=is_clip). With use_future_returns, the
-            future-returns PG term instead uses CISPO-style symmetric clip in [1-is_clip, 1+is_clip].
-            Sampled-token path always uses the CISPO-style symmetric clip.
+            Full-logit distill KL uses one-sided clamp(max=is_clip).
+        cispo_clip (float): CISPO-style symmetric clip epsilon. Used for the future-returns PG
+            term (full-logit) and for the sampled-token path: ratio ∈ [1-cispo_clip, 1+cispo_clip].
         rover_t (float): ROVER log-importance scale. Defaults to gamma-compatible 1.0.
         target_adv_only (bool): If True, use advantages directly as the ROVER target.
         use_rover_clip (bool): If True, apply target-aware ROVER clipping in log-IS space.
@@ -97,6 +97,7 @@ class SelfDistillationConfig(BaseConfig):
     dont_reprompt_on_self_success: bool = False
     remove_thinking_from_demonstration: bool = False
     is_clip: Optional[float] = None
+    cispo_clip: float = 0.2
     gamma: float = 1.0
     rover_t: float = 1.0
     target_adv_only: bool = False
@@ -156,6 +157,10 @@ class SelfDistillationConfig(BaseConfig):
             )
         if self.is_clip is not None and self.is_clip <= 0:
             raise ValueError(f"self_distillation.is_clip must be positive, got {self.is_clip}")
+        if not 0.0 < self.cispo_clip < 1.0:
+            raise ValueError(
+                f"self_distillation.cispo_clip must be in (0, 1), got {self.cispo_clip}"
+            )
         if self.rover_t <= 0:
             raise ValueError(f"self_distillation.rover_t must be positive, got {self.rover_t}")
         if self.next_q_scale_factor is not None and self.next_q_scale_factor < 0:

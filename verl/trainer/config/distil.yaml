@@ -18,6 +18,7 @@ actor_rollout_ref:
     self_distillation:
       max_reprompt_len: 10240
       is_clip: 2.0
+      cispo_clip: 0.2
       full_logit_distillation: True
       distillation_topk: 100
       distillation_add_tail: True
