@@ -45,6 +45,7 @@ DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
 ALPHAS=(0.5)
 USE_FUTURE_RETURNS="${USE_FUTURE_RETURNS:-False}"
 USE_FUTURE_RETURNS_BASELINE="${USE_FUTURE_RETURNS_BASELINE:-False}"
+FUTURE_RETURNS_REWARD_SCALE="${FUTURE_RETURNS_REWARD_SCALE:-none}"
 GAMMA="${GAMMA:-1.0}"
 
 MODEL_PATHS=(
@@ -116,6 +117,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                 if [[ "${USE_FUTURE_RETURNS_BASELINE}" == "True" || "${USE_FUTURE_RETURNS_BASELINE}" == "true" || "${USE_FUTURE_RETURNS_BASELINE}" == "1" ]]; then
                                     RETURNS_TAG="${RETURNS_TAG}-baseline"
                                 fi
+                                RETURNS_TAG="${RETURNS_TAG}-rs${FUTURE_RETURNS_REWARD_SCALE}"
                             else
                                 RETURNS_TAG="nogae"
                             fi
@@ -136,6 +138,7 @@ actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
 actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
+actor_rollout_ref.actor.self_distillation.future_returns_reward_scale=$FUTURE_RETURNS_REWARD_SCALE \
 actor_rollout_ref.actor.self_distillation.include_environment_feedback=False \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16"

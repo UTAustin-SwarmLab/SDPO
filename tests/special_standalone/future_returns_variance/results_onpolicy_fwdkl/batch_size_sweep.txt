@@ -1,0 +1,83 @@
+exact grad T=256 ...
+rollout pool N=4096 ...
+N=4 ...
+N=8 ...
+N=16 ...
+N=32 ...
+N=64 ...
+N=128 ...
+N=256 ...
+N=512 ...
+N=1024 ...
+N=2048 ...
+N=4096 ...
+
+N     variant                        SNR        cos
+4     raw G_t                          0.5687  0.07441
+4     G_t - batch_mean_t               2.5793  0.96842
+4     G_t / remaining                  7.2207  0.96891
+4     (G_t - batch_mean_t)/remaining  12.8867  0.97227
+4     G_t / (T-1)                      9.7844  0.96974
+4     no PG term                      12.8534  0.97127
+8     raw G_t                          0.3608  0.13942
+8     G_t - batch_mean_t               2.0648  0.98283
+8     G_t / remaining                  6.6659  0.97306
+8     (G_t - batch_mean_t)/remaining  11.6710  0.97385
+8     G_t / (T-1)                      9.0288  0.97257
+8     no PG term                      11.7142  0.97275
+16    raw G_t                          0.2544  0.24674
+16    G_t - batch_mean_t               1.9178  0.99052
+16    G_t / remaining                  6.3935  0.97304
+16    (G_t - batch_mean_t)/remaining  11.0795  0.97357
+16    G_t / (T-1)                      8.6772  0.97225
+16    no PG term                      11.1053  0.97241
+32    raw G_t                          0.1777  0.24982
+32    G_t - batch_mean_t               1.8633  0.99592
+32    G_t / remaining                  6.1242  0.97373
+32    (G_t - batch_mean_t)/remaining  10.2391  0.97387
+32    G_t / (T-1)                      8.2833  0.97284
+32    no PG term                      10.2577  0.97269
+64    raw G_t                          0.1332  0.35480
+64    G_t - batch_mean_t               1.7874  0.99743
+64    G_t / remaining                  6.0748  0.97398
+64    (G_t - batch_mean_t)/remaining  10.3965  0.97397
+64    G_t / (T-1)                      8.2109  0.97298
+64    no PG term                      10.4107  0.97274
+128   raw G_t                          0.1062  0.48139
+128   G_t - batch_mean_t               1.7511  0.99887
+128   G_t / remaining                  6.1311  0.97387
+128   (G_t - batch_mean_t)/remaining  10.4320  0.97405
+128   G_t / (T-1)                      8.2994  0.97300
+128   no PG term                      10.4547  0.97281
+256   raw G_t                          0.0777  0.62006
+256   G_t - batch_mean_t               1.7208  0.99943
+256   G_t / remaining                  6.0970  0.97406
+256   (G_t - batch_mean_t)/remaining  10.4000  0.97398
+256   G_t / (T-1)                      8.2590  0.97296
+256   no PG term                      10.4252  0.97272
+512   raw G_t                          0.0677  0.76363
+512   G_t - batch_mean_t               1.7250  0.99970
+512   G_t / remaining                  6.0690  0.97381
+512   (G_t - batch_mean_t)/remaining  10.3545  0.97390
+512   G_t / (T-1)                      8.2368  0.97283
+512   no PG term                      10.3783  0.97265
+1024  raw G_t                          0.0582  0.82782
+1024  G_t - batch_mean_t               1.7145  0.99981
+1024  G_t / remaining                  6.0626  0.97390
+1024  (G_t - batch_mean_t)/remaining  10.3454  0.97397
+1024  G_t / (T-1)                      8.2299  0.97293
+1024  no PG term                      10.3686  0.97272
+2048  raw G_t                          0.0557  0.87988
+2048  G_t - batch_mean_t               1.7178  0.99989
+2048  G_t / remaining                  6.0715  0.97385
+2048  (G_t - batch_mean_t)/remaining  10.3523  0.97395
+2048  G_t / (T-1)                      8.2414  0.97288
+2048  no PG term                      10.3744  0.97270
+4096  raw G_t                          0.0549  0.91756
+4096  G_t - batch_mean_t               1.7174  0.99993
+4096  G_t / remaining                  6.0691  0.97391
+4096  (G_t - batch_mean_t)/remaining  10.3448  0.97397
+4096  G_t / (T-1)                      8.2361  0.97293
+4096  no PG term                      10.3675  0.97271
+
+Wrote tests/special_standalone/future_returns_variance/results_onpolicy_fwdkl/batch_size_sweep.json

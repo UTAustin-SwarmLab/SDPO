@@ -1,0 +1,121 @@
+divergence=jsd_alpha_0.5  alpha=0.5
+
+=== equal_lengths  T=64  N=10000  micro-B=16  alpha=0.5  ||exact||=2.870  mean_r=0.1764  mean_len=64.0 ===
+  -- full pool (batch mean over all N) --
+  raw G_t                          SNR=   0.0627  cos=0.98322  ||mean||=2.595  noise=41.411
+  G_t / (T-1)                      SNR=   3.7156  cos=0.96335  ||mean||=3.140  noise=0.845
+  G_t - mean_t(G_t)                SNR=   1.2886  cos=0.99998  ||mean||=2.876  noise=2.232
+  (G_t - mean_t(G_t))/(T-1)        SNR=   5.1463  cos=0.96346  ||mean||=3.145  noise=0.611
+  G(r_t - mean_t(r_t))             SNR=   1.2886  cos=0.99998  ||mean||=2.876  noise=2.232
+  G(r_t - mean_t(r_t))/(T-1)       SNR=   5.1463  cos=0.96346  ||mean||=3.145  noise=0.611
+  G(r_t - mean_t(r_t))/remaining   SNR=   5.0876  cos=0.96746  ||mean||=3.124  noise=0.614
+  no PG term                       SNR=   5.1500  cos=0.96240  ||mean||=3.151  noise=0.612
+  -- micro-batch B=16  (64 random subsets) --
+  raw G_t                          SNR=   0.2506±0.054  cos=0.26225±0.2673
+  G_t / (T-1)                      SNR=   3.8830±0.355  cos=0.96181±0.0044
+  G_t - mean_t(G_t)                SNR=   1.4652±0.244  cos=0.98532±0.0063
+  (G_t - mean_t(G_t))/(T-1)        SNR=   5.4243±0.755  cos=0.96288±0.0028
+  G(r_t - mean_t(r_t))             SNR=   1.4652±0.244  cos=0.98532±0.0063
+  G(r_t - mean_t(r_t))/(T-1)       SNR=   5.4243±0.755  cos=0.96288±0.0028
+  G(r_t - mean_t(r_t))/remaining   SNR=   5.3493±0.729  cos=0.96665±0.0027
+  no PG term                       SNR=   5.4304±0.756  cos=0.96187±0.0028
+
+  [unequal] T_min=16  E[L]=40.0  survival[0]=1.000  survival[T/2]=0.653
+
+=== unequal_lengths  T=64  N=10000  micro-B=16  alpha=0.5  ||exact||=1.794  mean_r=0.1099  mean_len=39.9 ===
+  -- full pool (batch mean over all N) --
+  raw G_t                          SNR=   0.0776  cos=0.99622  ||mean||=1.837  noise=23.675
+  G_t / (T-1)                      SNR=   2.1649  cos=0.96404  ||mean||=1.959  noise=0.905
+  G_t - mean_t(G_t)                SNR=   0.1662  cos=0.99888  ||mean||=1.766  noise=10.626
+  (G_t - mean_t(G_t))/(T-1)        SNR=   2.2731  cos=0.96398  ||mean||=1.958  noise=0.861
+  G(r_t - mean_t(r_t))             SNR=   1.1080  cos=0.99998  ||mean||=1.794  noise=1.619
+  G(r_t - mean_t(r_t))/(T-1)       SNR=   2.3190  cos=0.96403  ||mean||=1.958  noise=0.844
+  G(r_t - mean_t(r_t))/remaining   SNR=   2.2938  cos=0.97005  ||mean||=1.939  noise=0.845
+  no PG term                       SNR=   2.3195  cos=0.96298  ||mean||=1.962  noise=0.846
+  -- micro-batch B=16  (64 random subsets) --
+  raw G_t                          SNR=   0.2695±0.063  cos=0.31444±0.2761
+  G_t / (T-1)                      SNR=   2.2565±0.269  cos=0.96233±0.0051
+  G_t - mean_t(G_t)                SNR=   0.3105±0.066  cos=0.59434±0.1858
+  (G_t - mean_t(G_t))/(T-1)        SNR=   2.3839±0.324  cos=0.96256±0.0039
+  G(r_t - mean_t(r_t))             SNR=   1.2705±0.196  cos=0.98371±0.0078
+  G(r_t - mean_t(r_t))/(T-1)       SNR=   2.4366±0.324  cos=0.96249±0.0036
+  G(r_t - mean_t(r_t))/remaining   SNR=   2.4084±0.321  cos=0.96755±0.0034
+  no PG term                       SNR=   2.4379±0.325  cos=0.96155±0.0036
+
+=== equal_lengths  T=256  N=10000  micro-B=16  alpha=0.5  ||exact||=11.480  mean_r=0.1764  mean_len=256.0 ===
+  -- full pool (batch mean over all N) --
+  raw G_t                          SNR=   0.0398  cos=0.97987  ||mean||=13.241  noise=332.890
+  G_t / (T-1)                      SNR=   7.5109  cos=0.96177  ||mean||=12.608  noise=1.679
+  G_t - mean_t(G_t)                SNR=   1.3233  cos=0.99999  ||mean||=11.513  noise=8.700
+  (G_t - mean_t(G_t))/(T-1)        SNR=  10.4101  cos=0.96169  ||mean||=12.603  noise=1.211
+  G(r_t - mean_t(r_t))             SNR=   1.3233  cos=0.99999  ||mean||=11.513  noise=8.700
+  G(r_t - mean_t(r_t))/(T-1)       SNR=  10.4101  cos=0.96169  ||mean||=12.603  noise=1.211
+  G(r_t - mean_t(r_t))/remaining   SNR=  10.3729  cos=0.96310  ||mean||=12.573  noise=1.212
+  no PG term                       SNR=  10.4132  cos=0.96142  ||mean||=12.609  noise=1.211
+  -- micro-batch B=16  (64 random subsets) --
+  raw G_t                          SNR=   0.2557±0.062  cos=0.07428±0.2685
+  G_t / (T-1)                      SNR=   7.7346±0.564  cos=0.96162±0.0026
+  G_t - mean_t(G_t)                SNR=   1.4942±0.293  cos=0.98395±0.0081
+  (G_t - mean_t(G_t))/(T-1)        SNR=  10.7947±1.306  cos=0.96192±0.0018
+  G(r_t - mean_t(r_t))             SNR=   1.4942±0.293  cos=0.98395±0.0081
+  G(r_t - mean_t(r_t))/(T-1)       SNR=  10.7947±1.306  cos=0.96192±0.0018
+  G(r_t - mean_t(r_t))/remaining   SNR=  10.7637±1.297  cos=0.96324±0.0018
+  no PG term                       SNR=  10.7933±1.304  cos=0.96167±0.0018
+
+  [unequal] T_min=64  E[L]=160.0  survival[0]=1.000  survival[T/2]=0.663
+
+=== unequal_lengths  T=256  N=10000  micro-B=16  alpha=0.5  ||exact||=7.175  mean_r=0.1098  mean_len=159.3 ===
+  -- full pool (batch mean over all N) --
+  raw G_t                          SNR=   0.0332  cos=0.96231  ||mean||=6.328  noise=190.725
+  G_t / (T-1)                      SNR=   2.6350  cos=0.96177  ||mean||=7.837  noise=2.974
+  G_t - mean_t(G_t)                SNR=   0.0786  cos=0.99189  ||mean||=6.545  noise=83.326
+  (G_t - mean_t(G_t))/(T-1)        SNR=   2.6777  cos=0.96178  ||mean||=7.839  noise=2.927
+  G(r_t - mean_t(r_t))             SNR=   1.1361  cos=0.99998  ||mean||=7.139  noise=6.284
+  G(r_t - mean_t(r_t))/(T-1)       SNR=   2.6936  cos=0.96178  ||mean||=7.841  noise=2.911
+  G(r_t - mean_t(r_t))/remaining   SNR=   2.6840  cos=0.96396  ||mean||=7.812  noise=2.911
+  no PG term                       SNR=   2.6936  cos=0.96151  ||mean||=7.845  noise=2.913
+  -- micro-batch B=16  (64 random subsets) --
+  raw G_t                          SNR=   0.2435±0.048  cos=0.21227±0.2924
+  G_t / (T-1)                      SNR=   2.6863±0.335  cos=0.96082±0.0029
+  G_t - mean_t(G_t)                SNR=   0.2664±0.058  cos=0.32967±0.2649
+  (G_t - mean_t(G_t))/(T-1)        SNR=   2.7311±0.361  cos=0.96127±0.0018
+  G(r_t - mean_t(r_t))             SNR=   1.3011±0.240  cos=0.98322±0.0095
+  G(r_t - mean_t(r_t))/(T-1)       SNR=   2.7497±0.364  cos=0.96129±0.0017
+  G(r_t - mean_t(r_t))/remaining   SNR=   2.7393±0.363  cos=0.96309±0.0017
+  no PG term                       SNR=   2.7496±0.364  cos=0.96105±0.0017
+
+==============================================================================
+SUMMARY  (micro-batch cosine → exact; equal vs unequal; jsd_alpha_0.5)
+==============================================================================
+
+T=64, B=16
+  variant                             equal cos  unequal cos        |Δ|    equal SNR  unequal SNR
+  raw G_t                               0.26225      0.31444    0.05219       0.2506       0.2695
+  G_t / (T-1)                           0.96181      0.96233    0.00052       3.8830       2.2565
+  G_t - mean_t(G_t)                     0.98532      0.59434    0.39098       1.4652       0.3105
+  (G_t - mean_t(G_t))/(T-1)             0.96288      0.96256    0.00032       5.4243       2.3839
+  G(r_t - mean_t(r_t))                  0.98532      0.98371    0.00161       1.4652       1.2705
+  G(r_t - mean_t(r_t))/(T-1)            0.96288      0.96249    0.00038       5.4243       2.4366
+  G(r_t - mean_t(r_t))/remaining        0.96665      0.96755    0.00090       5.3493       2.4084
+  no PG term                            0.96187      0.96155    0.00032       5.4304       2.4379
+
+  equivalence |cos(G−meanG) − cos(G(r−meanr))| (full pool):
+    equal_lengths      cos_G=0.999979  cos_r=0.999979  |Δ|=1.11e-16  |ΔSNR|=2.22e-16
+    unequal_lengths    cos_G=0.998875  cos_r=0.999979  |Δ|=1.10e-03  |ΔSNR|=9.42e-01
+
+T=256, B=16
+  variant                             equal cos  unequal cos        |Δ|    equal SNR  unequal SNR
+  raw G_t                               0.07428      0.21227    0.13799       0.2557       0.2435
+  G_t / (T-1)                           0.96162      0.96082    0.00080       7.7346       2.6863
+  G_t - mean_t(G_t)                     0.98395      0.32967    0.65428       1.4942       0.2664
+  (G_t - mean_t(G_t))/(T-1)             0.96192      0.96127    0.00066      10.7947       2.7311
+  G(r_t - mean_t(r_t))                  0.98395      0.98322    0.00072       1.4942       1.3011
+  G(r_t - mean_t(r_t))/(T-1)            0.96192      0.96129    0.00064      10.7947       2.7497
+  G(r_t - mean_t(r_t))/remaining        0.96324      0.96309    0.00015      10.7637       2.7393
+  no PG term                            0.96167      0.96105    0.00062      10.7933       2.7496
+
+  equivalence |cos(G−meanG) − cos(G(r−meanr))| (full pool):
+    equal_lengths      cos_G=0.999988  cos_r=0.999988  |Δ|=1.11e-16  |ΔSNR|=6.88e-15
+    unequal_lengths    cos_G=0.991895  cos_r=0.999977  |Δ|=8.08e-03  |ΔSNR|=1.06e+00
+
+Wrote tests/special_standalone/future_returns_variance/results_onpolicy_fwdkl/equal_vs_unequal_jsd.json

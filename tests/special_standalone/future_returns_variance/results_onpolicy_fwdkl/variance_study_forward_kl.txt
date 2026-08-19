@@ -1,0 +1,34 @@
+divergence=forward_kl  alpha=0.0
+
+=== forward_kl  T=64  N=20000  ||exact grad||=16.955  mean d_t=0.8000 ===
+  raw G_t                          SNR=   0.0921  cos_to_exact=0.99661
+  G_t - batch_mean_t               SNR=   1.6367  cos_to_exact=0.99999
+  G(r - batch_mean_t)              SNR=   1.6367  cos_to_exact=0.99999
+  G_t / remaining                  SNR=   3.0314  cos_to_exact=0.97673
+  (G_t - batch_mean_t)/remaining   SNR=   5.1476  cos_to_exact=0.97686
+  G(r - batch_mean_t)/remaining    SNR=   5.1476  cos_to_exact=0.97686
+  G_t / (T-1)                      SNR=   4.1197  cos_to_exact=0.97379
+  G(r - batch_mean_t)/(T-1)        SNR=   5.1932  cos_to_exact=0.97387
+  no PG term                       SNR=   5.1977  cos_to_exact=0.97307
+
+=== forward_kl  T=256  N=20000  ||exact grad||=67.917  mean d_t=0.8004 ===
+  raw G_t                          SNR=   0.0451  cos_to_exact=0.98719
+  G_t - batch_mean_t               SNR=   1.7041  cos_to_exact=0.99999
+  G(r - batch_mean_t)              SNR=   1.7041  cos_to_exact=0.99999
+  G_t / remaining                  SNR=   6.0909  cos_to_exact=0.97397
+  (G_t - batch_mean_t)/remaining   SNR=  10.4527  cos_to_exact=0.97395
+  G(r - batch_mean_t)/remaining    SNR=  10.4527  cos_to_exact=0.97395
+  G_t / (T-1)                      SNR=   8.3104  cos_to_exact=0.97294
+  G(r - batch_mean_t)/(T-1)        SNR=  10.4834  cos_to_exact=0.97290
+  no PG term                       SNR=  10.4845  cos_to_exact=0.97270
+
+=== forward_kl  T=1024  N=20000  ||exact grad||=271.765  mean d_t=0.8006 ===
+  raw G_t                          SNR=   0.0247  cos_to_exact=0.92786
+  G_t - batch_mean_t               SNR=   1.7144  cos_to_exact=1.00000
+  G(r - batch_mean_t)              SNR=   1.7144  cos_to_exact=1.00000
+  G_t / remaining                  SNR=  12.1554  cos_to_exact=0.97297
+  (G_t - batch_mean_t)/remaining   SNR=  20.8361  cos_to_exact=0.97291
+  G(r - batch_mean_t)/remaining    SNR=  20.8361  cos_to_exact=0.97291
+  G_t / (T-1)                      SNR=  16.5855  cos_to_exact=0.97261
+  G(r - batch_mean_t)/(T-1)        SNR=  20.8537  cos_to_exact=0.97257
+  no PG term                       SNR=  20.8548  cos_to_exact=0.97252
