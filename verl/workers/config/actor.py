@@ -63,19 +63,23 @@ class SelfDistillationConfig(BaseConfig):
             gamma-discounted Monte-Carlo return of future distillation rewards (no value function).
             At gamma=1.0 this makes the loss the exact total derivative of the on-policy distillation
             objective.
-        use_future_returns_baseline (bool): If True (default), subtract a position-wise leave-one-out
-            batch mean of the future returns before the policy-gradient term. Unbiased variance
-            reduction; required for usable SNR at typical micro-batch sizes.
-            Full-logit path centers G_t after the cumsum (G - E[G_t]). Sampled-token path
-            centers the per-token reward before the cumsum (G(r - E[r_t])).
+        use_future_returns_baseline (bool): If True (default), apply leave-one-out
+            centering twice before the policy-gradient term: first on per-token rewards
+            ``r_t``, then again on the future returns ``G`` formed from those centered
+            rewards. Unbiased variance reduction; required for usable SNR at typical
+            micro-batch sizes. Scope is controlled by ``future_returns_baseline_mode``.
+        future_returns_baseline_mode (str): ``"group"`` (default) = LOO within each
+            prompt uid group (requires ``index``/``uid``); ``"batch"`` = LOO over the
+            full microbatch (no uid required).
         future_returns_reward_scale (str): Optional per-token divisor applied to the distillation
             reward (after masking, before baseline / cumsum). ``"none"`` (default) leaves r_t
             unchanged. ``"seq_len"`` divides by the sequence length T_i = loss_mask.sum(1)
             (constant over t). ``"remaining"`` divides by N_rem(t) = (T_i - t).clamp(min=1),
             the number of valid tokens from t through the end of the response.
-        use_reward_baseline (bool): If True, subtract a position-wise leave-one-out batch mean of the
-            distillation reward before forming SDQL Bellman targets (``r + gamma * next_q``).
-            Same variance-reduction idea as ``use_future_returns_baseline`` for SDPO.
+        use_reward_baseline (bool): If True, subtract a position-wise leave-one-out mean of the
+            distillation reward within each prompt group before forming SDQL Bellman targets
+            (``r + gamma * next_q``). Same idea as ``use_future_returns_baseline`` for SDPO;
+            requires prompt ``index``/``uid``.
         use_reward_clamp (bool): If True, clamp sampled-token distillation rewards to [clamp_low, clamp_high].
         response_level_rover_loss (bool): If True, compute ROVER MSE after averaging each response.
         next_q_scale_factor (Optional[float]): Optional multiplier for the bootstrapped next-Q term.
@@ -111,6 +115,7 @@ class SelfDistillationConfig(BaseConfig):
     use_rover_clip: bool = False
     use_future_returns: bool = False
     use_future_returns_baseline: bool = False
+    future_returns_baseline_mode: str = "group"  # "group" | "batch"
     future_returns_reward_scale: str = "none"
     use_reward_baseline: bool = False
     use_reward_clamp: bool = True
@@ -188,6 +193,15 @@ class SelfDistillationConfig(BaseConfig):
             raise ValueError(
                 "self_distillation.future_returns_reward_scale must be one of "
                 f"{valid_fr_scale}, got {self.future_returns_reward_scale}"
+            )
+        if self.future_returns_baseline_mode is None:
+            self.future_returns_baseline_mode = "group"
+        self.future_returns_baseline_mode = str(self.future_returns_baseline_mode).lower()
+        valid_fr_baseline_mode = {"group", "batch"}
+        if self.future_returns_baseline_mode not in valid_fr_baseline_mode:
+            raise ValueError(
+                "self_distillation.future_returns_baseline_mode must be one of "
+                f"{valid_fr_baseline_mode}, got {self.future_returns_baseline_mode}"
             )
 
 

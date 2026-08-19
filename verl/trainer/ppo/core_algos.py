@@ -1105,7 +1105,7 @@ def discounted_cumsum(xs: torch.Tensor, gamma: float) -> torch.Tensor:
 
 
 def masked_leave_one_out_baseline(values: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-    """Position-wise leave-one-out mean of ``values`` over the batch.
+    """Position-wise leave-one-out mean of ``values`` over the **full batch**.
 
     Excluding a row from its own baseline keeps the policy-gradient term unbiased at
     any batch size. When a position has a single valid row the baseline is zero, so
@@ -1126,6 +1126,68 @@ def masked_leave_one_out_baseline(values: torch.Tensor, mask: torch.Tensor) -> t
     others_sum = masked.sum(dim=0, keepdim=True) - masked
     others_count = (expanded_mask.sum(dim=0, keepdim=True) - expanded_mask).clamp_min(1.0)
     return others_sum / others_count
+
+
+def masked_group_leave_one_out_baseline(
+    values: torch.Tensor,
+    mask: torch.Tensor,
+    index: np.ndarray,
+) -> torch.Tensor:
+    """Position-wise leave-one-out mean of ``values`` **within each prompt group**.
+
+    Same unbiased LOO idea as ``masked_leave_one_out_baseline``, but means are taken
+    only over rows that share the same prompt id (GRPO-style). Singleton groups get a
+    zero baseline so the raw return / reward is kept.
+
+    Args:
+        values: ``[B, T]`` or ``[B, T, ...]`` returns / rewards / advantages.
+        mask: ``[B, T]`` response mask (broadcast over trailing dims).
+        index: Prompt ids of shape ``[B]``.
+
+    Returns:
+        Tensor with the same shape as ``values``.
+    """
+    if len(index) != values.shape[0]:
+        raise ValueError(
+            f"index length ({len(index)}) must match batch size ({values.shape[0]})"
+        )
+    baseline = torch.zeros_like(values)
+    groups: dict[Any, list[int]] = defaultdict(list)
+    for i in range(values.shape[0]):
+        groups[index[i]].append(i)
+    for row_ids in groups.values():
+        if len(row_ids) == 1:
+            continue
+        idx_t = torch.as_tensor(row_ids, device=values.device, dtype=torch.long)
+        baseline[idx_t] = masked_leave_one_out_baseline(values[idx_t], mask[idx_t])
+    return baseline
+
+
+def resolve_leave_one_out_baseline(
+    values: torch.Tensor,
+    mask: torch.Tensor,
+    mode: str = "group",
+    index: Optional[np.ndarray] = None,
+) -> torch.Tensor:
+    """Dispatch to batch-level or group-level leave-one-out baseline.
+
+    Args:
+        values / mask: see ``masked_leave_one_out_baseline``.
+        mode: ``"group"`` (per-prompt / uid) or ``"batch"`` (full microbatch).
+        index: Required when ``mode == "group"``.
+    """
+    mode = (mode or "group").lower()
+    if mode in ("group", "prompt", "uid"):
+        if index is None:
+            raise ValueError(
+                "future_returns_baseline_mode='group' requires prompt `index`/`uid`."
+            )
+        return masked_group_leave_one_out_baseline(values, mask, index)
+    if mode in ("batch", "global"):
+        return masked_leave_one_out_baseline(values, mask)
+    raise ValueError(
+        f"future_returns_baseline_mode must be one of {{'group', 'batch'}}, got {mode}"
+    )
 
 
 def future_returns_token_scale(loss_mask: torch.Tensor, mode: str = "none") -> torch.Tensor:
@@ -1160,6 +1222,7 @@ def compute_self_distillation_loss(
     self_distillation_mask: Optional[torch.Tensor] = None,
     loss_agg_mode: str = "token-mean",
     rollout_is_weights: Optional[torch.Tensor] = None,
+    index: Optional[np.ndarray] = None,
 ) -> tuple[torch.Tensor, dict[str, Any]]:
 
     metrics = {}
@@ -1167,6 +1230,24 @@ def compute_self_distillation_loss(
     loss_mask = response_mask
     if self_distillation_mask is not None:
         loss_mask = loss_mask * self_distillation_mask.unsqueeze(1)
+
+    use_future_returns_baseline = bool(
+        getattr(self_distillation_config, "use_future_returns", False)
+        and getattr(self_distillation_config, "use_future_returns_baseline", True)
+    )
+    baseline_mode = str(
+        getattr(self_distillation_config, "future_returns_baseline_mode", "group")
+    ).lower()
+    if use_future_returns_baseline and baseline_mode in ("group", "prompt", "uid") and index is None:
+        raise ValueError(
+            "future_returns_baseline_mode='group' requires prompt `index`/`uid` for "
+            "per-prompt leave-one-out baselines."
+        )
+
+    def _loo(values: torch.Tensor) -> torch.Tensor:
+        return resolve_leave_one_out_baseline(
+            values, loss_mask, mode=baseline_mode, index=index
+        )
 
     if self_distillation_config.full_logit_distillation:
         use_topk = self_distillation_config.distillation_topk is not None
@@ -1231,23 +1312,30 @@ def compute_self_distillation_loss(
         if self_distillation_config.use_future_returns:
             # Future discounted returns of next-token KL rewards:
             # G_t = r_{t+1} + gamma * r_{t+2} + gamma^2 * r_{t+3} + ...
+            # Baseline: center r_t within each prompt group, form G, then center G.
             reward = kl_loss.sum(-1).detach() * loss_mask
             reward_scale = future_returns_token_scale(
                 loss_mask, getattr(self_distillation_config, "future_returns_reward_scale", "none")
             )
             reward = reward / reward_scale
+            if getattr(self_distillation_config, "use_future_returns_baseline", True):
+                reward_baseline = _loo(reward)
+                metrics["self_distillation/future_returns_reward_baseline"] = (
+                    (reward_baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
+                ).item()
+                reward = (reward - reward_baseline) * loss_mask
             reward_shifted = torch.concat([reward[:, 1:], torch.zeros_like(reward[:, :1])], dim=1)
             reward_reversed = torch.flip(reward_shifted, dims=[1])
             reward_cumsum = torch.flip(
                 discounted_cumsum(reward_reversed, self_distillation_config.gamma),
                 dims=[1],
             )
-            if getattr(self_distillation_config, "use_future_returns_baseline", True):
-                baseline = masked_leave_one_out_baseline(reward_cumsum, loss_mask)
-                metrics["self_distillation/future_returns_baseline"] = (
-                    (baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
-                ).item()
-                reward_cumsum = reward_cumsum - baseline
+            # if getattr(self_distillation_config, "use_future_returns_baseline", True):
+            #     returns_baseline = _loo(reward_cumsum)
+            #     metrics["self_distillation/future_returns_baseline"] = (
+            #         (returns_baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
+            #     ).item()
+            #     reward_cumsum = reward_cumsum - returns_baseline
             future_pg_loss = reward_cumsum * student_log_probs
             metrics["self_distillation/future_kl_token_loss"] = future_pg_loss.mean().item()
 
@@ -1267,25 +1355,30 @@ def compute_self_distillation_loss(
             reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
         
         if self_distillation_config.use_future_returns:
-            # G(r - E[r_t]): center per-token reward (LOO over batch at each t), then
-            # undiscounted/discounted cumsum. Unlike full-logit, this path has no
-            # separate direct KL term, so G_t includes r_t (unshifted).
+            # Unlike full-logit, this path has no separate direct KL term, so G_t
+            # includes r_t (unshifted). Baseline: center r, form G, then center G.
             reward = reward * loss_mask
             reward_scale = future_returns_token_scale(
                 loss_mask, getattr(self_distillation_config, "future_returns_reward_scale", "none")
             )
             reward = reward / reward_scale
             if getattr(self_distillation_config, "use_future_returns_baseline", True):
-                baseline = masked_leave_one_out_baseline(reward, loss_mask)
-                metrics["self_distillation/future_returns_baseline"] = (
-                    (baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
+                reward_baseline = _loo(reward)
+                metrics["self_distillation/future_returns_reward_baseline"] = (
+                    (reward_baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
                 ).item()
-                reward = (reward - baseline) * loss_mask
+                reward = (reward - reward_baseline) * loss_mask
             reward_reversed = torch.flip(reward, dims=[1])
             reward = torch.flip(
                 discounted_cumsum(reward_reversed, self_distillation_config.gamma),
                 dims=[1],
             )
+            # if getattr(self_distillation_config, "use_future_returns_baseline", True):
+            #     returns_baseline = _loo(reward)
+            #     metrics["self_distillation/future_returns_baseline"] = (
+            #         (returns_baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
+            #     ).item()
+            #     reward = reward - returns_baseline
 
         # Sampled-token path is already a PG objective; CISPO below covers future returns too.
         per_token_loss = -reward.detach() * student_log_probs
@@ -1666,6 +1759,7 @@ def compute_self_distillation_q_loss(
     loss_agg_mode: str = "token-mean",
     rollout_is_weights: Optional[torch.Tensor] = None,
     advantages: Optional[torch.Tensor] = None,
+    index: Optional[np.ndarray] = None,
 ) -> tuple[torch.Tensor, dict[str, Any]]:
 
     metrics = {}
@@ -1685,6 +1779,11 @@ def compute_self_distillation_q_loss(
     loss_mask = response_mask
     if self_distillation_mask is not None:
         loss_mask = loss_mask * self_distillation_mask.unsqueeze(1)
+
+    if getattr(self_distillation_config, "use_reward_baseline", False) and index is None:
+        raise ValueError(
+            "use_reward_baseline requires prompt `index`/`uid` for per-prompt leave-one-out baselines."
+        )
 
     # compute Q values from  
     
@@ -1782,8 +1881,8 @@ def compute_self_distillation_q_loss(
                 reward = reward.scatter_add(-1, sampled_token_ids.unsqueeze(-1), env_adv)
 
         if getattr(self_distillation_config, "use_reward_baseline", False):
-            # Leave-one-out batch mean over sequences (SDPO-style variance reduction).
-            baseline = masked_leave_one_out_baseline(reward, loss_mask)
+            # Per-prompt leave-one-out mean (SDPO-style variance reduction).
+            baseline = masked_group_leave_one_out_baseline(reward, loss_mask, index=index)
             with torch.no_grad():
                 baseline_mean, _ = masked_mean_std(baseline.detach(), loss_mask)
                 metrics["sdql/reward_baseline"] = baseline_mean.item()
@@ -1799,7 +1898,7 @@ def compute_self_distillation_q_loss(
             next_student_log_probs = torch.cat(
                 [student_distill_log_probs[:, 1:, :], zero_tail_logp], dim=1
             )
-            target_q_vals = reward.detach() + gamma * next_q_vals * next_student_log_probs.detach()
+            target_q_vals = reward.detach() + gamma * next_q_vals * next_student_log_probs.exp().detach()
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
@@ -1849,7 +1948,7 @@ def compute_self_distillation_q_loss(
             reward = reward + env_adv *  self_distillation_config.env_reward_scale
 
         if getattr(self_distillation_config, "use_reward_baseline", False):
-            baseline = masked_leave_one_out_baseline(reward, loss_mask)
+            baseline = masked_group_leave_one_out_baseline(reward, loss_mask, index=index)
             metrics["sdql/reward_baseline"] = (
                 (baseline.detach() * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
             ).item()
