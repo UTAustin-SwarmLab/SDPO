@@ -23,7 +23,7 @@ import torch
 import torch.nn.functional as F
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from variance_study import exact_grad, per_sample_grads, remaining_weights, rollout  # noqa: E402
+from variance_study import exact_grad, future_returns, per_sample_grads, remaining_weights, rollout  # noqa: E402
 
 
 def main():
@@ -33,6 +33,8 @@ def main():
     p.add_argument("--n-min", type=int, default=2, help="min exponent: N=2**n_min")
     p.add_argument("--n-max", type=int, default=12, help="max exponent: N=2**n_max")
     p.add_argument("--reps", type=int, default=32)
+    p.add_argument("--alpha", type=float, default=0.0,
+                   help="0=forward KL, 1=reverse KL, else generalized JSD")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--out", type=str, default="")
     args = p.parse_args()
@@ -48,20 +50,24 @@ def main():
     teacher = F.softmax(teacher_logits, -1)
     teacher_lp = F.log_softmax(teacher_logits, -1)
 
-    rem = lambda G, T: G / remaining_weights(T)
+    rem = lambda G, T, r: G / remaining_weights(T)
+    center_r = lambda G, T, r: future_returns(r - r.mean(0, keepdim=True))
     variants = {
-        "raw G_t": lambda G, T: G,
-        "G_t - batch_mean_t": lambda G, T: G - G.mean(0, keepdim=True),
+        "raw G_t": lambda G, T, r: G,
+        "G_t - batch_mean_t": lambda G, T, r: G - G.mean(0, keepdim=True),
+        "G(r - batch_mean_t)": center_r,
         "G_t / remaining": rem,
-        "(G_t - batch_mean_t)/remaining": lambda G, T: (G - G.mean(0, keepdim=True)) / remaining_weights(T),
-        "G_t / (T-1)": lambda G, T: G / (T - 1),
-        "no PG term": lambda G, T: torch.zeros_like(G),
+        "(G_t - batch_mean_t)/remaining": lambda G, T, r: (G - G.mean(0, keepdim=True)) / remaining_weights(T),
+        "G(r - batch_mean_t)/remaining": lambda G, T, r: center_r(G, T, r) / remaining_weights(T),
+        "G_t / (T-1)": lambda G, T, r: G / (T - 1),
+        "G(r - batch_mean_t)/(T-1)": lambda G, T, r: center_r(G, T, r) / (T - 1),
+        "no PG term": lambda G, T, r: torch.zeros_like(G),
     }
 
-    print(f"exact grad T={args.T} ...", flush=True)
-    g_star = exact_grad(theta, teacher, teacher_lp, args.T)
+    print(f"exact grad T={args.T} alpha={args.alpha} ...", flush=True)
+    g_star = exact_grad(theta, teacher, teacher_lp, args.T, alpha=args.alpha)
     print(f"rollout pool N={N_POOL} ...", flush=True)
-    st_all, ac_all, rw_all = rollout(theta, teacher, teacher_lp, args.T, N_POOL)
+    st_all, ac_all, rw_all = rollout(theta, teacher, teacher_lp, args.T, N_POOL, alpha=args.alpha)
 
     results = {
         name: {"N": [], "snr_mean": [], "snr_std": [], "cos_mean": [], "cos_std": []}
@@ -76,7 +82,7 @@ def main():
             idx = torch.randperm(N_POOL)[:n]
             st, ac, rw = st_all[idx], ac_all[idx], rw_all[idx]
             for name, fn in variants.items():
-                g = per_sample_grads(theta, teacher, st, ac, rw, fn)
+                g = per_sample_grads(theta, teacher, st, ac, rw, fn, teacher_lp=teacher_lp, alpha=args.alpha)
                 mean = g.mean(0)
                 if n > 1:
                     noise = (g - mean).pow(2).sum(dim=(1, 2)).mean().sqrt()
@@ -103,6 +109,7 @@ def main():
             print(f"{n:<5} {name:<30} {d['snr_mean'][n_i]:8.4f}  {d['cos_mean'][n_i]:.5f}")
 
     payload = {
+        "alpha": args.alpha,
         "T": args.T,
         "N_POOL": N_POOL,
         "N_REPS": args.reps,

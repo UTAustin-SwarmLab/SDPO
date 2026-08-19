@@ -22,6 +22,7 @@ DONTS_REPROMPT_ON_SELF_SUCCESS=True
 ALPHA=0.5
 USE_FUTURE_RETURNS=${USE_FUTURE_RETURNS:-False}
 USE_FUTURE_RETURNS_BASELINE=${USE_FUTURE_RETURNS_BASELINE:-False}
+FUTURE_RETURNS_REWARD_SCALE=${FUTURE_RETURNS_REWARD_SCALE:-none}
 GAMMA=${GAMMA:-1.0}
 MODEL_PATH="Qwen/Qwen3-4B"
 RAY_DASHBOARD_PORT=8170
@@ -52,7 +53,7 @@ export USER=${USER:-$(whoami)}
 # =============================================================================
 
 MODEL_NAME=$(echo "$MODEL_PATH" | tr '/' '-')
-EXP_NAME="LOCAL-SDPO-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-lambda${LAMBDA}-clip_adv_high${CLIP_ADV_HIGH}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}-${SUFFIX}"
+EXP_NAME="LOCAL-SDPO-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-lambda${LAMBDA}-clip_adv_high${CLIP_ADV_HIGH}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-s${FUTURE_RETURNS_REWARD_SCALE}-${MODEL_NAME}-${SUFFIX}"
 
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
 data.val_batch_size=$TRAIN_BATCH_SIZE \
@@ -80,6 +81,7 @@ actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
 actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
+actor_rollout_ref.actor.self_distillation.future_returns_reward_scale=$FUTURE_RETURNS_REWARD_SCALE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.55 \
 actor_rollout_ref.rollout.val_kwargs.n=4 \
@@ -94,7 +96,7 @@ echo "Starting Local SDPO Training"
 echo "Experiment: $EXP_NAME"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
-echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA)"
+echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE, reward_scale=$FUTURE_RETURNS_REWARD_SCALE)"
 echo "----------------------------------------------------------------"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

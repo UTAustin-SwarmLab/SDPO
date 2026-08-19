@@ -49,6 +49,8 @@ def main():
     p.add_argument("--n-max", type=int, default=10)
     p.add_argument("--reps", type=int, default=48)
     p.add_argument("--T-min-frac", type=float, default=0.25)
+    p.add_argument("--alpha", type=float, default=0.0,
+                   help="0=forward KL, 1=reverse KL, else generalized JSD")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--out", type=str, required=True)
     args = p.parse_args()
@@ -80,6 +82,7 @@ def main():
 
     results = {
         "meta": {
+            "alpha": args.alpha,
             "V": args.V, "T": T, "N": args.N, "BS": BS, "reps": args.reps,
             "T_min": T_min, "T_min_frac": args.T_min_frac, "seed": args.seed,
             "variants": VARIANTS,
@@ -88,10 +91,10 @@ def main():
     }
 
     for setting, cfg in settings.items():
-        print(f"\n===== {setting} =====", flush=True)
-        g_star = exact_grad(theta, teacher, teacher_lp, T, survival=cfg["survival"])
+        print(f"\n===== {setting}  alpha={args.alpha} =====", flush=True)
+        g_star = exact_grad(theta, teacher, teacher_lp, T, survival=cfg["survival"], alpha=args.alpha)
         st, ac, rw, mask = rollout(
-            theta, teacher, teacher_lp, T, args.N, lengths=cfg["lengths"]
+            theta, teacher, teacher_lp, T, args.N, lengths=cfg["lengths"], alpha=args.alpha
         )
         print(f"  ||exact||={g_star.norm():.3f}  mean_len={mask.sum(1).mean():.1f}", flush=True)
 
@@ -105,7 +108,7 @@ def main():
         full = {}
         for name in VARIANTS:
             W = make_weights(name, rw, mask, T)
-            g = per_sample_grads(theta, teacher, st, ac, rw, mask, W)
+            g = per_sample_grads(theta, teacher, st, ac, rw, mask, W, teacher_lp=teacher_lp, alpha=args.alpha)
             full[name] = metrics(g, g_star)
         setting_out["full_pool"] = full
         print("  full pool:", {k: round(v["cos"], 5) for k, v in full.items()}, flush=True)
@@ -118,7 +121,9 @@ def main():
                 st_b, ac_b, rw_b, mask_b = st[idx], ac[idx], rw[idx], mask[idx]
                 for name in VARIANTS:
                     W = make_weights(name, rw_b, mask_b, T)
-                    g = per_sample_grads(theta, teacher, st_b, ac_b, rw_b, mask_b, W)
+                    g = per_sample_grads(
+                        theta, teacher, st_b, ac_b, rw_b, mask_b, W, teacher_lp=teacher_lp, alpha=args.alpha
+                    )
                     m = metrics(g, g_star)
                     for k in acc[name]:
                         acc[name][k].append(m[k] if k != "noise" else m["noise"])
@@ -138,8 +143,14 @@ def main():
             # quick line
             gmean = by_var["G_t - mean_t(G_t)"]["cos_mean"]
             rmean = by_var["G(r_t - mean_t(r_t))"]["cos_mean"]
+            rmean_t = by_var["G(r_t - mean_t(r_t))/(T-1)"]["cos_mean"]
+            rmean_rem = by_var["G(r_t - mean_t(r_t))/remaining"]["cos_mean"]
             raw = by_var["raw G_t"]["cos_mean"]
-            print(f"    cos raw={raw:.3f}  G-meanG={gmean:.3f}  G(r-meanr)={rmean:.3f}", flush=True)
+            print(
+                f"    cos raw={raw:.3f}  G-meanG={gmean:.3f}  "
+                f"G(r-meanr)={rmean:.3f}  /(T-1)={rmean_t:.3f}  /rem={rmean_rem:.3f}",
+                flush=True,
+            )
 
         results["settings"][setting] = setting_out
 

@@ -31,6 +31,7 @@ from verl.trainer.ppo.core_algos import (
     compute_distil_self_distillation_loss,
     compute_self_distillation_loss,
     discounted_cumsum,
+    future_returns_token_scale,
     masked_leave_one_out_baseline,
 )
 
@@ -44,6 +45,7 @@ def _base_cfg(**overrides):
         use_future_returns=True,
         # Exact single-sequence gradient checks compare against the raw future return.
         use_future_returns_baseline=False,
+        future_returns_reward_scale="none",
         gamma=1.0,
         is_clip=None,
         cispo_clip=0.2,
@@ -413,6 +415,82 @@ class TestFutureReturnsBaseline:
         )
         assert torch.isfinite(loss)
         assert "self_distillation/future_returns_baseline" in metrics
+
+    def test_sampled_baseline_is_g_of_centered_reward(self):
+        """Sampled-token + baseline = G(r - LOO E[r_t]), not G - E[G]."""
+        torch.manual_seed(2)
+        B, T = 5, 4
+        s_tok = (torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0).requires_grad_(True)
+        t_tok = torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0
+        mask = torch.ones(B, T, dtype=torch.float64)
+        mask[-1, 2:] = 0.0
+        cfg = _base_cfg(
+            full_logit_distillation=False,
+            alpha=1.0,
+            use_future_returns=True,
+            use_future_returns_baseline=True,
+            gamma=1.0,
+            use_reward_clamp=False,
+        )
+        loss, _ = compute_self_distillation_loss(
+            student_log_probs=s_tok,
+            teacher_log_probs=t_tok,
+            response_mask=mask,
+            self_distillation_config=cfg,
+            loss_agg_mode="seq-mean-token-sum",
+        )
+        r = (t_tok - s_tok).detach() * mask
+        r_c = (r - masked_leave_one_out_baseline(r, mask)) * mask
+        G = torch.flip(discounted_cumsum(torch.flip(r_c, dims=[1]), 1.0), dims=[1])
+        expected = -(G.detach() * s_tok * mask).sum() / B
+        assert torch.allclose(loss, expected)
+
+    @pytest.mark.parametrize("mode,divisor_fn", [
+        ("seq_len", lambda mask: mask.sum(1, keepdim=True).expand_as(mask)),
+        ("remaining", lambda mask: (
+            mask.sum(1, keepdim=True)
+            - torch.arange(mask.size(1), dtype=mask.dtype).unsqueeze(0)
+        ).clamp(min=1.0)),
+    ])
+    def test_sampled_reward_scale_divides_r_before_cumsum(self, mode, divisor_fn):
+        torch.manual_seed(3)
+        B, T = 4, 6
+        s_tok = (torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0).requires_grad_(True)
+        t_tok = torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0
+        mask = torch.ones(B, T, dtype=torch.float64)
+        mask[0, 4:] = 0.0
+        mask[1, 3:] = 0.0
+        cfg = _base_cfg(
+            full_logit_distillation=False,
+            alpha=1.0,
+            use_future_returns=True,
+            use_future_returns_baseline=False,
+            future_returns_reward_scale=mode,
+            gamma=1.0,
+            use_reward_clamp=False,
+        )
+        loss, _ = compute_self_distillation_loss(
+            student_log_probs=s_tok,
+            teacher_log_probs=t_tok,
+            response_mask=mask,
+            self_distillation_config=cfg,
+            loss_agg_mode="seq-mean-token-sum",
+        )
+        r = (t_tok - s_tok).detach() * mask / divisor_fn(mask)
+        G = torch.flip(discounted_cumsum(torch.flip(r, dims=[1]), 1.0), dims=[1])
+        expected = -(G.detach() * s_tok * mask).sum() / B
+        assert torch.allclose(loss, expected)
+
+
+class TestFutureReturnsTokenScale:
+    def test_seq_len_and_remaining_use_loss_mask(self):
+        mask = torch.tensor([[1.0, 1.0, 1.0, 0.0], [1.0, 1.0, 0.0, 0.0]])
+        seq = future_returns_token_scale(mask, "seq_len")
+        rem = future_returns_token_scale(mask, "remaining")
+        none = future_returns_token_scale(mask, "none")
+        assert torch.allclose(seq, torch.tensor([[3.0, 3.0, 3.0, 3.0], [2.0, 2.0, 2.0, 2.0]]))
+        assert torch.allclose(rem, torch.tensor([[3.0, 2.0, 1.0, 1.0], [2.0, 1.0, 1.0, 1.0]]))
+        assert torch.allclose(none, torch.ones_like(mask))
 
 
 class TestFutureReturnsCispoSplit:

@@ -13,7 +13,8 @@ Under:
   equal lengths   — every trajectory has length T
   unequal lengths — right-padded; L ~ Uniform{T_min..T}, independent of the chain
 
-Exact grad accounts for survival P(L > t) when lengths vary.
+Exact grad accounts for survival P(L > t) when lengths vary. Per-sample grads are
+autograd of the training surrogate (per-token forward KL + W_t log pi).
 
 Run from repo root:
   python tests/special_standalone/future_returns_variance/variance_equal_vs_unequal.py
@@ -25,10 +26,19 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
 import torch
 import torch.nn.functional as F
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from variance_study import (  # noqa: E402
+    divergence_name,
+    remaining_from_mask,
+    surrogate_grads,
+    token_divergence,
+)
 
 
 def exact_grad(
@@ -37,13 +47,15 @@ def exact_grad(
     teacher_lp: torch.Tensor,
     T: int,
     survival: torch.Tensor | None = None,
+    alpha: float = 0.0,
 ) -> torch.Tensor:
-    """∇J with J = sum_t survival[t] * E_{s~P_t}[KL(teacher||pi)].
+    """∇J with J = sum_t survival[t] * E_{s~P_t}[D_alpha(pi, teacher)].
 
     survival[t] = P(L > t). None → all ones (fixed length T).
     """
-    pi = F.softmax(theta, -1)
-    d = (teacher * (teacher_lp - F.log_softmax(theta, -1))).sum(-1)
+    log_pi = F.log_softmax(theta, -1)
+    pi = log_pi.exp()
+    d = token_divergence(log_pi, teacher, teacher_lp, alpha)
     P = torch.full((theta.shape[0],), 1.0 / theta.shape[0], dtype=theta.dtype)
     if survival is None:
         survival = torch.ones(T, dtype=theta.dtype)
@@ -56,15 +68,17 @@ def exact_grad(
 
 
 @torch.no_grad()
-def rollout(theta, teacher, teacher_lp, T: int, N: int, lengths: torch.Tensor | None = None):
-    """Roll out N trajectories of pad length T.
+def rollout(theta, teacher, teacher_lp, T: int, N: int, lengths: torch.Tensor | None = None,
+            alpha: float = 0.0):
+    """Roll out N trajectories of pad length T. Tokens sampled from the student.
 
     lengths: [N] int in 1..T. None → all length T.
     Returns states, actions, rewards, mask  all [N, T].
     """
     V = theta.shape[0]
-    pi = F.softmax(theta, -1)
-    d = (teacher * (teacher_lp - F.log_softmax(theta, -1))).sum(-1)
+    log_pi = F.log_softmax(theta, -1)
+    pi = log_pi.exp()
+    d = token_divergence(log_pi, teacher, teacher_lp, alpha)
     s = torch.randint(0, V, (N,))
     states, actions = [], []
     for _ in range(T):
@@ -96,21 +110,18 @@ def masked_batch_mean(values: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
     return (values * mask).sum(dim=0, keepdim=True) / denom
 
 
-@torch.no_grad()
-def per_sample_grads(theta, teacher, states, actions, rewards, mask, weight: torch.Tensor):
-    """Analytic per-sample grads [N,V,V] with credit weights `weight` [N,T]."""
-    V = theta.shape[0]
-    N, T = rewards.shape
-    pi = F.softmax(theta, -1)
-    onehot = F.one_hot(actions, V).to(rewards.dtype)
-    pi_s = pi[states]
-    # Direct KL term only on valid tokens; PG term uses weight (already masked by caller).
-    direct = (pi_s - teacher[states]) * mask.unsqueeze(-1)
-    pg = weight.unsqueeze(-1) * (onehot - pi_s) * mask.unsqueeze(-1)
-    contrib = direct + pg
-    g = torch.zeros(N, V, V, dtype=rewards.dtype)
-    g.scatter_add_(1, states.unsqueeze(-1).expand(-1, -1, V), contrib)
-    return g
+def per_sample_grads(
+    theta, teacher, states, actions, rewards, mask, weight,
+    teacher_lp=None, alpha: float = 0.0, chunk: int = 512,
+):
+    """Autograd of the on-policy SDPO full-logit surrogate. Returns [N, V, V].
+
+        L_i = sum_t mask_t * [ D_alpha(s_t) + W_t log pi(a_t|s_t) ]
+    """
+    return surrogate_grads(
+        theta, teacher, states, actions, weight,
+        mask=mask, teacher_lp=teacher_lp, alpha=alpha, chunk=chunk,
+    )
 
 
 def make_weights(name: str, rewards: torch.Tensor, mask: torch.Tensor, T: int) -> torch.Tensor:
@@ -125,9 +136,14 @@ def make_weights(name: str, rewards: torch.Tensor, mask: torch.Tensor, T: int) -
     elif name == "(G_t - mean_t(G_t))/(T-1)":
         W = (G - masked_batch_mean(G, mask)) / (T - 1)
     elif name == "G(r_t - mean_t(r_t))":
-        r_c = rewards - masked_batch_mean(rewards, mask)
-        r_c = r_c * mask
+        r_c = (rewards - masked_batch_mean(rewards, mask)) * mask
         W = future_returns(r_c)
+    elif name == "G(r_t - mean_t(r_t))/(T-1)":
+        r_c = (rewards - masked_batch_mean(rewards, mask)) * mask
+        W = future_returns(r_c) / (T - 1)
+    elif name == "G(r_t - mean_t(r_t))/remaining":
+        r_c = (rewards - masked_batch_mean(rewards, mask)) * mask
+        W = future_returns(r_c) / remaining_from_mask(mask)
     elif name == "no PG term":
         W = torch.zeros_like(G)
     else:
@@ -141,6 +157,8 @@ VARIANTS = [
     "G_t - mean_t(G_t)",
     "(G_t - mean_t(G_t))/(T-1)",
     "G(r_t - mean_t(r_t))",
+    "G(r_t - mean_t(r_t))/(T-1)",
+    "G(r_t - mean_t(r_t))/remaining",
     "no PG term",
 ]
 
@@ -169,11 +187,12 @@ def run_setting(
     lengths: torch.Tensor | None,
     survival: torch.Tensor | None,
     reps: int,
+    alpha: float = 0.0,
 ):
-    g_star = exact_grad(theta, teacher, teacher_lp, T, survival=survival)
-    st, ac, rw, mask = rollout(theta, teacher, teacher_lp, T, N, lengths=lengths)
+    g_star = exact_grad(theta, teacher, teacher_lp, T, survival=survival, alpha=alpha)
+    st, ac, rw, mask = rollout(theta, teacher, teacher_lp, T, N, lengths=lengths, alpha=alpha)
 
-    print(f"\n=== {label}  T={T}  N={N}  micro-B={batch_size}  "
+    print(f"\n=== {label}  T={T}  N={N}  micro-B={batch_size}  alpha={alpha}  "
           f"||exact||={g_star.norm():.3f}  mean_r={rw.mean():.4f}  "
           f"mean_len={mask.sum(1).mean():.1f} ===")
 
@@ -182,7 +201,7 @@ def run_setting(
     print("  -- full pool (batch mean over all N) --")
     for name in VARIANTS:
         W = make_weights(name, rw, mask, T)
-        g = per_sample_grads(theta, teacher, st, ac, rw, mask, W)
+        g = per_sample_grads(theta, teacher, st, ac, rw, mask, W, teacher_lp=teacher_lp, alpha=alpha)
         m = metrics(g, g_star)
         print(f"  {name:<32} SNR={m['snr']:9.4f}  cos={m['cos']:.5f}  "
               f"||mean||={m['mean_norm']:.3f}  noise={m['noise']:.3f}")
@@ -199,7 +218,9 @@ def run_setting(
             st_b, ac_b, rw_b, mask_b = st[idx], ac[idx], rw[idx], mask[idx]
             for name in VARIANTS:
                 W = make_weights(name, rw_b, mask_b, T)
-                g = per_sample_grads(theta, teacher, st_b, ac_b, rw_b, mask_b, W)
+                g = per_sample_grads(
+                    theta, teacher, st_b, ac_b, rw_b, mask_b, W, teacher_lp=teacher_lp, alpha=alpha
+                )
                 m = metrics(g, g_star)
                 acc[name]["cos"].append(m["cos"])
                 acc[name]["snr"].append(m["snr"])
@@ -228,6 +249,8 @@ def main():
     p.add_argument("--reps", type=int, default=64, help="random micro-batch subsets")
     p.add_argument("--T-min-frac", type=float, default=0.25,
                    help="unequal: L ~ Uniform{ceil(frac*T)..T}")
+    p.add_argument("--alpha", type=float, default=0.0,
+                   help="0=forward KL, 1=reverse KL, else generalized JSD")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--out", type=str, default="")
     args = p.parse_args()
@@ -239,13 +262,14 @@ def main():
     teacher_logits = torch.randn(args.V, args.V) * 1.5
     teacher = F.softmax(teacher_logits, -1)
     teacher_lp = F.log_softmax(teacher_logits, -1)
+    print(f"divergence={divergence_name(args.alpha)}  alpha={args.alpha}")
 
     all_rows = []
     for T in args.T:
         # Equal lengths
         all_rows += run_setting(
             "equal_lengths", theta, teacher, teacher_lp, T, args.N,
-            args.batch_size, lengths=None, survival=None, reps=args.reps,
+            args.batch_size, lengths=None, survival=None, reps=args.reps, alpha=args.alpha,
         )
 
         # Unequal lengths: L ~ Uniform{T_min..T}
@@ -263,12 +287,13 @@ def main():
               f"survival[0]={survival[0]:.3f}  survival[T/2]={survival[T//2]:.3f}")
         all_rows += run_setting(
             "unequal_lengths", theta, teacher, teacher_lp, T, args.N,
-            args.batch_size, lengths=lengths, survival=survival, reps=args.reps,
+            args.batch_size, lengths=lengths, survival=survival, reps=args.reps, alpha=args.alpha,
         )
 
     # Compact comparison table: equal vs unequal cos at micro-batch
     print("\n" + "=" * 78)
-    print("SUMMARY  (micro-batch cosine → exact; equal vs unequal)")
+    print("SUMMARY  (micro-batch cosine → exact; equal vs unequal; "
+          f"{divergence_name(args.alpha)})")
     print("=" * 78)
     for T in args.T:
         print(f"\nT={T}, B={args.batch_size}")
