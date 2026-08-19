@@ -1128,6 +1128,25 @@ def masked_leave_one_out_baseline(values: torch.Tensor, mask: torch.Tensor) -> t
     return others_sum / others_count
 
 
+def future_returns_token_scale(loss_mask: torch.Tensor, mode: str = "none") -> torch.Tensor:
+    """Per-token divisor for future-return rewards, shape ``[B, T]``.
+
+    ``seq_len`` uses T_i = loss_mask.sum(1). ``remaining`` uses N_rem(t) = (T_i - t).clamp(min=1).
+    """
+    mode = (mode or "none").lower()
+    if mode in ("none", "off"):
+        return torch.ones_like(loss_mask)
+    seq_len = loss_mask.sum(dim=1, keepdim=True).clamp(min=1.0)
+    if mode in ("seq_len", "t", "length"):
+        return seq_len.expand_as(loss_mask)
+    if mode in ("remaining", "n_rem"):
+        positions = torch.arange(loss_mask.size(1), device=loss_mask.device, dtype=loss_mask.dtype).unsqueeze(0)
+        return (seq_len - positions).clamp(min=1.0)
+    raise ValueError(
+        f"future_returns_reward_scale must be one of {{'none', 'remaining', 'seq_len'}}, got {mode}"
+    )
+
+
 def compute_self_distillation_loss(
     student_log_probs: torch.Tensor,
     teacher_log_probs: torch.Tensor,
@@ -1212,7 +1231,11 @@ def compute_self_distillation_loss(
         if self_distillation_config.use_future_returns:
             # Future discounted returns of next-token KL rewards:
             # G_t = r_{t+1} + gamma * r_{t+2} + gamma^2 * r_{t+3} + ...
-            reward = kl_loss.sum(-1).detach()*loss_mask
+            reward = kl_loss.sum(-1).detach() * loss_mask
+            reward_scale = future_returns_token_scale(
+                loss_mask, getattr(self_distillation_config, "future_returns_reward_scale", "none")
+            )
+            reward = reward / reward_scale
             reward_shifted = torch.concat([reward[:, 1:], torch.zeros_like(reward[:, :1])], dim=1)
             reward_reversed = torch.flip(reward_shifted, dims=[1])
             reward_cumsum = torch.flip(
@@ -1244,18 +1267,26 @@ def compute_self_distillation_loss(
             reward = torch.clamp(reward, min=self_distillation_config.clamp_low, max=self_distillation_config.clamp_high)
         
         if self_distillation_config.use_future_returns:
-            reward = reward*loss_mask
-            reward_reversed = torch.flip(reward, dims=[1])
-            reward = torch.flip(
-                discounted_cumsum(reward_reversed, self_distillation_config.gamma),
-                dims=[1],
+            # G(r - E[r_t]): center per-token reward (LOO over batch at each t), then
+            # undiscounted/discounted cumsum. Unlike full-logit, this path has no
+            # separate direct KL term, so G_t includes r_t (unshifted).
+            reward = reward * loss_mask
+            reward_scale = future_returns_token_scale(
+                loss_mask, getattr(self_distillation_config, "future_returns_reward_scale", "none")
             )
+            reward = reward / reward_scale
             if getattr(self_distillation_config, "use_future_returns_baseline", True):
                 baseline = masked_leave_one_out_baseline(reward, loss_mask)
                 metrics["self_distillation/future_returns_baseline"] = (
                     (baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
                 ).item()
-                reward = reward - baseline
+                reward = (reward - baseline) * loss_mask
+            reward_reversed = torch.flip(reward, dims=[1])
+            reward = torch.flip(
+                discounted_cumsum(reward_reversed, self_distillation_config.gamma),
+                dims=[1],
+            )
+
         # Sampled-token path is already a PG objective; CISPO below covers future returns too.
         per_token_loss = -reward.detach() * student_log_probs
 

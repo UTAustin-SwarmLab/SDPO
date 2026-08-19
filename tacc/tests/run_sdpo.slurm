@@ -141,6 +141,7 @@ DONT_REPROMPT_ON_SELF_SUCCESS=${DONT_REPROMPT_ON_SELF_SUCCESS:-True}
 MODEL_PATH=${MODEL_PATH:-"Qwen/Qwen3-4B"}
 USE_FUTURE_RETURNS=${USE_FUTURE_RETURNS:-False}
 USE_FUTURE_RETURNS_BASELINE=${USE_FUTURE_RETURNS_BASELINE:-False}
+FUTURE_RETURNS_REWARD_SCALE=${FUTURE_RETURNS_REWARD_SCALE:-none}
 GAMMA=${GAMMA:-1.0}
 RAY_DASHBOARD_PORT=${RAY_DASHBOARD_PORT:-8170}
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
@@ -163,7 +164,7 @@ ICL_VALIDATION=${ICL_VALIDATION:-True}
 ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-teacher}
 LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 
-EXP_NAME="LOCAL-SDPO-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-model${MODEL_PATH}-${SUFFIX}"
+EXP_NAME="LOCAL-SDPO-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-s${FUTURE_RETURNS_REWARD_SCALE}-model${MODEL_PATH}-${SUFFIX}"
 
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
 data.val_batch_size=$TRAIN_BATCH_SIZE \
@@ -191,6 +192,7 @@ actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
 actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
+actor_rollout_ref.actor.self_distillation.future_returns_reward_scale=$FUTURE_RETURNS_REWARD_SCALE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.55 \
 actor_rollout_ref.rollout.val_kwargs.n=4 \
@@ -212,7 +214,7 @@ echo "Data: $DATA_PATH"
 echo "Task: $TASK"
 echo "Model: $MODEL_PATH"
 echo "Ray dashboard port: $RAY_DASHBOARD_PORT"
-echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE)"
+echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE, reward_scale=$FUTURE_RETURNS_REWARD_SCALE)"
 echo "GPUs per node: 1"
 echo "----------------------------------------------------------------"
 

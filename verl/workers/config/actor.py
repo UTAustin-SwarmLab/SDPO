@@ -66,6 +66,13 @@ class SelfDistillationConfig(BaseConfig):
         use_future_returns_baseline (bool): If True (default), subtract a position-wise leave-one-out
             batch mean of the future returns before the policy-gradient term. Unbiased variance
             reduction; required for usable SNR at typical micro-batch sizes.
+            Full-logit path centers G_t after the cumsum (G - E[G_t]). Sampled-token path
+            centers the per-token reward before the cumsum (G(r - E[r_t])).
+        future_returns_reward_scale (str): Optional per-token divisor applied to the distillation
+            reward (after masking, before baseline / cumsum). ``"none"`` (default) leaves r_t
+            unchanged. ``"seq_len"`` divides by the sequence length T_i = loss_mask.sum(1)
+            (constant over t). ``"remaining"`` divides by N_rem(t) = (T_i - t).clamp(min=1),
+            the number of valid tokens from t through the end of the response.
         use_reward_baseline (bool): If True, subtract a position-wise leave-one-out batch mean of the
             distillation reward before forming SDQL Bellman targets (``r + gamma * next_q``).
             Same variance-reduction idea as ``use_future_returns_baseline`` for SDPO.
@@ -104,6 +111,7 @@ class SelfDistillationConfig(BaseConfig):
     use_rover_clip: bool = False
     use_future_returns: bool = False
     use_future_returns_baseline: bool = False
+    future_returns_reward_scale: str = "none"
     use_reward_baseline: bool = False
     use_reward_clamp: bool = True
     response_level_rover_loss: bool = False
@@ -172,6 +180,14 @@ class SelfDistillationConfig(BaseConfig):
             raise ValueError(
                 "self_distillation.target_q_mode must be one of {'uniform', 'max', 'on-policy'}, "
                 f"got {self.target_q_mode}"
+            )
+        if self.future_returns_reward_scale is None:
+            self.future_returns_reward_scale = "none"
+        valid_fr_scale = {"none", "remaining", "seq_len"}
+        if self.future_returns_reward_scale not in valid_fr_scale:
+            raise ValueError(
+                "self_distillation.future_returns_reward_scale must be one of "
+                f"{valid_fr_scale}, got {self.future_returns_reward_scale}"
             )
 
 

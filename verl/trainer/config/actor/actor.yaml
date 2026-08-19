@@ -107,7 +107,14 @@ self_distillation:
 
   # If true, subtract a position-wise leave-one-out batch mean of the future returns
   # before the PG term. Unbiased variance reduction; only applied when use_future_returns.
+  # Full-logit: centers G_t (G - E[G_t]). Sampled-token: centers r_t then cumsum (G(r - E[r_t])).
   use_future_returns_baseline: true
+
+  # Divide per-token distillation reward before baseline / future-return cumsum.
+  #   none      – r_t unchanged
+  #   seq_len   – r_t / T_i, T_i = loss_mask.sum(1)
+  #   remaining – r_t / N_rem(t), N_rem(t) = (T_i - t).clamp(min=1)
+  future_returns_reward_scale: "none"
 
   # If true, subtract a position-wise leave-one-out batch mean of the distillation reward
   # before forming SDQL Bellman targets (r + gamma * next_q).

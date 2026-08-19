@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Usage: USE_FUTURE_RETURNS=True USE_FUTURE_RETURNS_BASELINE=True GAMMA=1.0 ENABLE_ICL=True ./run_sdpo_all.sh [--dry-run]
+# Usage: USE_FUTURE_RETURNS=True USE_FUTURE_RETURNS_BASELINE=True FUTURE_RETURNS_REWARD_SCALE=none GAMMA=1.0 ENABLE_ICL=True ./run_sdpo_all.sh [--dry-run]
 #
 # TACC generalization sweep for SDPO baseline.
 # Mirrors experiments/generalization/run_sdpo_all.sh.
@@ -8,6 +8,8 @@
 # Set USE_FUTURE_RETURNS=True to enable discounted future-KL returns (default: False).
 # Set USE_FUTURE_RETURNS_BASELINE=True to subtract leave-one-out baseline (default: False;
 # only applied when USE_FUTURE_RETURNS is enabled; appends -baseline to the gae tag).
+# Set FUTURE_RETURNS_REWARD_SCALE=none|remaining|seq_len (default: none). Divides r_t
+# before baseline/cumsum; remaining = N_rem(t), seq_len = T_i. Appends -s* to the gae tag.
 
 DRY_RUN=false
 if [[ "${1:-}" == "--dry-run" ]]; then
@@ -25,6 +27,7 @@ DATA_PATHS=(
 ENABLE_ICL="${ENABLE_ICL:-False}"
 USE_FUTURE_RETURNS="${USE_FUTURE_RETURNS:-False}"
 USE_FUTURE_RETURNS_BASELINE="${USE_FUTURE_RETURNS_BASELINE:-False}"
+FUTURE_RETURNS_REWARD_SCALE="${FUTURE_RETURNS_REWARD_SCALE:-none}"
 GAMMA="${GAMMA:-1.0}"
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
@@ -54,6 +57,7 @@ if [[ "${USE_FUTURE_RETURNS}" == "True" || "${USE_FUTURE_RETURNS}" == "true" || 
     if [[ "${USE_FUTURE_RETURNS_BASELINE}" == "True" || "${USE_FUTURE_RETURNS_BASELINE}" == "true" || "${USE_FUTURE_RETURNS_BASELINE}" == "1" ]]; then
         RETURNS_TAG="${RETURNS_TAG}-baseline"
     fi
+    RETURNS_TAG="${RETURNS_TAG}-rs${FUTURE_RETURNS_REWARD_SCALE}"
 else
     RETURNS_TAG="nogae"
 fi
@@ -69,7 +73,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                 for CISPO_CLIP in "${CISPO_CLIPS[@]}"; do
                                     for DATA_PATH in "${DATA_PATHS[@]}"; do
                                         EXP_NAME="FINAL-SDPO-${ICL_TAG}-${RETURNS_TAG}-isclip${IS_CLIP}-cispoclip${CISPO_CLIP}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
-                                        CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdpo.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}" "${TEACHER_UPDATE_RATE}" "${ENABLE_ICL}" "${IS_CLIP}" "${USE_FUTURE_RETURNS}" "${GAMMA}" "${USE_FUTURE_RETURNS_BASELINE}" "${CISPO_CLIP}")
+                                        CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdpo.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}" "${TEACHER_UPDATE_RATE}" "${ENABLE_ICL}" "${IS_CLIP}" "${USE_FUTURE_RETURNS}" "${GAMMA}" "${USE_FUTURE_RETURNS_BASELINE}" "${CISPO_CLIP}" "${FUTURE_RETURNS_REWARD_SCALE}")
                                         if [[ "$DRY_RUN" == true ]]; then
                                             printf '%q ' "${CMD[@]}"
                                             echo
