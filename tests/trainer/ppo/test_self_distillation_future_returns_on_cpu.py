@@ -23,6 +23,7 @@ from __future__ import annotations
 import itertools
 from types import SimpleNamespace
 
+import numpy as np
 import pytest
 import torch
 import torch.nn.functional as F
@@ -32,6 +33,7 @@ from verl.trainer.ppo.core_algos import (
     compute_self_distillation_loss,
     discounted_cumsum,
     future_returns_token_scale,
+    masked_group_leave_one_out_baseline,
     masked_leave_one_out_baseline,
 )
 
@@ -45,6 +47,7 @@ def _base_cfg(**overrides):
         use_future_returns=True,
         # Exact single-sequence gradient checks compare against the raw future return.
         use_future_returns_baseline=False,
+        future_returns_baseline_mode="group",
         future_returns_reward_scale="none",
         gamma=1.0,
         is_clip=None,
@@ -325,6 +328,27 @@ class TestFutureReturnsBaseline:
         # column 2: nothing valid -> zero baseline
         assert torch.allclose(baseline[:, 2], torch.zeros(3, dtype=torch.float64))
 
+    def test_per_prompt_does_not_mix_groups(self):
+        values = torch.tensor(
+            [[1.0, 2.0], [3.0, 4.0], [10.0, 20.0], [30.0, 40.0]], dtype=torch.float64
+        )
+        mask = torch.ones(4, 2, dtype=torch.float64)
+        index = np.array(["a", "a", "b", "b"], dtype=object)
+        baseline = masked_group_leave_one_out_baseline(values, mask, index=index)
+        # Group a: each row sees only the other a-row
+        assert torch.allclose(baseline[0], values[1])
+        assert torch.allclose(baseline[1], values[0])
+        # Group b: each row sees only the other b-row (not the a-rows)
+        assert torch.allclose(baseline[2], values[3])
+        assert torch.allclose(baseline[3], values[2])
+
+    def test_singleton_prompt_group_gets_zero_baseline(self):
+        values = torch.tensor([[1.0, 2.0], [10.0, 20.0]], dtype=torch.float64)
+        mask = torch.ones(2, 2, dtype=torch.float64)
+        index = np.array(["a", "b"], dtype=object)
+        baseline = masked_group_leave_one_out_baseline(values, mask, index=index)
+        assert torch.allclose(baseline, torch.zeros_like(values))
+
     def test_single_valid_row_gets_zero_baseline(self):
         values = torch.tensor([[5.0], [7.0]], dtype=torch.float64)
         mask = torch.tensor([[1.0], [0.0]], dtype=torch.float64)
@@ -341,6 +365,7 @@ class TestFutureReturnsBaseline:
         s_tok = s_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
         t_tok = t_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
         mask = torch.ones(1, T, dtype=torch.float64)
+        index = np.array(["p0"], dtype=object)
 
         def run(**over):
             loss, _ = compute_self_distillation_loss(
@@ -351,6 +376,7 @@ class TestFutureReturnsBaseline:
                 student_all_log_probs=s_all,
                 teacher_all_log_probs=t_all,
                 loss_agg_mode="seq-mean-token-sum",
+                index=index,
             )
             return loss
 
@@ -359,6 +385,80 @@ class TestFutureReturnsBaseline:
         raw = run(use_future_returns=True, use_future_returns_baseline=False)
         assert torch.allclose(with_baseline, raw)
         assert not torch.allclose(with_baseline, without_pg)
+
+    def test_baseline_requires_prompt_index(self):
+        s_tok = torch.zeros(2, 3, dtype=torch.float64)
+        t_tok = torch.zeros(2, 3, dtype=torch.float64)
+        mask = torch.ones(2, 3, dtype=torch.float64)
+        s_all = F.log_softmax(torch.randn(2, 3, 4, dtype=torch.float64), -1)
+        t_all = F.log_softmax(torch.randn(2, 3, 4, dtype=torch.float64), -1)
+        with pytest.raises(ValueError, match="group"):
+            compute_self_distillation_loss(
+                student_log_probs=s_tok,
+                teacher_log_probs=t_tok,
+                response_mask=mask,
+                self_distillation_config=_base_cfg(
+                    use_future_returns=True,
+                    use_future_returns_baseline=True,
+                    future_returns_baseline_mode="group",
+                ),
+                student_all_log_probs=s_all,
+                teacher_all_log_probs=t_all,
+            )
+
+    def test_batch_baseline_does_not_need_index(self):
+        torch.manual_seed(5)
+        B, T, V = 4, 3, 5
+        s_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        t_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        actions = torch.randint(0, V, (B, T))
+        s_tok = s_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        t_tok = t_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        mask = torch.ones(B, T, dtype=torch.float64)
+        loss, metrics = compute_self_distillation_loss(
+            student_log_probs=s_tok,
+            teacher_log_probs=t_tok,
+            response_mask=mask,
+            self_distillation_config=_base_cfg(
+                use_future_returns=True,
+                use_future_returns_baseline=True,
+                future_returns_baseline_mode="batch",
+            ),
+            student_all_log_probs=s_all,
+            teacher_all_log_probs=t_all,
+            loss_agg_mode="token-mean",
+        )
+        assert torch.isfinite(loss)
+        assert "self_distillation/future_returns_baseline" in metrics
+
+    def test_batch_vs_group_baseline_differ_with_mixed_prompts(self):
+        torch.manual_seed(6)
+        B, T, V = 4, 3, 4
+        s_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        t_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        actions = torch.randint(0, V, (B, T))
+        s_tok = s_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        t_tok = t_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        mask = torch.ones(B, T, dtype=torch.float64)
+        index = np.array(["a", "a", "b", "b"], dtype=object)
+
+        def run(mode: str):
+            return compute_self_distillation_loss(
+                student_log_probs=s_tok,
+                teacher_log_probs=t_tok,
+                response_mask=mask,
+                self_distillation_config=_base_cfg(
+                    use_future_returns=True,
+                    use_future_returns_baseline=True,
+                    future_returns_baseline_mode=mode,
+                ),
+                student_all_log_probs=s_all,
+                teacher_all_log_probs=t_all,
+                loss_agg_mode="token-mean",
+                index=index,
+            )[0]
+
+        assert not torch.allclose(run("group"), run("batch"))
 
     def test_full_logit_baseline_reduces_return_magnitude(self):
         torch.manual_seed(0)
@@ -371,14 +471,16 @@ class TestFutureReturnsBaseline:
         t_tok = t_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
         mask = torch.ones(B, T, dtype=torch.float64)
         mask[:, -1] = 0.0  # pad last token on all seqs
+        # Two prompt groups of 4; LOO must not mix across prompts.
+        index = np.array(["p0"] * 4 + ["p1"] * 4, dtype=object)
 
         with torch.no_grad():
             kl = F.kl_div(s_all, t_all, reduction="none", log_target=True).sum(-1)
             reward = kl * mask
             shifted = torch.cat([reward[:, 1:], torch.zeros_like(reward[:, :1])], dim=1)
             G = torch.flip(discounted_cumsum(torch.flip(shifted, dims=[1]), 1.0), dims=[1])
-            centered = G - masked_leave_one_out_baseline(G, mask)
-            assert (centered * mask).abs().sum() < (G * mask).abs().sum()
+            centered = G - masked_group_leave_one_out_baseline(G, mask, index=index)
+            assert (centered * mask).abs().sum() < (G_raw * mask).abs().sum()
 
         loss, metrics = compute_self_distillation_loss(
             student_log_probs=s_tok,
@@ -388,9 +490,43 @@ class TestFutureReturnsBaseline:
             student_all_log_probs=s_all,
             teacher_all_log_probs=t_all,
             loss_agg_mode="seq-mean-token-sum",
+            index=index,
         )
         assert torch.isfinite(loss)
+        assert "self_distillation/future_returns_reward_baseline" in metrics
         assert "self_distillation/future_returns_baseline" in metrics
+
+    def test_full_logit_baseline_is_center_r_then_center_g(self):
+        """Full-logit + baseline = (G(r - E[r]) - E[G])."""
+        torch.manual_seed(4)
+        B, T, V = 6, 4, 5
+        s_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        t_all = F.log_softmax(torch.randn(B, T, V, dtype=torch.float64), -1)
+        actions = torch.randint(0, V, (B, T))
+        s_tok = s_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1).requires_grad_(True)
+        t_tok = t_all.gather(-1, actions.unsqueeze(-1)).squeeze(-1)
+        mask = torch.ones(B, T, dtype=torch.float64)
+        index = np.array(["p0"] * B, dtype=object)
+        cfg = _base_cfg(use_future_returns=True, use_future_returns_baseline=True, gamma=1.0)
+
+        loss, _ = compute_self_distillation_loss(
+            student_log_probs=s_tok,
+            teacher_log_probs=t_tok,
+            response_mask=mask,
+            self_distillation_config=cfg,
+            student_all_log_probs=s_all,
+            teacher_all_log_probs=t_all,
+            loss_agg_mode="seq-mean-token-sum",
+            index=index,
+        )
+        with torch.no_grad():
+            kl = F.kl_div(s_all, t_all, reduction="none", log_target=True).sum(-1) * mask
+            r_c = (kl - masked_group_leave_one_out_baseline(kl, mask, index=index)) * mask
+            shifted = torch.cat([r_c[:, 1:], torch.zeros_like(r_c[:, :1])], dim=1)
+            G = torch.flip(discounted_cumsum(torch.flip(shifted, dims=[1]), 1.0), dims=[1])
+            G_c = G - masked_group_leave_one_out_baseline(G, mask, index=index)
+            expected = ((kl + G_c * s_tok) * mask).sum() / B
+        assert torch.allclose(loss, expected)
 
     def test_sampled_logit_baseline_runs(self):
         torch.manual_seed(1)
@@ -406,24 +542,29 @@ class TestFutureReturnsBaseline:
         s_tok = torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0
         t_tok = torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0
         mask = torch.ones(B, T, dtype=torch.float64)
+        index = np.array(["p0"] * 3 + ["p1"] * 3, dtype=object)
         loss, metrics = compute_self_distillation_loss(
             student_log_probs=s_tok,
             teacher_log_probs=t_tok,
             response_mask=mask,
             self_distillation_config=cfg,
             loss_agg_mode="token-mean",
+            index=index,
         )
         assert torch.isfinite(loss)
+        assert "self_distillation/future_returns_reward_baseline" in metrics
         assert "self_distillation/future_returns_baseline" in metrics
 
-    def test_sampled_baseline_is_g_of_centered_reward(self):
-        """Sampled-token + baseline = G(r - LOO E[r_t]), not G - E[G]."""
+    def test_sampled_baseline_is_center_r_then_center_g(self):
+        """Sampled-token + baseline = (G(r - E[r]) - E[G])."""
         torch.manual_seed(2)
         B, T = 5, 4
         s_tok = (torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0).requires_grad_(True)
         t_tok = torch.randn(B, T, dtype=torch.float64).clamp(max=0.0) - 1.0
         mask = torch.ones(B, T, dtype=torch.float64)
         mask[-1, 2:] = 0.0
+        # Treat the whole batch as one prompt group so LOO matches the hand-derived target.
+        index = np.array(["p0"] * B, dtype=object)
         cfg = _base_cfg(
             full_logit_distillation=False,
             alpha=1.0,
@@ -438,11 +579,13 @@ class TestFutureReturnsBaseline:
             response_mask=mask,
             self_distillation_config=cfg,
             loss_agg_mode="seq-mean-token-sum",
+            index=index,
         )
         r = (t_tok - s_tok).detach() * mask
-        r_c = (r - masked_leave_one_out_baseline(r, mask)) * mask
+        r_c = (r - masked_group_leave_one_out_baseline(r, mask, index=index)) * mask
         G = torch.flip(discounted_cumsum(torch.flip(r_c, dims=[1]), 1.0), dims=[1])
-        expected = -(G.detach() * s_tok * mask).sum() / B
+        G_c = G - masked_group_leave_one_out_baseline(G, mask, index=index)
+        expected = -(G_c.detach() * s_tok * mask).sum() / B
         assert torch.allclose(loss, expected)
 
     @pytest.mark.parametrize("mode,divisor_fn", [

@@ -19,6 +19,7 @@ actor_rollout_ref:
       max_reprompt_len: 10240
       is_clip: 2.0
       cispo_clip: 0.2
+      future_returns_baseline_mode: group
       use_solution: False
       use_feedback: True
       use_response: True

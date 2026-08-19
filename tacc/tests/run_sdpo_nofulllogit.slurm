@@ -124,6 +124,7 @@ USE_REWARD_CLAMP="${USE_REWARD_CLAMP:-True}"
 IS_CLIP="${IS_CLIP:-0.2}"
 USE_FUTURE_RETURNS="${USE_FUTURE_RETURNS:-False}"
 USE_FUTURE_RETURNS_BASELINE="${USE_FUTURE_RETURNS_BASELINE:-False}"
+FUTURE_RETURNS_BASELINE_MODE="${FUTURE_RETURNS_BASELINE_MODE:-group}"
 FUTURE_RETURNS_REWARD_SCALE="${FUTURE_RETURNS_REWARD_SCALE:-none}"
 GAMMA="${GAMMA:-1.0}"
 DONT_REPROMPT_ON_SELF_SUCCESS="${DONT_REPROMPT_ON_SELF_SUCCESS:-True}"
@@ -151,7 +152,7 @@ OUTPUT_DIR="${WORK}/output/SDPO-nofulllogit-test"
 CKPT_DIR="${OUTPUT_DIR}/checkpoints"
 mkdir -p "$OUTPUT_DIR" "$CKPT_DIR"
 
-EXP_NAME="${EXP_NAME:-SMOKE-SDPO-nofulllogit-${CLAMP_TAG}-a${ALPHA}-s${FUTURE_RETURNS_REWARD_SCALE}-$(date +%Y%m%d-%H%M%S)}"
+EXP_NAME="${EXP_NAME:-SMOKE-SDPO-nofulllogit-${CLAMP_TAG}-a${ALPHA}-s${FUTURE_RETURNS_REWARD_SCALE}-bl${FUTURE_RETURNS_BASELINE_MODE}-$(date +%Y%m%d-%H%M%S)}"
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
 data.val_batch_size=$TRAIN_BATCH_SIZE \
 trainer.experiment_name=$EXP_NAME \
@@ -186,6 +187,7 @@ actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
 actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
+actor_rollout_ref.actor.self_distillation.future_returns_baseline_mode=$FUTURE_RETURNS_BASELINE_MODE \
 actor_rollout_ref.actor.self_distillation.future_returns_reward_scale=$FUTURE_RETURNS_REWARD_SCALE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=2 \
 actor_rollout_ref.rollout.gpu_memory_utilization=0.5 \
@@ -209,6 +211,6 @@ echo "Alpha: $ALPHA"
 echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP, tag=$CLAMP_TAG)"
 echo "is_clip: $IS_CLIP"
 echo "full_logit_distillation: False"
-echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE, reward_scale=$FUTURE_RETURNS_REWARD_SCALE)"
+echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE, baseline_mode=$FUTURE_RETURNS_BASELINE_MODE, reward_scale=$FUTURE_RETURNS_REWARD_SCALE)"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

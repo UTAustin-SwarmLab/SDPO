@@ -105,10 +105,14 @@ self_distillation:
   # distillation rewards via an extra policy-gradient term.
   use_future_returns: false
 
-  # If true, subtract a position-wise leave-one-out batch mean of the future returns
-  # before the PG term. Unbiased variance reduction; only applied when use_future_returns.
-  # Full-logit: centers G_t (G - E[G_t]). Sampled-token: centers r_t then cumsum (G(r - E[r_t])).
+  # If true, subtract leave-one-out means: first center per-token reward r_t,
+  # form future returns G, then center G as well. Only when use_future_returns.
   use_future_returns_baseline: true
+
+  # Scope of the leave-one-out baseline when use_future_returns_baseline is true:
+  #   group – LOO within each prompt uid group (requires batch uid / index)
+  #   batch – LOO over the full microbatch (no uid required)
+  future_returns_baseline_mode: group
 
   # Divide per-token distillation reward before baseline / future-return cumsum.
   #   none      – r_t unchanged
@@ -116,8 +120,9 @@ self_distillation:
   #   remaining – r_t / N_rem(t), N_rem(t) = (T_i - t).clamp(min=1)
   future_returns_reward_scale: "none"
 
-  # If true, subtract a position-wise leave-one-out batch mean of the distillation reward
-  # before forming SDQL Bellman targets (r + gamma * next_q).
+  # If true, subtract a position-wise leave-one-out mean of the distillation reward
+  # within each prompt group (uid) before forming SDQL Bellman targets
+  # (r + gamma * next_q). Requires batch uid / prompt index.
   use_reward_baseline: false
 
   # If true, clamp sampled-token distillation rewards to [clamp_low, clamp_high].

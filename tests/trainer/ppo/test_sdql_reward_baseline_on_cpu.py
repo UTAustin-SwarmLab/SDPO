@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
+import numpy as np
 import pytest
 import torch
 import torch.nn.functional as F
@@ -86,6 +87,7 @@ class TestSdqlRewardBaseline:
                 old_all_log_probs=old_all,
                 student_all_log_probs=s_all,
                 loss_agg_mode="token-mean",
+                index=np.array(["p0"] * B, dtype=object),
             )
 
         loss_on, metrics_on = run(True)
@@ -121,6 +123,7 @@ class TestSdqlRewardBaseline:
             student_topk_log_probs=s_topk,
             teacher_topk_log_probs=t_topk,
             loss_agg_mode="token-mean",
+            index=np.array(["p0"] * B, dtype=object),
         )
         assert torch.isfinite(loss)
         assert "sdql/reward_baseline" in metrics

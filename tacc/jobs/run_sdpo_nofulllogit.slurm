@@ -140,6 +140,7 @@ GAMMA=${18:-1.0}
 USE_FUTURE_RETURNS_BASELINE=${19:-False}
 CISPO_CLIP=${20:-0.2}
 FUTURE_RETURNS_REWARD_SCALE=${21:-${FUTURE_RETURNS_REWARD_SCALE:-none}}
+FUTURE_RETURNS_BASELINE_MODE=${22:-${FUTURE_RETURNS_BASELINE_MODE:-group}}
 
 if [[ "${USE_REWARD_CLAMP}" == "True" || "${USE_REWARD_CLAMP}" == "true" || "${USE_REWARD_CLAMP}" == "1" ]]; then
     CLAMP_TAG="clamp${CLAMP_LOW}_${CLAMP_HIGH}"
@@ -215,6 +216,7 @@ actor_rollout_ref.actor.self_distillation.teacher_update_rate=$TEACHER_UPDATE_RA
 actor_rollout_ref.actor.self_distillation.use_future_returns=$USE_FUTURE_RETURNS \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
 actor_rollout_ref.actor.self_distillation.use_future_returns_baseline=$USE_FUTURE_RETURNS_BASELINE \
+actor_rollout_ref.actor.self_distillation.future_returns_baseline_mode=$FUTURE_RETURNS_BASELINE_MODE \
 actor_rollout_ref.actor.self_distillation.future_returns_reward_scale=$FUTURE_RETURNS_REWARD_SCALE \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
@@ -238,7 +240,7 @@ echo "full_logit_distillation: False"
 echo "is_clip: $IS_CLIP"
 echo "cispo_clip: $CISPO_CLIP"
 echo "Clamp: [$CLAMP_LOW, $CLAMP_HIGH] (use_reward_clamp=$USE_REWARD_CLAMP, tag=$CLAMP_TAG)"
-echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE, reward_scale=$FUTURE_RETURNS_REWARD_SCALE)"
+echo "use_future_returns: $USE_FUTURE_RETURNS (gamma=$GAMMA, baseline=$USE_FUTURE_RETURNS_BASELINE, baseline_mode=$FUTURE_RETURNS_BASELINE_MODE, reward_scale=$FUTURE_RETURNS_REWARD_SCALE)"
 echo "----------------------------------------------------------------"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS
