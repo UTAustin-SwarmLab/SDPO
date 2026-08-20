@@ -35,17 +35,16 @@ GAMMA="${GAMMA:-1.0}"
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
 MINI_BATCH_SIZES=(16)
-LRS=(3e-6)
+LRS=(1e-5)
 ALPHAS=(0.0 0.5 1.0)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
-TOPK=50
-TEACHER_UPDATE_RATE=0.05
+TOPK=100
+TEACHER_UPDATE_RATE=0.01
 # One-sided IS ratio clip for full-logit distill KL (null disables IS weighting).
 IS_CLIPS=(2.0)
 # CISPO-style symmetric clip for the future-returns PG term: ratio ∈ [1-cispo_clip, 1+cispo_clip].
-CISPO_CLIPS=(0.2)
+CISPO_CLIPS=(0.99)
 MODEL_PATHS=(
-    "allenai/Olmo-3-7B-Instruct"
     "Qwen/Qwen3-8B"
 )
 
