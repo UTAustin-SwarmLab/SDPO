@@ -96,6 +96,12 @@ class SelfDistillationConfig(BaseConfig):
         reprompt_template_feedback_solution (str): Template for reprompting with both feedback and solution.
     """
 
+    # __post_init__ normalizes these; BaseConfig freezes declared fields otherwise.
+    _mutable_fields = BaseConfig._mutable_fields | {
+        "future_returns_baseline_mode",
+        "future_returns_reward_scale",
+    }
+
     full_logit_distillation: bool = True
     alpha: float = 0.0
     success_reward_threshold: float = 1.0

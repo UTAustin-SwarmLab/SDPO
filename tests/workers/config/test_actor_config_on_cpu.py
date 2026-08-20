@@ -21,6 +21,7 @@ from verl.workers.config import (
     FSDPActorConfig,
     McoreActorConfig,
     OptimizerConfig,
+    SelfDistillationConfig,
 )
 
 
@@ -250,6 +251,23 @@ class TestActorConfig(unittest.TestCase):
         with self.assertRaises(ValueError) as cm:
             config.validate(n_gpus=16, train_batch_size=512)
         self.assertIn("must be >= n_gpus", str(cm.exception))
+
+    def test_self_distillation_config_post_init_normalization(self):
+        """__post_init__ must be able to write frozen-by-default BaseConfig fields."""
+        cfg = SelfDistillationConfig()
+        self.assertEqual(cfg.future_returns_baseline_mode, "group")
+        self.assertEqual(cfg.future_returns_reward_scale, "none")
+
+        cfg = SelfDistillationConfig(
+            future_returns_baseline_mode="GROUP",
+            future_returns_reward_scale=None,
+        )
+        self.assertEqual(cfg.future_returns_baseline_mode, "group")
+        self.assertEqual(cfg.future_returns_reward_scale, "none")
+
+        with self.assertRaises(ValueError) as cm:
+            SelfDistillationConfig(future_returns_baseline_mode="invalid")
+        self.assertIn("future_returns_baseline_mode", str(cm.exception))
 
 
 if __name__ == "__main__":
