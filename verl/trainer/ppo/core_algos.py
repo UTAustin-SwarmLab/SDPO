@@ -1314,10 +1314,6 @@ def compute_self_distillation_loss(
             # G_t = r_{t+1} + gamma * r_{t+2} + gamma^2 * r_{t+3} + ...
             # Baseline: center r_t within each prompt group, form G, then center G.
             reward = kl_loss.sum(-1).detach() * loss_mask
-            reward_scale = future_returns_token_scale(
-                loss_mask, getattr(self_distillation_config, "future_returns_reward_scale", "none")
-            )
-            reward = reward / reward_scale
             if getattr(self_distillation_config, "use_future_returns_baseline", True):
                 reward_baseline = _loo(reward)
                 metrics["self_distillation/future_returns_reward_baseline"] = (
@@ -1336,8 +1332,12 @@ def compute_self_distillation_loss(
             #         (returns_baseline * loss_mask).sum() / loss_mask.sum().clamp(min=1.0)
             #     ).item()
             #     reward_cumsum = reward_cumsum - returns_baseline
+            reward_scale = future_returns_token_scale(
+                loss_mask, getattr(self_distillation_config, "future_returns_reward_scale", "none")
+            )
+            reward_cumsum = reward_cumsum / reward_scale
             future_pg_loss = reward_cumsum * student_log_probs
-            metrics["self_distillation/future_kl_token_loss"] = future_pg_loss.mean().item()
+            metrics["self_distillation/future_kl_token_loss"] = ((future_pg_loss*loss_mask).sum()/loss_mask.sum().clamp(min=1.0)).item()
 
     else:
         future_pg_loss = None
@@ -1358,10 +1358,6 @@ def compute_self_distillation_loss(
             # Unlike full-logit, this path has no separate direct KL term, so G_t
             # includes r_t (unshifted). Baseline: center r, form G, then center G.
             reward = reward * loss_mask
-            reward_scale = future_returns_token_scale(
-                loss_mask, getattr(self_distillation_config, "future_returns_reward_scale", "none")
-            )
-            reward = reward / reward_scale
             if getattr(self_distillation_config, "use_future_returns_baseline", True):
                 reward_baseline = _loo(reward)
                 metrics["self_distillation/future_returns_reward_baseline"] = (
@@ -1373,6 +1369,11 @@ def compute_self_distillation_loss(
                 discounted_cumsum(reward_reversed, self_distillation_config.gamma),
                 dims=[1],
             )
+            
+            reward_scale = future_returns_token_scale(
+                loss_mask, getattr(self_distillation_config, "future_returns_reward_scale", "none")
+            )
+            reward = reward / reward_scale
             # if getattr(self_distillation_config, "use_future_returns_baseline", True):
             #     returns_baseline = _loo(reward)
             #     metrics["self_distillation/future_returns_baseline"] = (
@@ -1825,15 +1826,41 @@ def compute_self_distillation_q_loss(
             
         # 
         # 
+        def gather_sampled_topk(values: torch.Tensor) -> torch.Tensor:
+            """Take ``values`` at the sampled token over the top-k (+ optional tail) support."""
+            if sampled_token_ids is None or student_topk_indices is None:
+                raise ValueError(
+                    "sampled_token_ids and student_topk_indices are required to gather the sampled logit."
+                )
+            sampled_in_topk = student_topk_indices.eq(sampled_token_ids.unsqueeze(-1))
+            k = sampled_in_topk.size(-1)
+            sampled_mask = sampled_in_topk.to(values.dtype)
+            gathered = (values[..., :k] * sampled_mask).sum(dim=-1)
+            if values.size(-1) == k + 1:
+                in_topk = sampled_in_topk.any(dim=-1)
+                gathered = torch.where(in_topk, gathered, values[..., -1])
+            elif values.size(-1) != k:
+                raise ValueError(
+                    f"values last dim ({values.size(-1)}) must be K={k} or K+1 (tail)."
+                )
+            return gathered
+
         if self_distillation_config.alpha == 0.0:
-            reward = (teacher_distill_log_probs - student_distill_log_probs).exp().detach()
+            log_ratio = teacher_distill_log_probs - student_distill_log_probs
+            reward = log_ratio.exp().detach()
+            reward_step = gather_sampled_topk(log_ratio).detach()
         elif self_distillation_config.alpha == 1.0:
-            reward = (teacher_distill_log_probs - student_distill_log_probs).detach()
+            log_ratio = teacher_distill_log_probs - student_distill_log_probs
+            reward = log_ratio.detach()
+            reward_step = gather_sampled_topk(log_ratio).detach()
         else:
             mixed_logits = (1-self_distillation_config.alpha) * teacher_distill_log_probs.exp() + self_distillation_config.alpha * student_distill_log_probs.exp()
             mixed_logits_log = torch.log(mixed_logits) 
             mixed_logits_log = renorm_topk_log_probs(mixed_logits_log)
             reward = (mixed_logits_log - student_distill_log_probs).detach()
+            # reward is over the top-k support; reward_step is that mixture at the sampled token.
+            reward_step = gather_sampled_topk(mixed_logits_log - student_distill_log_probs).detach()
+            
             #raise ValueError("Only forward KL and reverse KL are supported for non-full-logit distillation")
             # # Compute the log of the mixture distribution
             # # log(a + b) = log(exp(log(a)) + exp(log(b))) -> for mixture
@@ -1888,6 +1915,7 @@ def compute_self_distillation_q_loss(
                 metrics["sdql/reward_baseline"] = baseline_mean.item()
             reward = reward - baseline
         
+        
         if self_distillation_config.target_q_mode == "uniform":
             target_q_vals = reward.detach() + gamma * next_q_vals.mean(-1, keepdim=True)
         elif self_distillation_config.target_q_mode == "max":
@@ -1899,6 +1927,23 @@ def compute_self_distillation_q_loss(
                 [student_distill_log_probs[:, 1:, :], zero_tail_logp], dim=1
             )
             target_q_vals = reward.detach() + gamma * next_q_vals * next_student_log_probs.exp().detach()
+        elif self_distillation_config.target_q_mode == "on-policy-lambda":
+            zero_tail_logp = torch.zeros_like(student_distill_log_probs[:, :1, :])
+            next_student_log_probs = torch.cat(
+                [student_distill_log_probs[:, 1:, :], zero_tail_logp], dim=1
+            )
+            # Reward obtain earlier is of shape bsz, seq, topk ; so reward_step is of shape bsz, seq, 1
+            values = next_q_vals * next_student_log_probs.exp().detach()
+            lambda_ = self_distillation_config.lambda_ 
+            lambda_returns = torch.zeros_like(values)
+            for t in range(values.size(1)):
+                if t == 0:
+                    continue
+                
+                index = values.size(1) - t - 1
+                lambda_returns[:, index] = reward[:, index] + gamma( (1- lambda_) * values[:, index] + lambda_ * lambda_returns[:, index+1])     
+                
+            target_q_vals = lambda_returns.detach()
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
