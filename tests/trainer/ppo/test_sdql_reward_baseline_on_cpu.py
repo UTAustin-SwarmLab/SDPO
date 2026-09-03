@@ -127,3 +127,74 @@ class TestSdqlRewardBaseline:
         )
         assert torch.isfinite(loss)
         assert "sdql/reward_baseline" in metrics
+
+
+class TestSdqlFullLogitLambdaReturns:
+    def test_uses_expected_q_value_and_sampled_future_rewards(self):
+        dtype = torch.float64
+        student = torch.log(
+            torch.tensor(
+                [[[0.7, 0.3], [0.4, 0.6], [0.8, 0.2]]],
+                dtype=dtype,
+            )
+        )
+        teacher = torch.log(
+            torch.tensor(
+                [[[0.6, 0.4], [0.5, 0.5], [0.3, 0.7]]],
+                dtype=dtype,
+            )
+        )
+        old = torch.log(
+            torch.tensor(
+                [[[0.5, 0.5], [0.7, 0.3], [0.6, 0.4]]],
+                dtype=dtype,
+            )
+        )
+        sampled_token_ids = torch.tensor([[10, 20, 30]])
+        topk_indices = torch.tensor([[[10, 11], [21, 20], [30, 31]]])
+        sampled_positions = torch.tensor([[0, 1, 0]])
+        sampled_student = student.gather(-1, sampled_positions.unsqueeze(-1)).squeeze(-1)
+        sampled_teacher = teacher.gather(-1, sampled_positions.unsqueeze(-1)).squeeze(-1)
+        sampled_old = old.gather(-1, sampled_positions.unsqueeze(-1)).squeeze(-1)
+        mask = torch.ones(1, 3, dtype=dtype)
+        gamma = 0.9
+        lambda_ = 0.5
+
+        loss, _ = compute_self_distillation_q_loss(
+            student_log_probs=sampled_student,
+            teacher_log_probs=sampled_teacher,
+            response_mask=mask,
+            self_distillation_config=_sdql_cfg(
+                alpha=1.0,
+                distillation_topk=2,
+                target_q_mode="on-policy-lambda",
+                use_reward_baseline=False,
+                gamma=gamma,
+                lambda_=lambda_,
+            ),
+            old_log_probs=sampled_old,
+            old_topk_log_probs=old,
+            sampled_token_ids=sampled_token_ids,
+            student_topk_indices=topk_indices,
+            student_topk_log_probs=student,
+            teacher_topk_log_probs=teacher,
+            loss_agg_mode="token-mean",
+        )
+
+        q_values = student - old
+        rewards = teacher - student
+        values = (student.exp() * q_values).sum(dim=-1)
+        sampled_rewards = rewards.gather(-1, sampled_positions.unsqueeze(-1)).squeeze(-1)
+
+        expected_targets = torch.empty_like(rewards)
+        sampled_return = torch.zeros(1, dtype=dtype)
+        for t in reversed(range(rewards.size(1))):
+            if t + 1 < rewards.size(1):
+                continuation = (1.0 - lambda_) * values[:, t + 1] + lambda_ * sampled_return
+            else:
+                continuation = torch.zeros_like(sampled_return)
+            expected_targets[:, t, :] = rewards[:, t, :] + gamma * continuation.unsqueeze(-1)
+            sampled_return = sampled_rewards[:, t] + gamma * continuation
+
+        expected_loss = ((q_values - expected_targets) ** 2).sum(dim=-1).mean()
+        assert torch.allclose(loss, expected_loss)

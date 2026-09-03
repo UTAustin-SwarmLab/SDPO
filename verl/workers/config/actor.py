@@ -84,8 +84,9 @@ class SelfDistillationConfig(BaseConfig):
         response_level_rover_loss (bool): If True, compute ROVER MSE after averaging each response.
         next_q_scale_factor (Optional[float]): Optional multiplier for the bootstrapped next-Q term.
         target_q_mode (str): How to aggregate bootstrapped next-Q in SDQL / ROVER targets.
-            One of ``"uniform"`` (mean), ``"max"``, or ``"on-policy"`` (next-Q * next student
-            log-probs; full-logit SDQL).
+            One of ``"uniform"`` (mean), ``"max"``, ``"on-policy"``, or
+            ``"on-policy-lambda"`` (full-logit sampled-trajectory lambda returns).
+        lambda_ (float): Lambda-return trace parameter used by ``"on-policy-lambda"``.
         use_env_reward (bool): If True, inject environment advantages only at sampled token actions.
         reprompt_template (str): Template for reprompting. Uses {prompt}, {solution}, {response}, {feedback} placeholders.
         solution_template (str): Template for formatting solution section. Uses {successful_previous_attempt} placeholder.
@@ -134,7 +135,8 @@ class SelfDistillationConfig(BaseConfig):
     clamp_low: float = -2.0
     env_reward_scale: float = 1.0
     use_env_reward: bool = False
-    target_q_mode: str = "uniform"  # "uniform", "max", or "on-policy"
+    target_q_mode: str = "uniform"
+    lambda_: float = 0.95
     reprompt_template: str = (
         "{prompt}{solution}{response}{feedback}\n\n"
         "Correctly solve the original question.\n"
@@ -187,11 +189,14 @@ class SelfDistillationConfig(BaseConfig):
                 "self_distillation.next_q_scale_factor must be non-negative when set, "
                 f"got {self.next_q_scale_factor}"
             )
-        if self.target_q_mode not in {"uniform", "max", "on-policy"}:
+        if self.target_q_mode not in {"uniform", "max", "on-policy", "on-policy-lambda"}:
             raise ValueError(
-                "self_distillation.target_q_mode must be one of {'uniform', 'max', 'on-policy'}, "
+                "self_distillation.target_q_mode must be one of "
+                "{'uniform', 'max', 'on-policy', 'on-policy-lambda'}, "
                 f"got {self.target_q_mode}"
             )
+        if not 0.0 <= self.lambda_ <= 1.0:
+            raise ValueError(f"self_distillation.lambda_ must be in [0, 1], got {self.lambda_}")
         if self.future_returns_reward_scale is None:
             self.future_returns_reward_scale = "none"
         valid_fr_scale = {"none", "remaining", "seq_len"}

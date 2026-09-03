@@ -138,7 +138,11 @@ self_distillation:
   #   "uniform"   – mean over next-token action Qs
   #   "max"       – max over next-token action Qs
   #   "on-policy" – elementwise next-Q * next student log-probs (full-logit SDQL)
+  #   "on-policy-lambda" – lambda return following sampled tokens after the current action
   target_q_mode: uniform
+
+  # Trace parameter for on-policy-lambda targets.
+  lambda_: 0.95
 
   # Whether to add a tail bucket when using distillation_topk
   distillation_add_tail: True

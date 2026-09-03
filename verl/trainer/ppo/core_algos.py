@@ -1848,18 +1848,14 @@ def compute_self_distillation_q_loss(
         if self_distillation_config.alpha == 0.0:
             log_ratio = teacher_distill_log_probs - student_distill_log_probs
             reward = log_ratio.exp().detach()
-            reward_step = gather_sampled_topk(log_ratio).detach()
         elif self_distillation_config.alpha == 1.0:
             log_ratio = teacher_distill_log_probs - student_distill_log_probs
             reward = log_ratio.detach()
-            reward_step = gather_sampled_topk(log_ratio).detach()
         else:
             mixed_logits = (1-self_distillation_config.alpha) * teacher_distill_log_probs.exp() + self_distillation_config.alpha * student_distill_log_probs.exp()
             mixed_logits_log = torch.log(mixed_logits) 
             mixed_logits_log = renorm_topk_log_probs(mixed_logits_log)
             reward = (mixed_logits_log - student_distill_log_probs).detach()
-            # reward is over the top-k support; reward_step is that mixture at the sampled token.
-            reward_step = gather_sampled_topk(mixed_logits_log - student_distill_log_probs).detach()
             
             #raise ValueError("Only forward KL and reverse KL are supported for non-full-logit distillation")
             # # Compute the log of the mixture distribution
@@ -1928,22 +1924,42 @@ def compute_self_distillation_q_loss(
             )
             target_q_vals = reward.detach() + gamma * next_q_vals * next_student_log_probs.exp().detach()
         elif self_distillation_config.target_q_mode == "on-policy-lambda":
-            zero_tail_logp = torch.zeros_like(student_distill_log_probs[:, :1, :])
-            next_student_log_probs = torch.cat(
-                [student_distill_log_probs[:, 1:, :], zero_tail_logp], dim=1
-            )
-            # Reward obtain earlier is of shape bsz, seq, topk ; so reward_step is of shape bsz, seq, 1
-            values = next_q_vals * next_student_log_probs.exp().detach()
-            lambda_ = self_distillation_config.lambda_ 
-            lambda_returns = torch.zeros_like(values)
-            for t in range(values.size(1)):
-                if t == 0:
-                    continue
-                
-                index = values.size(1) - t - 1
-                lambda_returns[:, index] = reward[:, index] + gamma( (1- lambda_) * values[:, index] + lambda_ * lambda_returns[:, index+1])     
-                
-            target_q_vals = lambda_returns.detach()
+            lambda_ = self_distillation_config.lambda_
+            if not 0.0 <= lambda_ <= 1.0:
+                raise ValueError(f"self_distillation.lambda_ must be in [0, 1], got {lambda_}")
+
+            # V(s_t) = E_{a ~ pi(.|s_t)}[Q(s_t, a)].
+            values = (
+                student_distill_log_probs.exp().detach() * q_vals.detach()
+            ).sum(dim=-1)
+
+            # The target has an action-specific immediate reward, but after that
+            # follows the sampled rollout. Gather again here so reward clamping,
+            # baselines, and environment rewards are reflected in the continuation.
+            sampled_rewards = gather_sampled_topk(reward.detach())
+            continuations = torch.zeros_like(sampled_rewards)
+            sampled_return = torch.zeros_like(sampled_rewards[:, 0])
+
+            # Only the scalar sampled-path recurre3nce is sequential. Apply the
+            # resulting continuation to every action in one vectorized operation.
+            for t in reversed(range(reward.size(1))):
+                if t + 1 < reward.size(1):
+                    next_is_valid = response_mask[:, t + 1].to(reward.dtype)
+                    continuation = next_is_valid * (
+                        (1.0 - lambda_) * values[:, t + 1]
+                        + lambda_ * sampled_return
+                    )
+                else:
+                    continuation = torch.zeros_like(sampled_return)
+
+                continuations[:, t] = continuation
+                sampled_return = (
+                    sampled_rewards[:, t] + gamma * continuation
+                ) * response_mask[:, t].to(reward.dtype)
+
+            target_q_vals = (
+                reward.detach() + gamma * continuations.unsqueeze(-1)
+            ).detach()
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
