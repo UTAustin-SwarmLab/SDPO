@@ -7,7 +7,7 @@
 #
 # SDQL-specific / shared distillation flags (override via env):
 #   TARGET_Q_MODES, IS_CLIPS, USE_ENV_REWARDS, ENV_REWARD_SCALE,
-#   USE_REWARD_CLAMP, DISTILLATION_ADD_TAIL, GAMMA, INCLUDE_ENVIRONMENT_FEEDBACK,
+#   USE_REWARD_CLAMP, DISTILLATION_ADD_TAIL, GAMMA, LAMBDAS, INCLUDE_ENVIRONMENT_FEEDBACK,
 #   USE_REWARD_BASELINES (True False)
 
 DRY_RUN=false
@@ -44,6 +44,7 @@ ENV_REWARD_SCALE=1.0
 USE_REWARD_CLAMP=False
 DISTILLATION_ADD_TAIL=False
 GAMMA=1.0
+LAMBDAS=(0.95)
 INCLUDE_ENVIRONMENT_FEEDBACK=False
 # Sweep both leave-one-out baseline on and off.
 USE_REWARD_BASELINES=(True False)
@@ -68,8 +69,9 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                             for TARGET_Q_MODE in "${TARGET_Q_MODES[@]}"; do
                                 for IS_CLIP in "${IS_CLIPS[@]}"; do
                                     for USE_ENV_REWARD in "${USE_ENV_REWARDS[@]}"; do
-                                        for USE_REWARD_BASELINE in "${USE_REWARD_BASELINES[@]}"; do
-                                            for DATA_PATH in "${DATA_PATHS[@]}"; do
+                                        for LAMBDA_ in "${LAMBDAS[@]}"; do
+                                            for USE_REWARD_BASELINE in "${USE_REWARD_BASELINES[@]}"; do
+                                                for DATA_PATH in "${DATA_PATHS[@]}"; do
                                                 if [[ "${IS_CLIP}" == "null" || -z "${IS_CLIP}" ]]; then
                                                     IS_TAG="inois"
                                                 else
@@ -80,7 +82,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                                 else
                                                     BASELINE_TAG="norwbaseline"
                                                 fi
-                                                EXP_NAME="FINAL-SDQL-tq${TARGET_Q_MODE}-${IS_TAG}-envrw${USE_ENV_REWARD}-${CLAMP_TAG}-${BASELINE_TAG}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}-topk${TOPK}"
+                                                EXP_NAME="FINAL-SDQL-tq${TARGET_Q_MODE}-lam${LAMBDA_}-${IS_TAG}-envrw${USE_ENV_REWARD}-${CLAMP_TAG}-${BASELINE_TAG}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}-topk${TOPK}"
                                                 CMD=(
                                                     sbatch
                                                     -A ASC26054
@@ -108,6 +110,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                                     "${GAMMA}"
                                                     "${INCLUDE_ENVIRONMENT_FEEDBACK}"
                                                     "${USE_REWARD_BASELINE}"
+                                                    "${LAMBDA_}"
                                                 )
                                                 if [[ "$DRY_RUN" == true ]]; then
                                                     printf '%q ' "${CMD[@]}"
@@ -116,6 +119,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                                     "${CMD[@]}"
                                                     sleep 90
                                                 fi
+                                                done
                                             done
                                         done
                                     done

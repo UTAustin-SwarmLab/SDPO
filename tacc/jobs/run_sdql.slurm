@@ -150,6 +150,7 @@ DISTILLATION_ADD_TAIL=${20:-False}
 GAMMA=${21:-1.0}
 INCLUDE_ENVIRONMENT_FEEDBACK=${22:-True}
 USE_REWARD_BASELINE=${23:-True}
+LAMBDA_=${24:-0.95}
 
 
 MAX_PROMPT_LENGTH=${MAX_PROMPT_LENGTH:-2048}
@@ -205,6 +206,7 @@ actor_rollout_ref.actor.self_distillation.target_q_mode=$TARGET_Q_MODE \
 actor_rollout_ref.actor.self_distillation.use_env_reward=$USE_ENV_REWARD \
 actor_rollout_ref.actor.self_distillation.env_reward_scale=$ENV_REWARD_SCALE \
 actor_rollout_ref.actor.self_distillation.gamma=$GAMMA \
+actor_rollout_ref.actor.self_distillation.lambda_=$LAMBDA_ \
 actor_rollout_ref.actor.self_distillation.use_reward_baseline=$USE_REWARD_BASELINE \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONT_REPROMPT_ON_SELF_SUCCESS} \
@@ -234,6 +236,7 @@ echo "use_env_reward: $USE_ENV_REWARD (scale=$ENV_REWARD_SCALE)"
 echo "use_reward_clamp: $USE_REWARD_CLAMP [$CLAMP_LOW, $CLAMP_HIGH]"
 echo "distillation_add_tail: $DISTILLATION_ADD_TAIL"
 echo "gamma: $GAMMA"
+echo "lambda_: $LAMBDA_"
 echo "full_logit_distillation: $FULL_LOGIT_DISTILLATION (topk=$TOPK)"
 echo "include_environment_feedback: $INCLUDE_ENVIRONMENT_FEEDBACK"
 echo "use_reward_baseline: $USE_REWARD_BASELINE"
