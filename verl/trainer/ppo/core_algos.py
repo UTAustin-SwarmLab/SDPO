@@ -1993,7 +1993,8 @@ def compute_self_distillation_q_loss(
         
         #assert self_distillation_config.alpha == 1.0, "Only reverse KL is supported for non-full-logit distillation"
         if self_distillation_config.alpha == 0.0:
-            reward = (teacher_log_probs.exp() / student_log_probs.exp()).detach()
+            # reward = (teacher_log_probs.exp() / student_log_probs.exp()).detach()
+            reward = (teacher_log_probs.exp()).detach()
         elif self_distillation_config.alpha == 1.0:
             reward = (teacher_log_probs - student_log_probs).detach()
         else:
