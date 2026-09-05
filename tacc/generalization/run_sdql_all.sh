@@ -47,7 +47,7 @@ GAMMA=1.0
 # Only swept when TARGET_Q_MODE=on-policy-lambda; otherwise the first value is passed through.
 LAMBDAS=(0.90 1.0)
 INCLUDE_ENVIRONMENT_FEEDBACK=False
-USE_REWARD_BASELINE=False
+USE_REWARD_BASELINE="${USE_REWARD_BASELINE:-False}"
 
 MODEL_PATHS=(
     "Qwen/Qwen3-8B"

@@ -5,7 +5,7 @@ divergence=reverse_kl  alpha=1.0
   G_t - batch_mean_t               SNR=   1.4175  cos_to_exact=0.99999
   G(r - batch_mean_t)              SNR=   1.4175  cos_to_exact=0.99999
   G_t / remaining                  SNR=   2.7765  cos_to_exact=0.97162
-  (G_t - batch_mean_t)/remaining   SNR=   5.2173  cos_to_exact=0.97156
+  (G_t - group_mean_t)/remaining   SNR=   5.2173  cos_to_exact=0.97156
   G(r - batch_mean_t)/remaining    SNR=   5.2173  cos_to_exact=0.97156
   G_t / (T-1)                      SNR=   3.9084  cos_to_exact=0.96796
   G(r - batch_mean_t)/(T-1)        SNR=   5.2628  cos_to_exact=0.96798
