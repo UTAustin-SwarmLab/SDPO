@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Usage: ./run_local_sdpo.sh [experiment_name_suffix]
+# Usage: ./run_local_sdql.sh [experiment_name_suffix]
+# Override TARGET_Q_MODE / LAMBDA_ / GAMMA / USE_REWARD_BASELINE via env.
 
 # =============================================================================
 # CONFIGURATION
@@ -15,7 +16,10 @@ DATA_PATH="datasets/new/gsm8k"
 TRAIN_BATCH_SIZE=16
 ROLLOUT_BATCH_SIZE=8
 LR=1e-5
-LAMBDA=0.0
+TARGET_Q_MODE="${TARGET_Q_MODE:-uniform}"
+LAMBDA_="${LAMBDA_:-0.95}"
+GAMMA="${GAMMA:-1.0}"
+USE_REWARD_BASELINE="${USE_REWARD_BASELINE:-False}"
 CLIP_ADV_HIGH=null
 DONTS_REPROMPT_ON_SELF_SUCCESS=True
 ALPHA=0.5
@@ -43,7 +47,7 @@ export USER=${USER:-$(whoami)}
 # =============================================================================
 
 MODEL_NAME=$(echo "$MODEL_PATH" | tr '/' '-')
-EXP_NAME="LOCAL-SDQL-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-lambda${LAMBDA}-clip_adv_high${CLIP_ADV_HIGH}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}-${SUFFIX}"
+EXP_NAME="LOCAL-SDQL-tq${TARGET_Q_MODE}-lam${LAMBDA_}-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}-${SUFFIX}"
 
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
 vars.dir=$PROJECT_ROOT \
@@ -62,14 +66,18 @@ actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONTS_
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.optim.lr_warmup_steps=10 \
 actor_rollout_ref.rollout.val_kwargs.n=16 \
-custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__init__.py"\
+custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__init__.py"
 
 
 echo "----------------------------------------------------------------"
-echo "Starting Local SDPO Training"
+echo "Starting Local SDQL Training"
 echo "Experiment: $EXP_NAME"
 echo "Data: $DATA_PATH"
 echo "Model: $MODEL_PATH"
+echo "target_q_mode: $TARGET_Q_MODE"
+echo "lambda_: $LAMBDA_"
+echo "gamma: $GAMMA"
+echo "use_reward_baseline: $USE_REWARD_BASELINE"
 echo "----------------------------------------------------------------"
 
 bash "$PROJECT_ROOT/training/verl_training.sh" "$EXP_NAME" "$CONFIG_NAME" "$DATA_PATH" $ARGS

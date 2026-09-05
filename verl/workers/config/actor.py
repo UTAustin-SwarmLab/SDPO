@@ -79,7 +79,8 @@ class SelfDistillationConfig(BaseConfig):
         use_reward_baseline (bool): If True, subtract a position-wise leave-one-out mean of the
             distillation reward within each prompt group before forming SDQL Bellman targets
             (``r + gamma * next_q``). Same idea as ``use_future_returns_baseline`` for SDPO;
-            requires prompt ``index``/``uid``.
+            requires prompt ``index``/``uid`` and intact prompt groups in the microbatch.
+            Leave False unless group packing is guaranteed.
         use_reward_clamp (bool): If True, clamp sampled-token distillation rewards to [clamp_low, clamp_high].
         response_level_rover_loss (bool): If True, compute ROVER MSE after averaging each response.
         next_q_scale_factor (Optional[float]): Optional multiplier for the bootstrapped next-Q term.

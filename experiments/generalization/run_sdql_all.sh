@@ -42,6 +42,9 @@ DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
 
 # 0: forward KL, 0.5: Jensen-Shannon divergence, 1: reverse KL
 ALPHAS=(0.5)
+TARGET_Q_MODES=(on-policy-lambda)
+# Only swept when TARGET_Q_MODE=on-policy-lambda; otherwise the first value is passed through.
+LAMBDAS=(0.90 1.0)
 
 MODEL_PATHS=(
     "Qwen/Qwen3-8B"
@@ -104,10 +107,22 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
             for DONTS_REPROMPT_ON_SELF_SUCCESS in "${DONTS_REPROMPT_ON_SELF_SUCCESSS[@]}"; do
                 for MODEL_PATH in "${MODEL_PATHS[@]}"; do
                     for ALPHA in "${ALPHAS[@]}"; do
-                        for DATA_PATH in "${DATA_PATHS[@]}"; do
+                        for TARGET_Q_MODE in "${TARGET_Q_MODES[@]}"; do
+                            if [[ "${TARGET_Q_MODE}" == "on-policy-lambda" ]]; then
+                                CURRENT_LAMBDAS=("${LAMBDAS[@]}")
+                            else
+                                CURRENT_LAMBDAS=("${LAMBDAS[0]}")
+                            fi
+                            for LAMBDA_ in "${CURRENT_LAMBDAS[@]}"; do
+                                for DATA_PATH in "${DATA_PATHS[@]}"; do
                             # 1. Construct the experiment name (must be unique)
                             MODEL_NAME=$(echo "$MODEL_PATH" | tr '/' '-')
-                            EXP_NAME="FINAL-SDQL-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}"
+                            if [[ "${TARGET_Q_MODE}" == "on-policy-lambda" ]]; then
+                                LAMBDA_TAG="-lam${LAMBDA_}"
+                            else
+                                LAMBDA_TAG=""
+                            fi
+                            EXP_NAME="FINAL-SDQL-tq${TARGET_Q_MODE}${LAMBDA_TAG}-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}"
 
                             # 2. Construct the arguments string to pass to the training script
                             # Format: key=value key2=value2 ...
@@ -119,6 +134,10 @@ actor_rollout_ref.actor.optim.lr=$LR \
 actor_rollout_ref.actor.ppo_mini_batch_size=32 \
 actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
 algorithm.rollout_correction.rollout_is=token \
+actor_rollout_ref.actor.self_distillation.target_q_mode=${TARGET_Q_MODE} \
+actor_rollout_ref.actor.self_distillation.lambda_=${LAMBDA_} \
+actor_rollout_ref.actor.self_distillation.gamma=1.0 \
+actor_rollout_ref.actor.self_distillation.use_reward_baseline=False \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONTS_REPROMPT_ON_SELF_SUCCESS} \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \
 actor_rollout_ref.actor.self_distillation.include_environment_feedback=False \
@@ -127,6 +146,8 @@ actor_rollout_ref.rollout.val_kwargs.n=16"
 
                             # 3. Submit
                             submit_job "$EXP_NAME" "$ARGS" "$DATA_PATH"
+                                done
+                            done
                         done
                     done
                 done

@@ -122,7 +122,8 @@ self_distillation:
 
   # If true, subtract a position-wise leave-one-out mean of the distillation reward
   # within each prompt group (uid) before forming SDQL Bellman targets
-  # (r + gamma * next_q). Requires batch uid / prompt index.
+  # (r + gamma * next_q). Requires intact prompt groups in each microbatch; leave
+  # false unless group packing is guaranteed.
   use_reward_baseline: false
 
   # If true, clamp sampled-token distillation rewards to [clamp_low, clamp_high].

@@ -8,7 +8,7 @@
 # SDQL-specific / shared distillation flags (override via env):
 #   TARGET_Q_MODES, IS_CLIPS, USE_ENV_REWARDS, ENV_REWARD_SCALE,
 #   USE_REWARD_CLAMP, DISTILLATION_ADD_TAIL, GAMMA, LAMBDAS, INCLUDE_ENVIRONMENT_FEEDBACK,
-#   USE_REWARD_BASELINES (True False)
+#   USE_REWARD_BASELINE (False; group LOO is skipped until microbatches stay grouped)
 
 DRY_RUN=false
 if [[ "${1:-}" == "--dry-run" ]]; then
@@ -36,7 +36,7 @@ TOPK=100
 TEACHER_UPDATE_RATE=0.05
 
 # Shared / SDQL loss flags (aligned with sdql.yaml + other TACC trainers)
-TARGET_Q_MODES=(uniform on-policy)
+TARGET_Q_MODES=(uniform on-policy on-policy-lambda)
 # null disables loss-level IS weighting (rover-style).
 IS_CLIPS=(null)
 USE_ENV_REWARDS=(False)
@@ -44,10 +44,10 @@ ENV_REWARD_SCALE=1.0
 USE_REWARD_CLAMP=False
 DISTILLATION_ADD_TAIL=False
 GAMMA=1.0
-LAMBDAS=(0.95)
+# Only swept when TARGET_Q_MODE=on-policy-lambda; otherwise the first value is passed through.
+LAMBDAS=(0.90 1.0)
 INCLUDE_ENVIRONMENT_FEEDBACK=False
-# Sweep both leave-one-out baseline on and off.
-USE_REWARD_BASELINES=(True False)
+USE_REWARD_BASELINE=False
 
 MODEL_PATHS=(
     "Qwen/Qwen3-8B"
@@ -67,22 +67,26 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                     for ALPHA in "${ALPHAS[@]}"; do
                         for DONTS_REPROMPT_ON_SELF_SUCCESS in "${DONTS_REPROMPT_ON_SELF_SUCCESSS[@]}"; do
                             for TARGET_Q_MODE in "${TARGET_Q_MODES[@]}"; do
-                                for IS_CLIP in "${IS_CLIPS[@]}"; do
-                                    for USE_ENV_REWARD in "${USE_ENV_REWARDS[@]}"; do
-                                        for LAMBDA_ in "${LAMBDAS[@]}"; do
-                                            for USE_REWARD_BASELINE in "${USE_REWARD_BASELINES[@]}"; do
-                                                for DATA_PATH in "${DATA_PATHS[@]}"; do
+                                if [[ "${TARGET_Q_MODE}" == "on-policy-lambda" ]]; then
+                                    CURRENT_LAMBDAS=("${LAMBDAS[@]}")
+                                else
+                                    CURRENT_LAMBDAS=("${LAMBDAS[0]}")
+                                fi
+                                for LAMBDA_ in "${CURRENT_LAMBDAS[@]}"; do
+                                    for IS_CLIP in "${IS_CLIPS[@]}"; do
+                                        for USE_ENV_REWARD in "${USE_ENV_REWARDS[@]}"; do
+                                            for DATA_PATH in "${DATA_PATHS[@]}"; do
                                                 if [[ "${IS_CLIP}" == "null" || -z "${IS_CLIP}" ]]; then
                                                     IS_TAG="inois"
                                                 else
                                                     IS_TAG="isclip${IS_CLIP}"
                                                 fi
-                                                if [[ "${USE_REWARD_BASELINE}" == "True" || "${USE_REWARD_BASELINE}" == "true" || "${USE_REWARD_BASELINE}" == "1" ]]; then
-                                                    BASELINE_TAG="rwbaseline"
+                                                if [[ "${TARGET_Q_MODE}" == "on-policy-lambda" ]]; then
+                                                    LAMBDA_TAG="-lam${LAMBDA_}"
                                                 else
-                                                    BASELINE_TAG="norwbaseline"
+                                                    LAMBDA_TAG=""
                                                 fi
-                                                EXP_NAME="FINAL-SDQL-tq${TARGET_Q_MODE}-lam${LAMBDA_}-${IS_TAG}-envrw${USE_ENV_REWARD}-${CLAMP_TAG}-${BASELINE_TAG}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}-topk${TOPK}"
+                                                EXP_NAME="FINAL-SDQL-tq${TARGET_Q_MODE}${LAMBDA_TAG}-${IS_TAG}-envrw${USE_ENV_REWARD}-${CLAMP_TAG}-norwbaseline-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}-topk${TOPK}"
                                                 CMD=(
                                                     sbatch
                                                     -A ASC26054
@@ -119,7 +123,6 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                                     "${CMD[@]}"
                                                     sleep 90
                                                 fi
-                                                done
                                             done
                                         done
                                     done

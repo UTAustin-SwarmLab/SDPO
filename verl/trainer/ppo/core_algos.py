@@ -1742,6 +1742,40 @@ def compute_rover_loss(
         
         
         
+def compute_on_policy_lambda_continuations(
+    sampled_rewards: torch.Tensor,
+    values: torch.Tensor,
+    response_mask: torch.Tensor,
+    gamma: float,
+    lambda_: float,
+) -> torch.Tensor:
+    """Scalar TD(λ) continuation along the sampled trajectory.
+
+    Returns ``C_t`` such that the lambda return is ``G_t = r_t + gamma * C_t``, with
+    ``C_T = 0`` and
+    ``C_t = m_{t+1} * [(1 - λ) V_{t+1} + λ (r_{t+1} + γ C_{t+1})]``.
+
+    The recurrence is sequential only over time; batch remains vectorized.
+    """
+    if not 0.0 <= lambda_ <= 1.0:
+        raise ValueError(f"self_distillation.lambda_ must be in [0, 1], got {lambda_}")
+
+    mask = response_mask.to(sampled_rewards.dtype)
+    continuations = torch.zeros_like(sampled_rewards)
+    sampled_return = torch.zeros_like(sampled_rewards[:, 0])
+    seq_len = sampled_rewards.size(1)
+    for t in reversed(range(seq_len)):
+        if t + 1 < seq_len:
+            continuation = mask[:, t + 1] * (
+                (1.0 - lambda_) * values[:, t + 1] + lambda_ * sampled_return
+            )
+        else:
+            continuation = torch.zeros_like(sampled_return)
+        continuations[:, t] = continuation
+        sampled_return = (sampled_rewards[:, t] + gamma * continuation) * mask[:, t]
+    return continuations
+
+
 def compute_self_distillation_q_loss(
     student_log_probs: torch.Tensor,
     teacher_log_probs: torch.Tensor,
@@ -1924,39 +1958,19 @@ def compute_self_distillation_q_loss(
             )
             target_q_vals = reward.detach() + gamma * next_q_vals * next_student_log_probs.exp().detach()
         elif self_distillation_config.target_q_mode == "on-policy-lambda":
-            lambda_ = self_distillation_config.lambda_
-            if not 0.0 <= lambda_ <= 1.0:
-                raise ValueError(f"self_distillation.lambda_ must be in [0, 1], got {lambda_}")
-
-            # V(s_t) = E_{a ~ pi(.|s_t)}[Q(s_t, a)].
+            # V(s_t) = E_{a ~ pi(.|s_t)}[Q(s_t, a)]. Immediate reward stays
+            # action-specific; the continuation follows the sampled rollout.
             values = (
                 student_distill_log_probs.exp().detach() * q_vals.detach()
             ).sum(dim=-1)
-
-            # The target has an action-specific immediate reward, but after that
-            # follows the sampled rollout. Gather again here so reward clamping,
-            # baselines, and environment rewards are reflected in the continuation.
             sampled_rewards = gather_sampled_topk(reward.detach())
-            continuations = torch.zeros_like(sampled_rewards)
-            sampled_return = torch.zeros_like(sampled_rewards[:, 0])
-
-            # Only the scalar sampled-path recurre3nce is sequential. Apply the
-            # resulting continuation to every action in one vectorized operation.
-            for t in reversed(range(reward.size(1))):
-                if t + 1 < reward.size(1):
-                    next_is_valid = response_mask[:, t + 1].to(reward.dtype)
-                    continuation = next_is_valid * (
-                        (1.0 - lambda_) * values[:, t + 1]
-                        + lambda_ * sampled_return
-                    )
-                else:
-                    continuation = torch.zeros_like(sampled_return)
-
-                continuations[:, t] = continuation
-                sampled_return = (
-                    sampled_rewards[:, t] + gamma * continuation
-                ) * response_mask[:, t].to(reward.dtype)
-
+            continuations = compute_on_policy_lambda_continuations(
+                sampled_rewards,
+                values,
+                loss_mask,
+                gamma,
+                self_distillation_config.lambda_,
+            )
             target_q_vals = (
                 reward.detach() + gamma * continuations.unsqueeze(-1)
             ).detach()
@@ -2024,6 +2038,23 @@ def compute_self_distillation_q_loss(
             raise ValueError(
                 "self_distillation.target_q_mode='on-policy' requires full_logit_distillation=True"
             )
+        elif self_distillation_config.target_q_mode == "on-policy-lambda":
+            # Token-level λ-returns: scalar sampled reward plus a Q-based value bootstrap.
+            action_log_probs = student_topk_log_probs if use_topk else student_all_log_probs
+            if action_log_probs is None:
+                raise ValueError(
+                    "on-policy-lambda token-level targets require student_topk_log_probs "
+                    "or student_all_log_probs."
+                )
+            values = (action_log_probs.exp().detach() * all_q_vals.detach()).sum(dim=-1)
+            continuations = compute_on_policy_lambda_continuations(
+                reward.detach(),
+                values,
+                loss_mask,
+                gamma,
+                self_distillation_config.lambda_,
+            )
+            target_q_vals = (reward.detach() + gamma * continuations).detach()
         else:
             raise ValueError(f"Invalid target_q_mode: {self_distillation_config.target_q_mode}")
         per_token_loss = (q_vals - target_q_vals.detach()) ** 2
