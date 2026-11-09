@@ -26,17 +26,17 @@ DATA_PATHS=(
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
 MINI_BATCH_SIZES=(32)
-LRS=(3e-6)
+LRS=(1e-5)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
 ALPHAS=(0.0 0.5 1.0)
 FULL_LOGIT_DISTILLATION=True
 CLAMP_HIGH=5.0
 CLAMP_LOW=-5.0
 TOPK=100
-TEACHER_UPDATE_RATE=0.05
+TEACHER_UPDATE_RATE="${TEACHER_UPDATE_RATE:-0.01}"
 
 # Shared / SDQL loss flags (aligned with sdql.yaml + other TACC trainers)
-TARGET_Q_MODES=(uniform on-policy on-policy-lambda)
+TARGET_Q_MODES=(on-policy)
 # null disables loss-level IS weighting (rover-style).
 IS_CLIPS=(null)
 USE_ENV_REWARDS=(False)
@@ -57,6 +57,12 @@ if [[ "${USE_REWARD_CLAMP}" == "True" || "${USE_REWARD_CLAMP}" == "true" || "${U
     CLAMP_TAG="clamp${CLAMP_LOW}_${CLAMP_HIGH}"
 else
     CLAMP_TAG="noclamp"
+fi
+
+if [[ "${USE_REWARD_BASELINE}" == "True" || "${USE_REWARD_BASELINE}" == "true" || "${USE_REWARD_BASELINE}" == "1" ]]; then
+    RWBASELINE_TAG="rwbaseline"
+else
+    RWBASELINE_TAG="norwbaseline"
 fi
 
 for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
@@ -86,7 +92,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                                 else
                                                     LAMBDA_TAG=""
                                                 fi
-                                                EXP_NAME="FINAL-SDQL-tq${TARGET_Q_MODE}${LAMBDA_TAG}-${IS_TAG}-envrw${USE_ENV_REWARD}-${CLAMP_TAG}-norwbaseline-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}-topk${TOPK}"
+                                                EXP_NAME="FINAL-SDQL-tq${TARGET_Q_MODE}${LAMBDA_TAG}-${IS_TAG}-envrw${USE_ENV_REWARD}-${CLAMP_TAG}-${RWBASELINE_TAG}-tur${TEACHER_UPDATE_RATE}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}-topk${TOPK}"
                                                 CMD=(
                                                     sbatch
                                                     -A ASC26054

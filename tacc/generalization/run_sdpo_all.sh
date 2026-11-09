@@ -39,7 +39,7 @@ LRS=(1e-5)
 ALPHAS=(0.0 0.5 1.0)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
 TOPK=100
-TEACHER_UPDATE_RATE=0.01
+TEACHER_UPDATE_RATE="${TEACHER_UPDATE_RATE:-0.01}"
 # One-sided IS ratio clip for full-logit distill KL (null disables IS weighting).
 IS_CLIPS=(2.0)
 # CISPO-style symmetric clip for the future-returns PG term: ratio ∈ [1-cispo_clip, 1+cispo_clip].
@@ -74,7 +74,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                             for IS_CLIP in "${IS_CLIPS[@]}"; do
                                 for CISPO_CLIP in "${CISPO_CLIPS[@]}"; do
                                     for DATA_PATH in "${DATA_PATHS[@]}"; do
-                                        EXP_NAME="FINAL-SDPO-${ICL_TAG}-${RETURNS_TAG}-isclip${IS_CLIP}-cispoclip${CISPO_CLIP}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
+                                        EXP_NAME="FINAL-SDPO-${ICL_TAG}-${RETURNS_TAG}-isclip${IS_CLIP}-cispoclip${CISPO_CLIP}-tur${TEACHER_UPDATE_RATE}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-alpha${ALPHA}-model${MODEL_PATH}"
                                         CMD=(sbatch -A ASC26054 "$TACC_DIR/jobs/run_sdpo.slurm" "${DATA_PATH}" "${TRAIN_BATCH_SIZE}" "${ROLLOUT_BATCH_SIZE}" "${MINI_BATCH_SIZE}" "${LR}" "${MODEL_PATH}" "${ALPHA}" "${DONTS_REPROMPT_ON_SELF_SUCCESS}" "${EXP_NAME}" "${TOPK}" "${TEACHER_UPDATE_RATE}" "${ENABLE_ICL}" "${IS_CLIP}" "${USE_FUTURE_RETURNS}" "${GAMMA}" "${USE_FUTURE_RETURNS_BASELINE}" "${CISPO_CLIP}" "${FUTURE_RETURNS_REWARD_SCALE}" "${FUTURE_RETURNS_BASELINE_MODE}")
                                         if [[ "$DRY_RUN" == true ]]; then
                                             printf '%q ' "${CMD[@]}"
