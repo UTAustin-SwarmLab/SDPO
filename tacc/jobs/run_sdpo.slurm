@@ -169,10 +169,13 @@ ICL_VALIDATION=${ICL_VALIDATION:-True}
 ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-teacher}
 LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 EXP_NAME="$SUFFIX"
+# W&B project (entity is set in training/verl_training.sh); override with PROJECT_NAME=... at submit time.
+PROJECT_NAME=${PROJECT_NAME:-SDPO2-${USER}}
 
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
 data.val_batch_size=$TRAIN_BATCH_SIZE \
 vars.dir=$PROJECT_ROOT \
+trainer.project_name=$PROJECT_NAME \
 trainer.experiment_name=$EXP_NAME \
 vars.task=$TASK \
 data.max_prompt_length=$MAX_PROMPT_LENGTH \

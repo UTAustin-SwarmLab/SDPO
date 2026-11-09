@@ -34,6 +34,8 @@ CLAMP_HIGH=5.0
 CLAMP_LOW=-5.0
 TOPK=100
 TEACHER_UPDATE_RATE="${TEACHER_UPDATE_RATE:-0.01}"
+# W&B project the jobs log to (read by tacc/jobs/run_sdql.slurm; sbatch exports the environment).
+export PROJECT_NAME="${PROJECT_NAME:-SDPO2-hrxu}"
 
 # Shared / SDQL loss flags (aligned with sdql.yaml + other TACC trainers)
 TARGET_Q_MODES=(on-policy)
