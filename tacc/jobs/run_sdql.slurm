@@ -6,7 +6,7 @@
 #SBATCH -N 8
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-#SBATCH -t 12:00:00
+#SBATCH -t 16:00:00
 #SBATCH --mem=0
 
 
@@ -224,6 +224,7 @@ trainer.log_val_generations=$LOG_VAL_GENERATIONS \
 trainer.test_freq=20 \
 trainer.save_freq=20 \
 trainer.max_actor_ckpt_to_keep=3 \
+trainer.total_training_steps=${TOTAL_TRAINING_STEPS:-400} \
 trainer.val_before_train=True \
 custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__init__.py"
 
