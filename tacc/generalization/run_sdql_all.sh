@@ -25,7 +25,7 @@ DATA_PATHS=(
 
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
-MINI_BATCH_SIZES=(32)
+MINI_BATCH_SIZES=(${MINI_BATCH_SIZES:-32})
 LRS=(1e-5)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
 ALPHAS=(0.0 0.5 1.0)
@@ -38,7 +38,7 @@ TEACHER_UPDATE_RATE="${TEACHER_UPDATE_RATE:-0.01}"
 export PROJECT_NAME="${PROJECT_NAME:-SDPO2-hrxu}"
 
 # Shared / SDQL loss flags (aligned with sdql.yaml + other TACC trainers)
-TARGET_Q_MODES=(on-policy)
+TARGET_Q_MODES=(${TARGET_Q_MODES:-on-policy})
 # null disables loss-level IS weighting (rover-style).
 IS_CLIPS=(null)
 USE_ENV_REWARDS=(False)
@@ -47,7 +47,7 @@ USE_REWARD_CLAMP=False
 DISTILLATION_ADD_TAIL=False
 GAMMA=1.0
 # Only swept when TARGET_Q_MODE=on-policy-lambda; otherwise the first value is passed through.
-LAMBDAS=(0.90 1.0)
+LAMBDAS=(${LAMBDAS:-0.90 1.0})
 INCLUDE_ENVIRONMENT_FEEDBACK=False
 USE_REWARD_BASELINE="${USE_REWARD_BASELINE:-False}"
 
