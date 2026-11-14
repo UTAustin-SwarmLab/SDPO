@@ -14,7 +14,7 @@ DATA_PATH="datasets/sciknoweval/all"
 # Hyperparameters (from experiments/run_sdpo_all.sh)
 TRAIN_BATCH_SIZE=32
 ROLLOUT_BATCH_SIZE=4
-MINI_BATCH_SIZE=16
+MINI_BATCH_SIZE=32
 LR=1e-5
 LAMBDA=0.0
 CLIP_ADV_HIGH=null
@@ -69,7 +69,7 @@ trainer.n_gpus_per_node=4 \
 actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.max_model_len=$MAX_MODEL_LEN \
 actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
-actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=16 \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=8 \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=32 \
 actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \

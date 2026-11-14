@@ -36,6 +36,9 @@ CPUS_PER_TASK=288
 
 # Sweep Parameters
 TRAIN_BATCH_SIZES=(32)
+# 32 = one optimizer update per step; 8 = four updates per step (off-policy test).
+MINI_BATCH_SIZES=(32)
+MICRO_BATCH_SIZE_PER_GPU=8
 ROLLOUT_BATCH_SIZES=(8)
 LRS=(1e-5)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
@@ -114,6 +117,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                                 CURRENT_LAMBDAS=("${LAMBDAS[0]}")
                             fi
                             for LAMBDA_ in "${CURRENT_LAMBDAS[@]}"; do
+                              for MINI_BATCH_SIZE in "${MINI_BATCH_SIZES[@]}"; do
                                 for DATA_PATH in "${DATA_PATHS[@]}"; do
                             # 1. Construct the experiment name (must be unique)
                             MODEL_NAME=$(echo "$MODEL_PATH" | tr '/' '-')
@@ -122,7 +126,7 @@ for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do
                             else
                                 LAMBDA_TAG=""
                             fi
-                            EXP_NAME="FINAL-SDQL-tq${TARGET_Q_MODE}${LAMBDA_TAG}-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}"
+                            EXP_NAME="FINAL-SDQL-tq${TARGET_Q_MODE}${LAMBDA_TAG}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}"
 
                             # 2. Construct the arguments string to pass to the training script
                             # Format: key=value key2=value2 ...
@@ -131,7 +135,8 @@ trainer.group_name=SDQL-generalization \
 actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.model.path=$MODEL_PATH \
 actor_rollout_ref.actor.optim.lr=$LR \
-actor_rollout_ref.actor.ppo_mini_batch_size=32 \
+actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=$MICRO_BATCH_SIZE_PER_GPU \
 actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.target_q_mode=${TARGET_Q_MODE} \
@@ -147,6 +152,7 @@ actor_rollout_ref.rollout.val_kwargs.n=16"
                             # 3. Submit
                             submit_job "$EXP_NAME" "$ARGS" "$DATA_PATH"
                                 done
+                              done
                             done
                         done
                     done

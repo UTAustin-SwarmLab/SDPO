@@ -13,7 +13,9 @@ CONFIG_NAME="sdql"
 DATA_PATH="datasets/new/gsm8k"
 
 # Hyperparameters (from experiments/run_sdpo_all.sh)
-TRAIN_BATCH_SIZE=16
+TRAIN_BATCH_SIZE=32
+MINI_BATCH_SIZE="${MINI_BATCH_SIZE:-32}"   # 32 or 8
+MICRO_BATCH_SIZE_PER_GPU="${MICRO_BATCH_SIZE_PER_GPU:-8}"
 ROLLOUT_BATCH_SIZE=8
 LR=1e-5
 TARGET_Q_MODE="${TARGET_Q_MODE:-uniform}"
@@ -47,7 +49,7 @@ export USER=${USER:-$(whoami)}
 # =============================================================================
 
 MODEL_NAME=$(echo "$MODEL_PATH" | tr '/' '-')
-EXP_NAME="LOCAL-SDQL-tq${TARGET_Q_MODE}-lam${LAMBDA_}-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}-${SUFFIX}"
+EXP_NAME="LOCAL-SDQL-tq${TARGET_Q_MODE}-lam${LAMBDA_}-mbs-${MINI_BATCH_SIZE}-train${TRAIN_BATCH_SIZE}-alpha${ALPHA}-rollout${ROLLOUT_BATCH_SIZE}-lr${LR}-dross${DONTS_REPROMPT_ON_SELF_SUCCESS}-${MODEL_NAME}-${SUFFIX}"
 
 ARGS="data.train_batch_size=$TRAIN_BATCH_SIZE \
 vars.dir=$PROJECT_ROOT \
@@ -59,7 +61,8 @@ actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
 actor_rollout_ref.actor.optim.lr=$LR \
-actor_rollout_ref.actor.ppo_mini_batch_size=8 \
+actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=$MICRO_BATCH_SIZE_PER_GPU \
 actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=${DONTS_REPROMPT_ON_SELF_SUCCESS} \

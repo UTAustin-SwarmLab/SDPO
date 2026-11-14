@@ -204,7 +204,7 @@ DATA_PATH="datasets/sciknoweval/all"
 # Hyperparameters (OOM-safe defaults; override via env if needed)
 TRAIN_BATCH_SIZE=${TRAIN_BATCH_SIZE:-32}
 ROLLOUT_BATCH_SIZE=${ROLLOUT_BATCH_SIZE:-8}
-MINI_BATCH_SIZE=${MINI_BATCH_SIZE:-8}
+MINI_BATCH_SIZE=${MINI_BATCH_SIZE:-32}
 LR=${LR:-1e-5}
 MODEL_PATH=${MODEL_PATH:-"Qwen/Qwen3-4B"}
 RAY_DASHBOARD_PORT=${RAY_DASHBOARD_PORT:-8169}
@@ -260,7 +260,7 @@ actor_rollout_ref.rollout.n=$ROLLOUT_BATCH_SIZE \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.actor.optim.lr=$LR \
 actor_rollout_ref.actor.ppo_mini_batch_size=$MINI_BATCH_SIZE \
-actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=8 \
+actor_rollout_ref.actor.ppo_micro_batch_size_per_gpu=${MICRO_BATCH_SIZE_PER_GPU:-8} \
 actor_rollout_ref.ref.log_prob_micro_batch_size_per_gpu=32 \
 actor_rollout_ref.model.path=$MODEL_PATH \
 algorithm.rollout_correction.rollout_is=token \

@@ -33,8 +33,8 @@ FUTURE_RETURNS_REWARD_SCALE="${FUTURE_RETURNS_REWARD_SCALE:-none}"
 GAMMA="${GAMMA:-1.0}"
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
-MINI_BATCH_SIZES=(16)
-LRS=(3e-6)
+MINI_BATCH_SIZES=(32)
+LRS=(1e-5)
 ALPHAS=(0.0 0.5 1.0)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
 # Sampled-token path does not use top-k logits.
@@ -46,9 +46,8 @@ USE_REWARD_CLAMP="${USE_REWARD_CLAMP:-True}"
 # is_clip enables loss-level IS (value unused for clipping on the sampled-token path).
 IS_CLIPS=(2.0)
 # CISPO-style symmetric clip for sampled-token path: ratio ∈ [1-cispo_clip, 1+cispo_clip].
-CISPO_CLIPS=(0.2)
+CISPO_CLIPS=(0.99)
 MODEL_PATHS=(
-    "allenai/Olmo-3-7B-Instruct"
     "Qwen/Qwen3-8B"
 )
 

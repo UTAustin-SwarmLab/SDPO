@@ -16,10 +16,15 @@ data:
   shuffle: True
   trust_remote_code: True
   apply_chat_template_kwargs: {"enable_thinking": false}
+  # Shared across all algorithms (GRPO, SDPO, SDQL, Distil, ROVER); override per run only on purpose.
+  train_batch_size: 32
 
 actor_rollout_ref:
   actor:
-    ppo_micro_batch_size_per_gpu: 1
+    ppo_mini_batch_size: 32
+    ppo_micro_batch_size_per_gpu: 8
+    optim:
+      lr: 1e-5
     ppo_max_token_len_per_gpu: ${max_model_len}
     clip_ratio_high: 0.28
     use_kl_loss: False
@@ -54,7 +59,7 @@ reward_model:
   use_reward_loop: False # disables experimental reward manager (which gives lower scores)
 
 trainer:
-  project_name: SDPO2-${oc.env:USER}
+  project_name: sdpo20icml2027  # W&B project for all algorithms
   group_name: ${oc.env:EXPERIMENT}
   experiment_name: ${oc.env:EXPERIMENT}
   n_gpus_per_node: 4
@@ -66,4 +71,5 @@ trainer:
   max_actor_ckpt_to_keep: 3
   max_critic_ckpt_to_keep: 3
   total_epochs: 30
+  total_training_steps: 400  # takes precedence over total_epochs
   default_local_dir: ${vars.ckpt_dir}/${trainer.experiment_name}  # experiment_name needs to be a unique identifier

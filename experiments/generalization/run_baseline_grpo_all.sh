@@ -38,9 +38,9 @@ CPUS_PER_TASK=288
 # Sweep Parameters
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
-MINI_BATCH_SIZES=(8 32)
+MINI_BATCH_SIZES=(32)
 
-LRS=(1e-5 1e-6)
+LRS=(1e-5)
 MODEL_PATHS=(
     "Qwen/Qwen3-8B"
     "allenai/Olmo-3-7B-Instruct"

@@ -25,12 +25,11 @@ DATA_PATHS=(
 
 TRAIN_BATCH_SIZES=(32)
 ROLLOUT_BATCH_SIZES=(8)
-MINI_BATCH_SIZES=(16)
-LRS=(3e-6)
+MINI_BATCH_SIZES=(8 32)
+LRS=(3e-6 1e-5)
 
 MODEL_PATHS=(
     "Qwen/Qwen3-8B"
-    "allenai/Olmo-3-7B-Instruct"
 )
 
 for TRAIN_BATCH_SIZE in "${TRAIN_BATCH_SIZES[@]}"; do

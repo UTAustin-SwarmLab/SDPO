@@ -41,7 +41,7 @@ DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
 TOPK=100
 TEACHER_UPDATE_RATE="${TEACHER_UPDATE_RATE:-0.01}"
 # W&B project the jobs log to (read by tacc/jobs/run_sdpo.slurm; sbatch exports the environment).
-export PROJECT_NAME="${PROJECT_NAME:-SDPO2-hrxu}"
+export PROJECT_NAME="${PROJECT_NAME:-sdpo20icml2027}"
 # One-sided IS ratio clip for full-logit distill KL (null disables IS weighting).
 IS_CLIPS=(2.0)
 # CISPO-style symmetric clip for the future-returns PG term: ratio ∈ [1-cispo_clip, 1+cispo_clip].
