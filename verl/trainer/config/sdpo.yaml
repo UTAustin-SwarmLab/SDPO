@@ -18,7 +18,7 @@ actor_rollout_ref:
     self_distillation:
       max_reprompt_len: 10240
       is_clip: 2.0
-      cispo_clip: 0.2
+      cispo_clip: 0.99
       future_returns_baseline_mode: group
     optim:
       lr: 1e-5
@@ -28,7 +28,7 @@ actor_rollout_ref:
 
 algorithm:
   adv_estimator: grpo # disables critic
-  norm_adv_by_std_in_grpo: False
+  norm_adv_by_std_in_grpo: True
   rollout_correction:
     rollout_is: token
     rollout_is_threshold: 2.0
@@ -37,4 +37,4 @@ data:
   train_batch_size: 32
 
 trainer:
-  val_before_train: False
+  val_before_train: True

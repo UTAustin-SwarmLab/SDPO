@@ -199,7 +199,7 @@ echo "Starting training..."
 CONFIG_NAME="baseline_grpo"
 
 # Default to ToolUse dataset
-DATA_PATH="datasets/sciknoweval/all"
+DATA_PATH="datasets/sciknoweval2/all"
 
 # Hyperparameters (OOM-safe defaults; override via env if needed)
 TRAIN_BATCH_SIZE=${TRAIN_BATCH_SIZE:-32}
@@ -231,7 +231,7 @@ mkdir -p "$LOCAL_OUTPUT_DIR" "$CKPT_DIR"
 # Define USER for Hydra config (required by user.yaml)
 export USER=${USER:-$(whoami)}
 export TASK="${TASK:-$DATA_PATH}"
-ICL_VALIDATION=${ICL_VALIDATION:-True}
+ICL_VALIDATION=${ICL_VALIDATION:-False}
 ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-student}
 LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 echo "Data: $DATA_PATH"

@@ -110,7 +110,7 @@ if [[ ! -d "$PROJECT_ROOT/verl" ]]; then
 fi
 
 CONFIG_NAME="distil"
-DATA_PATH="${DATA_PATH:-datasets/sciknoweval/all}"
+DATA_PATH="${DATA_PATH:-datasets/sciknoweval2/all}"
 TRAIN_BATCH_SIZE="${TRAIN_BATCH_SIZE:-32}"
 ROLLOUT_BATCH_SIZE="${ROLLOUT_BATCH_SIZE:-8}"
 MINI_BATCH_SIZE="${MINI_BATCH_SIZE:-32}"
@@ -127,7 +127,7 @@ export PROJECT_ROOT
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 export USER="${USER:-$(whoami)}"
 export TASK="${TASK:-$DATA_PATH}"
-ICL_VALIDATION=${ICL_VALIDATION:-True}
+ICL_VALIDATION=${ICL_VALIDATION:-False}
 ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-teacher}
 LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 OUTPUT_DIR="${WORK}/output/DISTIL-test"
@@ -157,7 +157,7 @@ actor_rollout_ref.actor.self_distillation.max_reprompt_len=$MAX_MODEL_LEN \
 actor_rollout_ref.rollout.tensor_model_parallel_size=1 \
 actor_rollout_ref.model.path=$MODEL_PATH \
 actor_rollout_ref.actor.optim.lr=$LR \
-actor_rollout_ref.actor.self_distillation.distillation_topk=50 \
+actor_rollout_ref.actor.self_distillation.distillation_topk=100 \
 algorithm.rollout_correction.rollout_is=token \
 actor_rollout_ref.actor.self_distillation.dont_reprompt_on_self_success=$DONT_REPROMPT_ON_SELF_SUCCESS \
 actor_rollout_ref.actor.self_distillation.alpha=$ALPHA \

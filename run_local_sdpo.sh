@@ -9,7 +9,7 @@
 CONFIG_NAME="sdpo"
 
 # Default to ToolUse dataset
-DATA_PATH="datasets/sciknoweval/all"
+DATA_PATH="datasets/sciknoweval2/all"
 
 # Hyperparameters (from experiments/run_sdpo_all.sh)
 TRAIN_BATCH_SIZE=32

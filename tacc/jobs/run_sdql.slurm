@@ -6,7 +6,7 @@
 #SBATCH -N 8
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-#SBATCH -t 16:00:00
+#SBATCH -t 30:00:00
 #SBATCH --mem=0
 
 
@@ -127,7 +127,7 @@ ray status --address "$HEAD_IP:$RAY_PORT"
 # 4. TRAINING ARGUMENTS (from sbatch CLI)
 # ==========================================
 CONFIG_NAME="sdql"
-DATA_PATH=${1:-"datasets/sciknoweval/all"}
+DATA_PATH=${1:-"datasets/sciknoweval2/all"}
 TRAIN_BATCH_SIZE=${2:-32}
 ROLLOUT_BATCH_SIZE=${3:-8}
 MINI_BATCH_SIZE=${4:-32}
@@ -140,7 +140,7 @@ TOPK=${10:-100}
 FULL_LOGIT_DISTILLATION=${11:-True}
 CLAMP_HIGH=${12:-5.0}
 CLAMP_LOW=${13:--5.0}
-TEACHER_UPDATE_RATE=${14:-0.05}
+TEACHER_UPDATE_RATE=${14:-0.01}
 TARGET_Q_MODE=${15:-uniform}
 IS_CLIP=${16:-null}
 USE_ENV_REWARD=${17:-False}
@@ -168,7 +168,7 @@ mkdir -p "$LOCAL_OUTPUT_DIR" "$CKPT_DIR"
 
 export USER=${USER:-$(whoami)}
 export TASK="${TASK:-$DATA_PATH}"
-ICL_VALIDATION=${ICL_VALIDATION:-True}
+ICL_VALIDATION=${ICL_VALIDATION:-False}
 ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-teacher}
 LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 EXP_NAME="$SUFFIX"

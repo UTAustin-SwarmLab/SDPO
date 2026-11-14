@@ -17,7 +17,7 @@ actor_rollout_ref:
 
 algorithm:
   adv_estimator: grpo
-  norm_adv_by_std_in_grpo: False
+  norm_adv_by_std_in_grpo: True
   rollout_correction:
     rollout_is: token
     rollout_is_threshold: 2.0

@@ -17,10 +17,10 @@ CONFIG_NAME="sdql"
 BASE_JOB_NAME="rlvr"
 
 DATA_PATHS=(
-    "datasets/sciknoweval/biology/"
-    "datasets/sciknoweval/chemistry/"
-    "datasets/sciknoweval/material/"
-    "datasets/sciknoweval/physics/"
+    "datasets/sciknoweval2/biology/"
+    "datasets/sciknoweval2/chemistry/"
+    "datasets/sciknoweval2/material/"
+    "datasets/sciknoweval2/physics/"
 )
 
 # Fixed Slurm resources

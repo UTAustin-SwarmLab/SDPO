@@ -15,7 +15,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TACC_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 DATA_PATHS=(
-    "datasets/sciknoweval/all/"
+    "datasets/sciknoweval2/all/"
 )
 
 TRAIN_BATCH_SIZES=(32)
@@ -24,7 +24,7 @@ MINI_BATCH_SIZES=(8 32)
 LRS=(1e-5)
 DONTS_REPROMPT_ON_SELF_SUCCESSS=(True)
 ALPHAS=(0.5)
-TEACHER_UPDATE_RATE=0.05
+TEACHER_UPDATE_RATE=0.01
 MODEL_PATHS=(
     "Qwen/Qwen3-8B"
 )

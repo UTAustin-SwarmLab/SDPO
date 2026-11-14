@@ -107,7 +107,7 @@ self_distillation:
 
   # If true, subtract leave-one-out means: first center per-token reward r_t,
   # form future returns G, then center G as well. Only when use_future_returns.
-  use_future_returns_baseline: true
+  use_future_returns_baseline: false
 
   # Scope of the leave-one-out baseline when use_future_returns_baseline is true:
   #   group – LOO within each prompt uid group (requires batch uid / index)
@@ -162,7 +162,7 @@ self_distillation:
   teacher_regularization: ema
 
   # EMA update rate for teacher weights, or trust-region mixing coefficient
-  teacher_update_rate: 0.05 
+  teacher_update_rate: 0.01
 
   # Maximum length of the reprompted prompt
   max_reprompt_len: 10240
@@ -198,7 +198,7 @@ self_distillation:
   is_clip: 2
   # CISPO-style symmetric clip for future-returns PG (full-logit) and sampled-token path:
   # ratio ∈ [1-cispo_clip, 1+cispo_clip].
-  cispo_clip: 0.2
+  cispo_clip: 0.99
 
   # Reprompting template - available variables: prompt, solution, response, feedback
   reprompt_template: |-

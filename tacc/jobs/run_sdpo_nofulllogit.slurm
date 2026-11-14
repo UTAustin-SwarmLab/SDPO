@@ -6,7 +6,7 @@
 #SBATCH -N 8
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=32
-#SBATCH -t 12:00:00
+#SBATCH -t 30:00:00
 #SBATCH --mem=0
 
 echo "Starting job on $(hostname)"
@@ -119,7 +119,7 @@ ray status --address "$HEAD_IP:$RAY_PORT"
 # ==========================================
 # 4. TRAINING ARGUMENTS (from sbatch CLI)
 # ==========================================
-DATA_PATH=${1:-"datasets/sciknoweval/all"}
+DATA_PATH=${1:-"datasets/sciknoweval2/all"}
 TRAIN_BATCH_SIZE=${2:-32}
 ROLLOUT_BATCH_SIZE=${3:-8}
 MINI_BATCH_SIZE=${4:-32}
@@ -129,7 +129,7 @@ ALPHA=${7:-0.5}
 DONT_REPROMPT_ON_SELF_SUCCESS=${8:-True}
 SUFFIX=${9:-"local_sdpo_nofulllogit"}
 TOPK=${10:-null}
-TEACHER_UPDATE_RATE=${11:-0.05}
+TEACHER_UPDATE_RATE=${11:-0.01}
 ENABLE_ICL=${12:-False}
 CLAMP_HIGH=${13:-2.0}
 CLAMP_LOW=${14:--2.0}
@@ -138,7 +138,7 @@ IS_CLIP=${16:-2.0}
 USE_FUTURE_RETURNS=${17:-False}
 GAMMA=${18:-1.0}
 USE_FUTURE_RETURNS_BASELINE=${19:-False}
-CISPO_CLIP=${20:-0.2}
+CISPO_CLIP=${20:-0.99}
 FUTURE_RETURNS_REWARD_SCALE=${21:-${FUTURE_RETURNS_REWARD_SCALE:-none}}
 FUTURE_RETURNS_BASELINE_MODE=${22:-${FUTURE_RETURNS_BASELINE_MODE:-group}}
 
@@ -174,7 +174,7 @@ mkdir -p "$LOCAL_OUTPUT_DIR" "$CKPT_DIR"
 
 export USER=${USER:-$(whoami)}
 export TASK="${TASK:-$DATA_PATH}"
-ICL_VALIDATION=${ICL_VALIDATION:-True}
+ICL_VALIDATION=${ICL_VALIDATION:-False}
 ICL_VALIDATION_POLICY=${ICL_VALIDATION_POLICY:-teacher}
 LOG_VAL_GENERATIONS=${LOG_VAL_GENERATIONS:-10}
 EXP_NAME="$SUFFIX"
@@ -226,7 +226,7 @@ trainer.log_val_generations=$LOG_VAL_GENERATIONS \
 trainer.test_freq=20 \
 trainer.save_freq=20 \
 trainer.max_actor_ckpt_to_keep=3 \
-trainer.val_before_train=False \
+trainer.val_before_train=True \
 custom_reward_function.path=$PROJECT_ROOT/verl/utils/reward_score/feedback/__init__.py"
 
 echo "----------------------------------------------------------------"

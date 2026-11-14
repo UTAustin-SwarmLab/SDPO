@@ -9,7 +9,7 @@
 CONFIG_NAME="baseline_grpo"
 
 # Default to ToolUse dataset
-DATA_PATH="datasets/sciknoweval/all"
+DATA_PATH="datasets/sciknoweval2/all"
 
 # Hyperparameters (OOM-safe defaults; override via env if needed)
 TRAIN_BATCH_SIZE=${TRAIN_BATCH_SIZE:-32}
