@@ -1,0 +1,98 @@
+group,variant,alpha,avg4,step,biology,chemistry,material,physics,last_step,last_val,runs
+"References","GRPO (lr 3e-6; run ends at step 199)",0.5,0.6279,160,0.3638,0.6954,0.7477,0.7047,180,0.6191,ifv06lhj
+"References","Distil (lr 1e-5, teacher EMA 0.01)",1.0,0.6825,320,0.4594,0.7714,0.7356,0.7637,380,0.6665,tppb3ufq
+"References","ROVER (mbs16, lr 1e-5)",0.5,0.6013,80,0.4294,0.6670,0.6775,0.6312,380,0.3811,yoccbm7n
+"SDPO base (stepwise only), lr 1e-5, EMA 0.05","With env feedback",0.0,0.6736,290,0.5200,0.7637,0.6822,0.7285,290,0.6736,kvd9hund
+"SDPO base (stepwise only), lr 1e-5, EMA 0.05","With env feedback",0.5,0.6596,290,0.4637,0.7595,0.7199,0.6953,290,0.6596,mq08zmcp
+"SDPO base (stepwise only), lr 1e-5, EMA 0.05","With env feedback",1.0,0.5859,30,0.3400,0.6601,0.6571,0.6863,350,0.4916,oapzokb2+6i11khkm
+"SDPO base (stepwise only), lr 1e-5, EMA 0.05","No env feedback",0.0,0.6542,240,0.4706,0.7387,0.6878,0.7195,240,0.6542,8ovi1uq2
+"SDPO base (stepwise only), lr 1e-5, EMA 0.05","No env feedback",0.5,0.6561,170,0.5531,0.7037,0.6989,0.6687,340,0.6373,54eer5m8
+"SDPO base (stepwise only), lr 1e-5, EMA 0.05","No env feedback",1.0,0.6223,40,0.4744,0.6738,0.6741,0.6668,150,0.4596,1jqglo3j
+"SDPO + future returns, env feedback (Aug 8-11), EMA 0.05","No baseline",0.0,0.5125,10,0.3075,0.4552,0.6534,0.6340,110,0.3450,k2xgjxg6+lufg2c2e+gvdsc9b9
+"SDPO + future returns, env feedback (Aug 8-11), EMA 0.05","No baseline",0.5,0.4908,100,0.3588,0.5899,0.5043,0.5102,150,0.4586,6s046pj5+w3j4vvg8
+"SDPO + future returns, env feedback (Aug 8-11), EMA 0.05","No baseline",1.0,0.5785,90,0.4581,0.6092,0.6878,0.5590,400,0.4879,g0mwg3bm+bhpxjjvu
+"SDPO + future returns, env feedback (Aug 8-11), EMA 0.05","Baseline v1 (pre-fix)",0.0,0.6421,330,0.5319,0.7504,0.7039,0.5820,400,0.5951,3e71h4jo
+"SDPO + future returns, env feedback (Aug 8-11), EMA 0.05","Baseline v1 (pre-fix)",0.5,0.5994,210,0.5069,0.7400,0.5535,0.5973,400,0.5940,epl4sx9x
+"SDPO + future returns, env feedback (Aug 8-11), EMA 0.05","Baseline v1 (pre-fix)",1.0,0.5267,50,0.4525,0.5179,0.6210,0.5156,80,0.5062,zqa4ysx8+l3zcepw9
+"SDPO + future returns, env feedback (Aug 8-11), EMA 0.05","Batch LOO baseline on G (corrected)",0.0,0.6531,380,0.5487,0.7833,0.6557,0.6246,400,0.6360,1ruezpqc
+"SDPO + future returns, env feedback (Aug 8-11), EMA 0.05","Batch LOO baseline on G (corrected)",0.5,0.5983,370,0.4838,0.7729,0.5826,0.5539,400,0.5878,sd5ltz6h
+"SDPO + future returns, env feedback (Aug 8-11), EMA 0.05","Batch LOO baseline on G (corrected)",1.0,0.4849,20,0.3425,0.4954,0.4983,0.6035,400,0.3624,bd8gkfjm
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.2, EMA 0.05",0.0,0.4924,40,0.3200,0.4318,0.6267,0.5910,400,0.0000,v1w1gv0d
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.2, EMA 0.05",0.5,0.4973,80,0.3162,0.4424,0.6902,0.5402,240,0.4075,moyab5n9
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.2, EMA 0.05",1.0,0.5018,40,0.2913,0.4256,0.6835,0.6070,100,0.3520,yegf3zsn
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.2, EMA 0.01",0.0,0.6357,360,0.4669,0.7121,0.7340,0.6301,400,0.6032,q1f1fs4n
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.2, EMA 0.01",0.5,0.4510,20,0.3400,0.3891,0.4860,0.5891,200,0.2811,amvqhgzu
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.2, EMA 0.01",1.0,0.5073,20,0.3500,0.4320,0.6113,0.6359,400,0.0522,lwx0hu7z
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.99, EMA 0.05",0.0,0.4986,40,0.3638,0.3896,0.6444,0.5965,380,0.0348,d5cozgd7
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.99, EMA 0.05",0.5,0.4757,20,0.3600,0.4821,0.4769,0.5836,400,0.2724,wn00dza0
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.99, EMA 0.05",1.0,0.5220,20,0.3644,0.4629,0.6267,0.6340,400,0.0000,odckkgtf
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.99, EMA 0.01",0.0,0.6630,320,0.5000,0.7560,0.7420,0.6539,400,0.6454,0o6f01pm
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.99, EMA 0.01",0.5,0.4494,20,0.3312,0.3772,0.4846,0.6043,400,0.4231,nubdqvie
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Sum, group LOO, CISPO 0.99, EMA 0.01",1.0,0.5089,40,0.3362,0.5473,0.5174,0.6348,400,0.3259,wormvd42
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), group LOO, CISPO 0.99, EMA 0.05",0.0,0.6552,280,0.5194,0.7342,0.6832,0.6840,400,0.6069,0q2rz5mf
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), group LOO, CISPO 0.99, EMA 0.05",0.5,0.6521,140,0.5194,0.6999,0.7373,0.6520,400,0.6477,7dpnqgxy
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), group LOO, CISPO 0.99, EMA 0.05",1.0,0.6056,20,0.4250,0.6329,0.6915,0.6730,400,0.3871,mnpamrjs
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), group LOO, CISPO 0.99, EMA 0.01",0.0,0.6862,400,0.4844,0.7650,0.7450,0.7504,400,0.6862,pydodnbi
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), group LOO, CISPO 0.99, EMA 0.01",0.5,0.6536,320,0.4394,0.7473,0.7116,0.7160,400,0.6531,ckpb6svm
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), group LOO, CISPO 0.99, EMA 0.01",1.0,0.6284,140,0.5312,0.6926,0.6557,0.6340,400,0.5455,7rd3jzcz
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), batch LOO, CISPO 0.99, EMA 0.05",0.0,0.6391,280,0.4919,0.7439,0.6327,0.6879,400,0.5626,zku4zbt2
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), batch LOO, CISPO 0.99, EMA 0.05",0.5,0.6523,140,0.5500,0.7077,0.7012,0.6504,400,0.6054,26z83fva
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), batch LOO, CISPO 0.99, EMA 0.05",1.0,0.5870,20,0.4044,0.6317,0.6795,0.6324,400,0.2956,u6e8sst7
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), batch LOO, CISPO 0.99, EMA 0.01",0.0,0.6793,400,0.4694,0.7521,0.7213,0.7746,400,0.6793,34tib0zu
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), batch LOO, CISPO 0.99, EMA 0.01",0.5,0.6798,300,0.5594,0.7470,0.6872,0.7258,400,0.6738,jntmxkfg
+"SDPO + future returns, no feedback, centred r_t (Aug 22-30)","Mean (remaining), batch LOO, CISPO 0.99, EMA 0.01",1.0,0.5811,20,0.3944,0.6324,0.6855,0.6121,400,0.4687,dce2eanv
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","Uniform, no centring",0.0,0.4272,20,0.3438,0.3960,0.5424,0.4266,40,0.0102,nh85fcx4
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","Uniform, no centring",0.5,0.6121,220,0.4050,0.6808,0.7126,0.6500,400,0.5577,33b8ef1m
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","Uniform, no centring",1.0,0.5925,220,0.4088,0.6625,0.6243,0.6742,380,0.5210,s0zyvxdm
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","On-policy, no centring",0.0,0.4627,20,0.3106,0.4225,0.5762,0.5414,20,0.4627,x1yt14um
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","On-policy, no centring",0.5,0.6331,180,0.4763,0.6756,0.7213,0.6594,400,0.5889,myb1g10y
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","On-policy, no centring",1.0,0.5903,160,0.3862,0.6189,0.7166,0.6395,400,0.4695,k41rpp2s
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=0.9, no centring",0.0,0.3759,20,0.2906,0.3341,0.4773,0.4016,140,0.0048,yc3flj5o
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=0.9, no centring",0.5,0.6077,200,0.4150,0.6485,0.7032,0.6641,400,0.5739,l60ea65a
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=0.9, no centring",1.0,0.5336,40,0.3844,0.4884,0.6250,0.6367,400,0.3986,ezh5bdi7
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=1.0, no centring",0.0,0.3327,20,0.2506,0.2804,0.4285,0.3715,140,0.0011,eqdmei36
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=1.0, no centring",0.5,0.5255,40,0.3144,0.4856,0.6534,0.6488,400,0.4777,14qw269p
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=1.0, no centring",1.0,0.5015,400,0.4000,0.5881,0.5615,0.4562,400,0.5015,597ib0aq
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","Uniform, centring",0.0,0.4417,20,0.3088,0.4088,0.5231,0.5262,20,0.4417,mgr7x5ab
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","On-policy, centring",0.0,0.4685,20,0.2994,0.4179,0.5759,0.5809,20,0.4685,g2a5xd86
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=0.9, centring",0.0,0.3978,20,0.2875,0.3680,0.4983,0.4375,60,0.0015,7w9cey80
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=0.9, centring",1.0,0.5416,60,0.4088,0.5065,0.6197,0.6316,400,0.4489,msbl1x1p
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=1.0, centring",0.0,0.3358,20,0.2681,0.2985,0.4275,0.3492,160,0.0031,eyc3qo1l
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=1.0, centring",0.5,0.5163,40,0.3069,0.4723,0.6521,0.6340,380,0.4791,uf1ioy57
+"SDQL, lr 3e-6, EMA 0.05, Sep 5-6 sweep","λ=1.0, centring",1.0,0.4244,20,0.2625,0.4408,0.4743,0.5199,160,0.0000,zwkexy5h
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, no centring (Aug 14)",0.0,0.4221,20,0.3119,0.3900,0.5241,0.4625,20,0.4221,kgh2r022
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, no centring (Aug 14)",0.5,0.6035,220,0.4144,0.6583,0.7002,0.6410,380,0.5539,mfww5t6t
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, no centring (Aug 14)",1.0,0.5466,160,0.3513,0.5951,0.6100,0.6301,400,0.5385,7ew1sd0f
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, centring (Aug 14)",0.0,0.5122,160,0.3631,0.5580,0.5638,0.5637,160,0.5122,edipzpdx
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, centring (Aug 14)",0.5,0.5074,60,0.3606,0.4647,0.6186,0.5855,80,0.4806,a9hnpczj
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, centring (Aug 14)",1.0,0.5977,340,0.4456,0.6906,0.6497,0.6047,400,0.5792,j1at7me0
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, no centring (Aug 17, micro-batch 1)",0.0,0.4314,20,0.3287,0.4060,0.5040,0.4867,20,0.4314,syaiqhm1
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, no centring (Aug 17, micro-batch 1)",0.5,0.6268,240,0.4906,0.6551,0.7296,0.6320,400,0.5949,3a50a9ot
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, no centring (Aug 17, micro-batch 1)",1.0,0.5707,160,0.3200,0.6622,0.6788,0.6219,400,0.4488,zm03pq9q
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, centring (Aug 17, micro-batch 1)",0.0,0.4569,20,0.2994,0.4098,0.5678,0.5504,20,0.4569,ly7vex8f
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, centring (Aug 17, micro-batch 1)",0.5,0.6249,200,0.4381,0.6815,0.7162,0.6637,400,0.6161,y8eq5q0o
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","On-policy, centring (Aug 17, micro-batch 1)",1.0,0.5673,160,0.3325,0.6321,0.6243,0.6801,400,0.4123,y9ddre11
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","Uniform, no centring (Aug 18)",0.0,0.4486,20,0.3344,0.4034,0.5705,0.4859,20,0.4486,xdcs4ryk
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","Uniform, no centring (Aug 18)",0.5,0.6412,260,0.5100,0.7007,0.7293,0.6246,400,0.5828,xwmz3igm
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","Uniform, no centring (Aug 18)",1.0,0.5856,180,0.3706,0.6451,0.6598,0.6668,400,0.5233,t0vtrfiu
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","Uniform, centring (Aug 18)",0.0,0.4891,20,0.3438,0.4201,0.5628,0.6297,280,0.0017,pauwmhbb
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","Uniform, centring (Aug 18)",0.5,0.6305,180,0.4738,0.6759,0.7089,0.6633,400,0.5722,t8qss8xb
+"SDQL, lr 3e-6, EMA 0.05, Aug 14-18","Uniform, centring (Aug 18)",1.0,0.6119,200,0.3969,0.6765,0.6778,0.6965,400,0.3844,7ztqehbg
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0, mbs32 (Aug 19)",0.5,0.6048,340,0.3894,0.6552,0.7059,0.6687,380,0.6037,tw1l2e9s
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0, mbs32 (Aug 19)",1.0,0.6093,340,0.4356,0.6432,0.6902,0.6684,340,0.6093,1fkbd33h
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.01, mbs32 (Aug 19)",0.5,0.6514,400,0.4988,0.6932,0.7316,0.6820,400,0.6514,llv7pc8y
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.01, mbs32 (Aug 19)",1.0,0.6433,320,0.4863,0.7027,0.7142,0.6699,400,0.6392,nntcrbf6
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0, mbs32 (Aug 20)",0.5,0.6021,380,0.3619,0.6626,0.7099,0.6738,400,0.5983,12ocxwrk
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0, mbs32 (Aug 20)",1.0,0.6170,360,0.4462,0.6403,0.7209,0.6605,400,0.6077,pquoaf1g
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.01, mbs32 (Aug 20)",0.5,0.6261,320,0.4050,0.6924,0.7229,0.6840,400,0.6222,7jm6nqe7
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.01, mbs32 (Aug 20)",1.0,0.6149,320,0.4119,0.6997,0.7005,0.6477,400,0.5694,xzn0voxu
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.05, mbs32 (Aug 20)",0.5,0.6367,240,0.5062,0.6784,0.7316,0.6305,400,0.5944,1m6vtuxy
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.05, mbs32 (Aug 20)",1.0,0.5944,180,0.3656,0.6494,0.7002,0.6625,400,0.4786,klxawodx
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0, mbs16",0.5,0.6183,320,0.4031,0.6683,0.7246,0.6773,400,0.6074,q9zov1au
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0, mbs16",1.0,0.6000,320,0.3881,0.6433,0.7039,0.6648,400,0.5961,5mz5a4fb
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.01, mbs16",0.5,0.6418,380,0.4544,0.7018,0.7333,0.6777,400,0.6336,ooqw4j1s
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.01, mbs16",1.0,0.6337,260,0.4669,0.7132,0.6999,0.6547,400,0.6122,wbl6mkjj
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0, mbs8",0.5,0.6239,400,0.4612,0.6842,0.6524,0.6977,400,0.6239,z8610td1
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0, mbs8",1.0,0.6080,340,0.3950,0.6665,0.7025,0.6680,400,0.5989,39ws2bjy
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.01, mbs8",0.5,0.6395,360,0.4981,0.7080,0.6795,0.6723,400,0.6250,9ntvz0tx
+"SDQL on-policy + centring, lr 3e-6: teacher rate x mini-batch","EMA 0.01, mbs8",1.0,0.6278,180,0.4631,0.6862,0.6885,0.6734,400,0.5900,uj948anc

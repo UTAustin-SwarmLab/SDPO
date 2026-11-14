@@ -1,0 +1,8 @@
+method,biology,chemistry,material,physics,avg4,run,step,alpha,name
+GRPO,0.3638,0.6954,0.7477,0.7047,0.6279,ifv06lhj,160,0.5,FINAL-GRPO-mbs-32-train32-rollout8-lr3e-6-modelQwen/Qwen3-8B
+Distil,0.4594,0.7714,0.7356,0.7637,0.6825,tppb3ufq,320,1,FINAL-DISTIL-mbs-32-train32-rollout8-lr1e-5-alpha1.0-modelQwen/Qwen3-8B
+ROVER,0.4294,0.6670,0.6775,0.6312,0.6013,yoccbm7n,80,0.5,FINAL-ROVER-mbs-16-train32-rollout8-lr1e-5-alpha0.5-modelQwen/Qwen3-8B
+SDPO base (stepwise only),0.5200,0.7637,0.6822,0.7285,0.6736,kvd9hund,290,0,FINAL-SDPO-noicl-isclip2.0-mbs-32-train32-rollout8-lr1e-5-alpha0.0-modelQwen/Qwe
+SDPO + future returns,0.4844,0.7650,0.7450,0.7504,0.6862,pydodnbi,400,0,frgroup-sdpo-noicl-gae10bgrouprsremaining-is20-cs099-a00-tur001-mbs32-lr1e-5-qwe
+SDQL (mbs 32),0.4988,0.6932,0.7316,0.6820,0.6514,llv7pc8y,400,0.5,tur-sdql-tqonpolicy-inois-envrwfalse-noclamp-rwbaseline-a05-tur001-mbs32-tr32-ro
+SDQL (mbs 8/16),0.4544,0.7018,0.7333,0.6777,0.6418,ooqw4j1s,380,0.5,ofp-sdql-tqonpolicy-inois-envrwfalse-noclamp-rwbaseline-a05-tur001-mbs16-tr32-ro

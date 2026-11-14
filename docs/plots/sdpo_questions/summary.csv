@@ -1,0 +1,1151 @@
+figure,metric,column,series,runs,common_end,win_final,win_mean,win_best,full_last_step,full_final,full_mean,full_best
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0 · forward KL","SDPO base · stepwise KL only (env feedback)","kvd9hund",110,0.4521,0.4084,0.4569,290,0.5054,0.4591,0.5200
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0 · forward KL","+ future returns, no baseline","k2xgjxg6,lufg2c2e,gvdsc9b9",110,0.1871,0.2738,0.3875,110,0.1871,0.2738,0.3875
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0 · forward KL","+ future returns, baseline v1 (Aug 10, pre-fix)","3e71h4jo",110,0.4304,0.4213,0.4625,400,0.4635,0.4710,0.5363
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0 · forward KL","+ future returns, LOO baseline on G (Aug 11, corrected)","1ruezpqc",110,0.4606,0.4223,0.4725,400,0.5452,0.5012,0.5669
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0 · forward KL","GRPO","ifv06lhj",110,0.3102,0.3102,0.3187,180,0.3502,0.3272,0.3638
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0 · forward KL","Distil (α=1)","tppb3ufq",110,0.4327,0.4287,0.4587,380,0.4502,0.4530,0.4844
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",110,0.4127,0.4019,0.4425,380,0.5033,0.4135,0.5288
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0 · forward KL","SDPO base · stepwise KL only (env feedback)","kvd9hund",110,0.6956,0.6688,0.7028,290,0.7556,0.7094,0.7637
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0 · forward KL","+ future returns, no baseline","k2xgjxg6,lufg2c2e,gvdsc9b9",110,0.0404,0.2307,0.4552,110,0.0404,0.2307,0.4552
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0 · forward KL","+ future returns, baseline v1 (Aug 10, pre-fix)","3e71h4jo",110,0.6784,0.5928,0.7158,400,0.7068,0.6907,0.7579
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0 · forward KL","+ future returns, LOO baseline on G (Aug 11, corrected)","1ruezpqc",110,0.6836,0.5848,0.6888,400,0.7801,0.7086,0.7879
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0 · forward KL","GRPO","ifv06lhj",110,0.6228,0.5876,0.6472,180,0.6831,0.6272,0.6954
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0 · forward KL","Distil (α=1)","tppb3ufq",110,0.7246,0.6948,0.7348,380,0.7577,0.7352,0.7714
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",110,0.6586,0.6429,0.6731,380,0.4263,0.5644,0.6731
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0 · forward KL","SDPO base · stepwise KL only (env feedback)","kvd9hund",110,0.6623,0.6615,0.6868,290,0.6554,0.6460,0.6868
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0 · forward KL","+ future returns, no baseline","k2xgjxg6,lufg2c2e,gvdsc9b9",110,0.5891,0.6074,0.6668,110,0.5891,0.6074,0.6668
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0 · forward KL","+ future returns, baseline v1 (Aug 10, pre-fix)","3e71h4jo",110,0.6257,0.5716,0.6467,400,0.6621,0.6543,0.7309
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0 · forward KL","+ future returns, LOO baseline on G (Aug 11, corrected)","1ruezpqc",110,0.5426,0.4571,0.5501,400,0.6311,0.5607,0.6557
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0 · forward KL","GRPO","ifv06lhj",110,0.7140,0.6967,0.7326,180,0.7478,0.7194,0.7493
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0 · forward KL","Distil (α=1)","tppb3ufq",110,0.7130,0.7009,0.7226,380,0.7164,0.7153,0.7356
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",110,0.6572,0.6434,0.6775,380,0.5035,0.6359,0.6952
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0 · forward KL","SDPO base · stepwise KL only (env feedback)","kvd9hund",110,0.6582,0.6519,0.6660,290,0.7266,0.6862,0.7285
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0 · forward KL","+ future returns, no baseline","k2xgjxg6,lufg2c2e,gvdsc9b9",110,0.4926,0.5441,0.6340,110,0.4926,0.5441,0.6340
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0 · forward KL","+ future returns, baseline v1 (Aug 10, pre-fix)","3e71h4jo",110,0.5139,0.4938,0.6016,400,0.5414,0.5478,0.6156
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0 · forward KL","+ future returns, LOO baseline on G (Aug 11, corrected)","1ruezpqc",110,0.5592,0.4987,0.5836,400,0.6227,0.5665,0.6426
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0 · forward KL","GRPO","ifv06lhj",110,0.6807,0.6793,0.6945,180,0.7055,0.6885,0.7070
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0 · forward KL","Distil (α=1)","tppb3ufq",110,0.6897,0.6760,0.6973,380,0.7557,0.7248,0.7672
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",110,0.6227,0.6254,0.6367,380,0.5457,0.5832,0.6687
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0.5 · JSD","SDPO base · stepwise KL only (env feedback)","mq08zmcp",150,0.4733,0.4181,0.4894,290,0.4227,0.4303,0.4894
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0.5 · JSD","+ future returns, no baseline","6s046pj5,w3j4vvg8",150,0.3350,0.3509,0.3925,150,0.3350,0.3509,0.3925
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0.5 · JSD","+ future returns, baseline v1 (Aug 10, pre-fix)","epl4sx9x",150,0.4110,0.3910,0.4606,400,0.4788,0.4346,0.5275
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0.5 · JSD","+ future returns, LOO baseline on G (Aug 11, corrected)","sd5ltz6h",150,0.4948,0.4703,0.5100,400,0.4785,0.4784,0.5238
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",150,0.3294,0.3186,0.3425,180,0.3502,0.3272,0.3638
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",150,0.4610,0.4383,0.4844,380,0.4502,0.4530,0.4844
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",150,0.3527,0.3859,0.4425,380,0.5033,0.4135,0.5288
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base · stepwise KL only (env feedback)","mq08zmcp",150,0.7085,0.6808,0.7174,290,0.7493,0.7053,0.7595
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0.5 · JSD","+ future returns, no baseline","6s046pj5,w3j4vvg8",150,0.4894,0.4413,0.5899,150,0.4894,0.4413,0.5899
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0.5 · JSD","+ future returns, baseline v1 (Aug 10, pre-fix)","epl4sx9x",150,0.7198,0.6182,0.7494,400,0.7575,0.7017,0.7667
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0.5 · JSD","+ future returns, LOO baseline on G (Aug 11, corrected)","sd5ltz6h",150,0.7239,0.6114,0.7394,400,0.7457,0.6957,0.7729
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",150,0.6613,0.6107,0.6790,180,0.6831,0.6272,0.6954
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",150,0.7364,0.7069,0.7403,380,0.7577,0.7352,0.7714
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",150,0.6212,0.6346,0.6731,380,0.4263,0.5644,0.6731
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0.5 · JSD","SDPO base · stepwise KL only (env feedback)","mq08zmcp",150,0.7120,0.6965,0.7196,290,0.7182,0.7076,0.7340
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0.5 · JSD","+ future returns, no baseline","6s046pj5,w3j4vvg8",150,0.5023,0.4939,0.5271,150,0.5023,0.4939,0.5271
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0.5 · JSD","+ future returns, baseline v1 (Aug 10, pre-fix)","epl4sx9x",150,0.5233,0.4651,0.5371,400,0.5212,0.5053,0.5672
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0.5 · JSD","+ future returns, LOO baseline on G (Aug 11, corrected)","sd5ltz6h",150,0.4875,0.4755,0.5090,400,0.5343,0.5031,0.5826
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",150,0.7434,0.7116,0.7493,180,0.7478,0.7194,0.7493
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",150,0.7174,0.7048,0.7226,380,0.7164,0.7153,0.7356
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",150,0.6723,0.6552,0.6952,380,0.5035,0.6359,0.6952
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0.5 · JSD","SDPO base · stepwise KL only (env feedback)","mq08zmcp",150,0.6620,0.6657,0.6813,290,0.6960,0.6801,0.7059
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0.5 · JSD","+ future returns, no baseline","6s046pj5,w3j4vvg8",150,0.5092,0.5290,0.6168,150,0.5092,0.5290,0.6168
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0.5 · JSD","+ future returns, baseline v1 (Aug 10, pre-fix)","epl4sx9x",150,0.5201,0.5183,0.5887,400,0.6003,0.5542,0.6301
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0.5 · JSD","+ future returns, LOO baseline on G (Aug 11, corrected)","sd5ltz6h",150,0.5474,0.5193,0.5934,400,0.5811,0.5563,0.6195
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",150,0.6885,0.6839,0.7070,180,0.7055,0.6885,0.7070
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",150,0.7052,0.6855,0.7102,380,0.7557,0.7248,0.7672
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",150,0.6299,0.6286,0.6484,380,0.5457,0.5832,0.6687
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=1 · reverse KL","SDPO base · stepwise KL only (env feedback)","oapzokb2,6i11khkm",80,0.3423,0.3329,0.3538,350,0.2975,0.3042,0.3950
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=1 · reverse KL","+ future returns, no baseline","g0mwg3bm,bhpxjjvu",80,0.3890,0.3752,0.4150,400,0.5065,0.4528,0.5300
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=1 · reverse KL","+ future returns, baseline v1 (Aug 10, pre-fix)","zqa4ysx8,l3zcepw9",80,0.4788,0.4440,0.4800,80,0.4788,0.4440,0.4800
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=1 · reverse KL","+ future returns, LOO baseline on G (Aug 11, corrected)","bd8gkfjm",80,0.3085,0.3393,0.3925,400,0.4000,0.3537,0.4100
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",80,0.3131,0.3105,0.3187,180,0.3502,0.3272,0.3638
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",80,0.4150,0.4213,0.4400,380,0.4502,0.4530,0.4844
+"q1a_baseline_env_feedback_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",80,0.4267,0.4108,0.4425,380,0.5033,0.4135,0.5288
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base · stepwise KL only (env feedback)","oapzokb2,6i11khkm",80,0.6821,0.6526,0.6935,350,0.5941,0.6259,0.6935
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=1 · reverse KL","+ future returns, no baseline","g0mwg3bm,bhpxjjvu",80,0.5042,0.4757,0.5807,400,0.5184,0.5119,0.6391
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=1 · reverse KL","+ future returns, baseline v1 (Aug 10, pre-fix)","zqa4ysx8,l3zcepw9",80,0.4459,0.4679,0.5179,80,0.4459,0.4679,0.5179
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=1 · reverse KL","+ future returns, LOO baseline on G (Aug 11, corrected)","bd8gkfjm",80,0.5623,0.5053,0.5798,400,0.4063,0.4842,0.5798
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",80,0.5958,0.5728,0.6204,180,0.6831,0.6272,0.6954
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",80,0.7053,0.6848,0.7202,380,0.7577,0.7352,0.7714
+"q1a_baseline_env_feedback_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",80,0.6580,0.6447,0.6731,380,0.4263,0.5644,0.6731
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=1 · reverse KL","SDPO base · stepwise KL only (env feedback)","oapzokb2,6i11khkm",80,0.6344,0.6420,0.6638,350,0.5099,0.5337,0.6638
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=1 · reverse KL","+ future returns, no baseline","g0mwg3bm,bhpxjjvu",80,0.6600,0.6139,0.6801,400,0.4335,0.5252,0.6878
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=1 · reverse KL","+ future returns, baseline v1 (Aug 10, pre-fix)","zqa4ysx8,l3zcepw9",80,0.6025,0.5920,0.6210,80,0.6025,0.5920,0.6210
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=1 · reverse KL","+ future returns, LOO baseline on G (Aug 11, corrected)","bd8gkfjm",80,0.3972,0.4092,0.4983,400,0.2679,0.3401,0.4983
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",80,0.6940,0.6877,0.7142,180,0.7478,0.7194,0.7493
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",80,0.7013,0.6954,0.7132,380,0.7164,0.7153,0.7356
+"q1a_baseline_env_feedback_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",80,0.6520,0.6423,0.6775,380,0.5035,0.6359,0.6952
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=1 · reverse KL","SDPO base · stepwise KL only (env feedback)","oapzokb2,6i11khkm",80,0.6374,0.6539,0.6898,350,0.5092,0.5901,0.6898
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=1 · reverse KL","+ future returns, no baseline","g0mwg3bm,bhpxjjvu",80,0.5936,0.6086,0.6262,400,0.4712,0.4794,0.6262
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=1 · reverse KL","+ future returns, baseline v1 (Aug 10, pre-fix)","zqa4ysx8,l3zcepw9",80,0.4716,0.5318,0.6270,80,0.4716,0.5318,0.6270
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=1 · reverse KL","+ future returns, LOO baseline on G (Aug 11, corrected)","bd8gkfjm",80,0.3865,0.4021,0.6035,400,0.4021,0.4208,0.6035
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",80,0.6872,0.6804,0.6945,180,0.7055,0.6885,0.7070
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",80,0.6809,0.6707,0.6887,380,0.7557,0.7248,0.7672
+"q1a_baseline_env_feedback_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",80,0.6293,0.6275,0.6367,380,0.5457,0.5832,0.6687
+"q1a_baseline_env_feedback.png","val","α=0 · forward KL","SDPO base · stepwise KL only (env feedback)","kvd9hund",110,0.6170,0.5977,0.6266,290,0.6607,0.6252,0.6736
+"q1a_baseline_env_feedback.png","val","α=0 · forward KL","+ future returns, no baseline","k2xgjxg6,lufg2c2e,gvdsc9b9",110,0.3273,0.4140,0.5125,110,0.3273,0.4140,0.5125
+"q1a_baseline_env_feedback.png","val","α=0 · forward KL","+ future returns, baseline v1 (Aug 10, pre-fix)","3e71h4jo",110,0.5621,0.5199,0.5912,400,0.5935,0.5909,0.6421
+"q1a_baseline_env_feedback.png","val","α=0 · forward KL","+ future returns, LOO baseline on G (Aug 11, corrected)","1ruezpqc",110,0.5615,0.4907,0.5708,400,0.6448,0.5843,0.6531
+"q1a_baseline_env_feedback.png","val","α=0 · forward KL","GRPO","ifv06lhj",110,0.5819,0.5685,0.5910,180,0.6216,0.5906,0.6279
+"q1a_baseline_env_feedback.png","val","α=0 · forward KL","Distil (α=1)","tppb3ufq",110,0.6400,0.6251,0.6534,380,0.6700,0.6571,0.6825
+"q1a_baseline_env_feedback.png","val","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",110,0.5878,0.5784,0.6013,380,0.4947,0.5492,0.6013
+"q1a_baseline_env_feedback.png","val","α=0.5 · JSD","SDPO base · stepwise KL only (env feedback)","mq08zmcp",150,0.6390,0.6153,0.6421,290,0.6465,0.6308,0.6596
+"q1a_baseline_env_feedback.png","val","α=0.5 · JSD","+ future returns, no baseline","6s046pj5,w3j4vvg8",150,0.4590,0.4538,0.4908,150,0.4590,0.4538,0.4908
+"q1a_baseline_env_feedback.png","val","α=0.5 · JSD","+ future returns, baseline v1 (Aug 10, pre-fix)","epl4sx9x",150,0.5436,0.4981,0.5563,400,0.5894,0.5489,0.5994
+"q1a_baseline_env_feedback.png","val","α=0.5 · JSD","+ future returns, LOO baseline on G (Aug 11, corrected)","sd5ltz6h",150,0.5634,0.5191,0.5693,400,0.5849,0.5584,0.5983
+"q1a_baseline_env_feedback.png","val","α=0.5 · JSD","GRPO","ifv06lhj",150,0.6057,0.5812,0.6179,180,0.6216,0.5906,0.6279
+"q1a_baseline_env_feedback.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",150,0.6550,0.6339,0.6607,380,0.6700,0.6571,0.6825
+"q1a_baseline_env_feedback.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",150,0.5691,0.5761,0.6013,380,0.4947,0.5492,0.6013
+"q1a_baseline_env_feedback.png","val","α=1 · reverse KL","SDPO base · stepwise KL only (env feedback)","oapzokb2,6i11khkm",80,0.5740,0.5703,0.5859,350,0.4777,0.5135,0.5859
+"q1a_baseline_env_feedback.png","val","α=1 · reverse KL","+ future returns, no baseline","g0mwg3bm,bhpxjjvu",80,0.5367,0.5183,0.5533,400,0.4824,0.4923,0.5785
+"q1a_baseline_env_feedback.png","val","α=1 · reverse KL","+ future returns, baseline v1 (Aug 10, pre-fix)","zqa4ysx8,l3zcepw9",80,0.4997,0.5089,0.5267,80,0.4997,0.5089,0.5267
+"q1a_baseline_env_feedback.png","val","α=1 · reverse KL","+ future returns, LOO baseline on G (Aug 11, corrected)","bd8gkfjm",80,0.4136,0.4140,0.4849,400,0.3691,0.3997,0.4849
+"q1a_baseline_env_feedback.png","val","α=1 · reverse KL","GRPO","ifv06lhj",80,0.5725,0.5628,0.5788,180,0.6216,0.5906,0.6279
+"q1a_baseline_env_feedback.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",80,0.6256,0.6181,0.6353,380,0.6700,0.6571,0.6825
+"q1a_baseline_env_feedback.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",80,0.5915,0.5813,0.6013,380,0.4947,0.5492,0.6013
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0 · forward KL","+ future returns, group LOO baseline","pydodnbi",400,0.4677,0.4517,0.5075,400,0.4677,0.4517,0.5075
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0 · forward KL","+ future returns, batch LOO baseline","34tib0zu",400,0.4600,0.4420,0.4763,400,0.4600,0.4420,0.4763
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.4738,0.4315,0.4838,240,0.4738,0.4315,0.4838
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0 · forward KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0 · forward KL","+ future returns, group LOO baseline","pydodnbi",400,0.7604,0.7287,0.7650,400,0.7604,0.7287,0.7650
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0 · forward KL","+ future returns, batch LOO baseline","34tib0zu",400,0.7533,0.7274,0.7632,400,0.7533,0.7274,0.7632
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7446,0.7063,0.7481,240,0.7446,0.7063,0.7481
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0 · forward KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0 · forward KL","+ future returns, group LOO baseline","pydodnbi",400,0.7380,0.7210,0.7467,400,0.7380,0.7210,0.7467
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0 · forward KL","+ future returns, batch LOO baseline","34tib0zu",400,0.7321,0.7147,0.7413,400,0.7321,0.7147,0.7413
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6857,0.6765,0.7076,240,0.6857,0.6765,0.7076
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0 · forward KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0 · forward KL","+ future returns, group LOO baseline","pydodnbi",400,0.7487,0.7123,0.7562,400,0.7487,0.7123,0.7562
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0 · forward KL","+ future returns, batch LOO baseline","34tib0zu",400,0.7624,0.7158,0.7746,400,0.7624,0.7158,0.7746
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7069,0.6662,0.7195,240,0.7069,0.6662,0.7195
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0 · forward KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0.5 · JSD","+ future returns, group LOO baseline","ckpb6svm",400,0.4127,0.4087,0.4450,400,0.4127,0.4087,0.4450
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0.5 · JSD","+ future returns, batch LOO baseline","jntmxkfg",400,0.5450,0.5238,0.5637,400,0.5450,0.5238,0.5637
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","+ future returns, group LOO baseline","ckpb6svm",400,0.7601,0.7226,0.7723,400,0.7601,0.7226,0.7723
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","+ future returns, batch LOO baseline","jntmxkfg",400,0.7420,0.7255,0.7484,400,0.7420,0.7255,0.7484
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0.5 · JSD","+ future returns, group LOO baseline","ckpb6svm",400,0.7099,0.7007,0.7353,400,0.7099,0.7007,0.7353
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0.5 · JSD","+ future returns, batch LOO baseline","jntmxkfg",400,0.7175,0.6985,0.7306,400,0.7175,0.6985,0.7306
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0.5 · JSD","+ future returns, group LOO baseline","ckpb6svm",400,0.6954,0.6904,0.7160,400,0.6954,0.6904,0.7160
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0.5 · JSD","+ future returns, batch LOO baseline","jntmxkfg",400,0.6996,0.6990,0.7258,400,0.6996,0.6990,0.7258
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=1 · reverse KL","+ future returns, group LOO baseline","7rd3jzcz",400,0.5202,0.4928,0.5563,400,0.5202,0.4928,0.5563
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=1 · reverse KL","+ future returns, batch LOO baseline","dce2eanv",400,0.3058,0.3292,0.3944,400,0.3058,0.3292,0.3944
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","+ future returns, group LOO baseline","7rd3jzcz",400,0.5300,0.6094,0.6926,400,0.5300,0.6094,0.6926
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","+ future returns, batch LOO baseline","dce2eanv",400,0.6409,0.6577,0.6915,400,0.6409,0.6577,0.6915
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=1 · reverse KL","+ future returns, group LOO baseline","7rd3jzcz",400,0.6326,0.5934,0.6925,400,0.6326,0.5934,0.6925
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=1 · reverse KL","+ future returns, batch LOO baseline","dce2eanv",400,0.3777,0.4787,0.6855,400,0.3777,0.4787,0.6855
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=1 · reverse KL","+ future returns, group LOO baseline","7rd3jzcz",400,0.5501,0.5976,0.6711,400,0.5501,0.5976,0.6711
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=1 · reverse KL","+ future returns, batch LOO baseline","dce2eanv",400,0.5352,0.5644,0.6590,400,0.5352,0.5644,0.6590
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q1b_baseline_group_vs_batch_tur001_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0 · forward KL","+ future returns, group LOO baseline","pydodnbi",400,0.6787,0.6534,0.6862,400,0.6787,0.6534,0.6862
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0 · forward KL","+ future returns, batch LOO baseline","34tib0zu",400,0.6769,0.6500,0.6793,400,0.6769,0.6500,0.6793
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6527,0.6202,0.6542,240,0.6527,0.6202,0.6542
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0 · forward KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0.5 · JSD","+ future returns, group LOO baseline","ckpb6svm",400,0.6445,0.6306,0.6536,400,0.6445,0.6306,0.6536
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0.5 · JSD","+ future returns, batch LOO baseline","jntmxkfg",400,0.6760,0.6617,0.6798,400,0.6760,0.6617,0.6798
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q1b_baseline_group_vs_batch_tur001.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q1b_baseline_group_vs_batch_tur001.png","val","α=1 · reverse KL","+ future returns, group LOO baseline","7rd3jzcz",400,0.5582,0.5733,0.6284,400,0.5582,0.5733,0.6284
+"q1b_baseline_group_vs_batch_tur001.png","val","α=1 · reverse KL","+ future returns, batch LOO baseline","dce2eanv",400,0.4649,0.5075,0.5811,400,0.4649,0.5075,0.5811
+"q1b_baseline_group_vs_batch_tur001.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q1b_baseline_group_vs_batch_tur001.png","val","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q1b_baseline_group_vs_batch_tur001.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q1b_baseline_group_vs_batch_tur001.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0 · forward KL","+ future returns, group LOO baseline","0q2rz5mf",400,0.4238,0.4682,0.5194,400,0.4238,0.4682,0.5194
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0 · forward KL","+ future returns, batch LOO baseline","zku4zbt2",400,0.4479,0.4503,0.5038,400,0.4479,0.4503,0.5038
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.4738,0.4315,0.4838,240,0.4738,0.4315,0.4838
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0 · forward KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0 · forward KL","+ future returns, group LOO baseline","0q2rz5mf",400,0.7430,0.7171,0.7449,400,0.7430,0.7171,0.7449
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0 · forward KL","+ future returns, batch LOO baseline","zku4zbt2",400,0.6404,0.7016,0.7493,400,0.6404,0.7016,0.7493
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7446,0.7063,0.7481,240,0.7446,0.7063,0.7481
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0 · forward KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0 · forward KL","+ future returns, group LOO baseline","0q2rz5mf",400,0.6591,0.6718,0.6928,400,0.6591,0.6718,0.6928
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0 · forward KL","+ future returns, batch LOO baseline","zku4zbt2",400,0.5974,0.6291,0.6918,400,0.5974,0.6291,0.6918
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6857,0.6765,0.7076,240,0.6857,0.6765,0.7076
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0 · forward KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0 · forward KL","+ future returns, group LOO baseline","0q2rz5mf",400,0.5944,0.6455,0.6984,400,0.5944,0.6455,0.6984
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0 · forward KL","+ future returns, batch LOO baseline","zku4zbt2",400,0.6186,0.6561,0.6961,400,0.6186,0.6561,0.6961
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7069,0.6662,0.7195,240,0.7069,0.6662,0.7195
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0 · forward KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0.5 · JSD","+ future returns, group LOO baseline","7dpnqgxy",400,0.4508,0.4605,0.5194,400,0.4508,0.4605,0.5194
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0.5 · JSD","+ future returns, batch LOO baseline","26z83fva",400,0.4327,0.4669,0.5500,400,0.4327,0.4669,0.5500
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","+ future returns, group LOO baseline","7dpnqgxy",400,0.7619,0.7175,0.7714,400,0.7619,0.7175,0.7714
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","+ future returns, batch LOO baseline","26z83fva",400,0.7218,0.7092,0.7409,400,0.7218,0.7092,0.7409
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0.5 · JSD","+ future returns, group LOO baseline","7dpnqgxy",400,0.6885,0.6919,0.7373,400,0.6885,0.6919,0.7373
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0.5 · JSD","+ future returns, batch LOO baseline","26z83fva",400,0.6829,0.6899,0.7079,400,0.6829,0.6899,0.7079
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0.5 · JSD","+ future returns, group LOO baseline","7dpnqgxy",400,0.6434,0.6503,0.6793,400,0.6434,0.6503,0.6793
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0.5 · JSD","+ future returns, batch LOO baseline","26z83fva",400,0.6350,0.6642,0.6984,400,0.6350,0.6642,0.6984
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=1 · reverse KL","+ future returns, group LOO baseline","mnpamrjs",400,0.3800,0.3821,0.4800,400,0.3800,0.3821,0.4800
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=1 · reverse KL","+ future returns, batch LOO baseline","u6e8sst7",400,0.2192,0.3194,0.4050,400,0.2192,0.3194,0.4050
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","+ future returns, group LOO baseline","mnpamrjs",400,0.3666,0.4407,0.6329,400,0.3666,0.4407,0.6329
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","+ future returns, batch LOO baseline","u6e8sst7",400,0.3899,0.4945,0.6592,400,0.3899,0.4945,0.6592
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=1 · reverse KL","+ future returns, group LOO baseline","mnpamrjs",400,0.4401,0.5262,0.6918,400,0.4401,0.5262,0.6918
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=1 · reverse KL","+ future returns, batch LOO baseline","u6e8sst7",400,0.2943,0.4154,0.6795,400,0.2943,0.4154,0.6795
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=1 · reverse KL","+ future returns, group LOO baseline","mnpamrjs",400,0.4521,0.4628,0.6730,400,0.4521,0.4628,0.6730
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=1 · reverse KL","+ future returns, batch LOO baseline","u6e8sst7",400,0.1917,0.3315,0.6359,400,0.1917,0.3315,0.6359
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q1b_baseline_group_vs_batch_tur005_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0 · forward KL","+ future returns, group LOO baseline","0q2rz5mf",400,0.6050,0.6256,0.6552,400,0.6050,0.6256,0.6552
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0 · forward KL","+ future returns, batch LOO baseline","zku4zbt2",400,0.5761,0.6093,0.6391,400,0.5761,0.6093,0.6391
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6527,0.6202,0.6542,240,0.6527,0.6202,0.6542
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0 · forward KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0.5 · JSD","+ future returns, group LOO baseline","7dpnqgxy",400,0.6361,0.6301,0.6521,400,0.6361,0.6301,0.6521
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0.5 · JSD","+ future returns, batch LOO baseline","26z83fva",400,0.6181,0.6326,0.6523,400,0.6181,0.6326,0.6523
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q1b_baseline_group_vs_batch_tur005.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q1b_baseline_group_vs_batch_tur005.png","val","α=1 · reverse KL","+ future returns, group LOO baseline","mnpamrjs",400,0.4097,0.4529,0.6056,400,0.4097,0.4529,0.6056
+"q1b_baseline_group_vs_batch_tur005.png","val","α=1 · reverse KL","+ future returns, batch LOO baseline","u6e8sst7",400,0.2738,0.3902,0.5870,400,0.2738,0.3902,0.5870
+"q1b_baseline_group_vs_batch_tur005.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q1b_baseline_group_vs_batch_tur005.png","val","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q1b_baseline_group_vs_batch_tur005.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q1b_baseline_group_vs_batch_tur005.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0 · forward KL","Sum (scale = none)","d5cozgd7",380,0.0083,0.0755,0.3706,380,0.0083,0.0755,0.3706
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","0q2rz5mf",380,0.4412,0.4712,0.5194,400,0.4238,0.4682,0.5194
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",380,0.4738,0.4315,0.4838,240,0.4738,0.4315,0.4838
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0 · forward KL","GRPO","ifv06lhj",380,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0 · forward KL","Distil (α=1)","tppb3ufq",380,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",380,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0 · forward KL","Sum (scale = none)","d5cozgd7",380,0.0162,0.0844,0.4164,380,0.0162,0.0844,0.4164
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","0q2rz5mf",380,0.7334,0.7156,0.7430,400,0.7430,0.7171,0.7449
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",380,0.7446,0.7063,0.7481,240,0.7446,0.7063,0.7481
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0 · forward KL","GRPO","ifv06lhj",380,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0 · forward KL","Distil (α=1)","tppb3ufq",380,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",380,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0 · forward KL","Sum (scale = none)","d5cozgd7",380,0.0594,0.1691,0.6444,380,0.0594,0.1691,0.6444
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","0q2rz5mf",380,0.6540,0.6723,0.6928,400,0.6591,0.6718,0.6928
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",380,0.6857,0.6765,0.7076,240,0.6857,0.6765,0.7076
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0 · forward KL","GRPO","ifv06lhj",380,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0 · forward KL","Distil (α=1)","tppb3ufq",380,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",380,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0 · forward KL","Sum (scale = none)","d5cozgd7",380,0.0600,0.1718,0.6445,380,0.0600,0.1718,0.6445
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","0q2rz5mf",380,0.5848,0.6473,0.6984,400,0.5944,0.6455,0.6984
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",380,0.7069,0.6662,0.7195,240,0.7069,0.6662,0.7195
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0 · forward KL","GRPO","ifv06lhj",380,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0 · forward KL","Distil (α=1)","tppb3ufq",380,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",380,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0.5 · JSD","Sum (scale = none)","wn00dza0",400,0.1842,0.1966,0.3850,400,0.1842,0.1966,0.3850
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","7dpnqgxy",400,0.4508,0.4605,0.5194,400,0.4508,0.4605,0.5194
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","Sum (scale = none)","wn00dza0",400,0.0053,0.0551,0.4821,400,0.0053,0.0551,0.4821
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","7dpnqgxy",400,0.7619,0.7175,0.7714,400,0.7619,0.7175,0.7714
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0.5 · JSD","Sum (scale = none)","wn00dza0",400,0.5890,0.5700,0.6711,400,0.5890,0.5700,0.6711
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","7dpnqgxy",400,0.6885,0.6919,0.7373,400,0.6885,0.6919,0.7373
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q2_reward_scale_tur005_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0.5 · JSD","Sum (scale = none)","wn00dza0",400,0.2780,0.4287,0.5836,400,0.2780,0.4287,0.5836
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","7dpnqgxy",400,0.6434,0.6503,0.6793,400,0.6434,0.6503,0.6793
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=1 · reverse KL","Sum (scale = none)","odckkgtf",400,0.0000,0.0584,0.3644,400,0.0000,0.0584,0.3644
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","mnpamrjs",400,0.3800,0.3821,0.4800,400,0.3800,0.3821,0.4800
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q2_reward_scale_tur005_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","Sum (scale = none)","odckkgtf",400,0.0000,0.0365,0.4629,400,0.0000,0.0365,0.4629
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","mnpamrjs",400,0.3666,0.4407,0.6329,400,0.3666,0.4407,0.6329
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q2_reward_scale_tur005_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q2_reward_scale_tur005_by_domain.png","val/material","α=1 · reverse KL","Sum (scale = none)","odckkgtf",400,0.0000,0.2477,0.6761,400,0.0000,0.2477,0.6761
+"q2_reward_scale_tur005_by_domain.png","val/material","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","mnpamrjs",400,0.4401,0.5262,0.6918,400,0.4401,0.5262,0.6918
+"q2_reward_scale_tur005_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q2_reward_scale_tur005_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q2_reward_scale_tur005_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q2_reward_scale_tur005_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=1 · reverse KL","Sum (scale = none)","odckkgtf",400,0.0000,0.1882,0.6340,400,0.0000,0.1882,0.6340
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","mnpamrjs",400,0.4521,0.4628,0.6730,400,0.4521,0.4628,0.6730
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q2_reward_scale_tur005_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q2_reward_scale_tur005.png","val","α=0 · forward KL","Sum (scale = none)","d5cozgd7",380,0.0360,0.1252,0.4986,380,0.0360,0.1252,0.4986
+"q2_reward_scale_tur005.png","val","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","0q2rz5mf",380,0.6034,0.6266,0.6552,400,0.6050,0.6256,0.6552
+"q2_reward_scale_tur005.png","val","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",380,0.6527,0.6202,0.6542,240,0.6527,0.6202,0.6542
+"q2_reward_scale_tur005.png","val","α=0 · forward KL","GRPO","ifv06lhj",380,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q2_reward_scale_tur005.png","val","α=0 · forward KL","Distil (α=1)","tppb3ufq",380,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q2_reward_scale_tur005.png","val","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",380,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q2_reward_scale_tur005.png","val","α=0.5 · JSD","Sum (scale = none)","wn00dza0",400,0.2641,0.3126,0.4757,400,0.2641,0.3126,0.4757
+"q2_reward_scale_tur005.png","val","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","7dpnqgxy",400,0.6361,0.6301,0.6521,400,0.6361,0.6301,0.6521
+"q2_reward_scale_tur005.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q2_reward_scale_tur005.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q2_reward_scale_tur005.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q2_reward_scale_tur005.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q2_reward_scale_tur005.png","val","α=1 · reverse KL","Sum (scale = none)","odckkgtf",400,0.0000,0.1327,0.5220,400,0.0000,0.1327,0.5220
+"q2_reward_scale_tur005.png","val","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","mnpamrjs",400,0.4097,0.4529,0.6056,400,0.4097,0.4529,0.6056
+"q2_reward_scale_tur005.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q2_reward_scale_tur005.png","val","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q2_reward_scale_tur005.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q2_reward_scale_tur005.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0 · forward KL","Sum (scale = none)","0o6f01pm",400,0.5129,0.4690,0.5244,400,0.5129,0.4690,0.5244
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","pydodnbi",400,0.4677,0.4517,0.5075,400,0.4677,0.4517,0.5075
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.4738,0.4315,0.4838,240,0.4738,0.4315,0.4838
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0 · forward KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0 · forward KL","Sum (scale = none)","0o6f01pm",400,0.7584,0.6731,0.7629,400,0.7584,0.6731,0.7629
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","pydodnbi",400,0.7604,0.7287,0.7650,400,0.7604,0.7287,0.7650
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7446,0.7063,0.7481,240,0.7446,0.7063,0.7481
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0 · forward KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0 · forward KL","Sum (scale = none)","0o6f01pm",400,0.6907,0.6502,0.7470,400,0.6907,0.6502,0.7470
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","pydodnbi",400,0.7380,0.7210,0.7467,400,0.7380,0.7210,0.7467
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6857,0.6765,0.7076,240,0.6857,0.6765,0.7076
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0 · forward KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0 · forward KL","Sum (scale = none)","0o6f01pm",400,0.6116,0.5713,0.6539,400,0.6116,0.5713,0.6539
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","pydodnbi",400,0.7487,0.7123,0.7562,400,0.7487,0.7123,0.7562
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7069,0.6662,0.7195,240,0.7069,0.6662,0.7195
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0 · forward KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0.5 · JSD","Sum (scale = none)","nubdqvie",400,0.5140,0.4832,0.5506,400,0.5140,0.4832,0.5506
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","ckpb6svm",400,0.4127,0.4087,0.4450,400,0.4127,0.4087,0.4450
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","Sum (scale = none)","nubdqvie",400,0.4843,0.4189,0.5217,400,0.4843,0.4189,0.5217
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","ckpb6svm",400,0.7601,0.7226,0.7723,400,0.7601,0.7226,0.7723
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0.5 · JSD","Sum (scale = none)","nubdqvie",400,0.1993,0.2373,0.4846,400,0.1993,0.2373,0.4846
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","ckpb6svm",400,0.7099,0.7007,0.7353,400,0.7099,0.7007,0.7353
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q2_reward_scale_tur001_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0.5 · JSD","Sum (scale = none)","nubdqvie",400,0.4764,0.3550,0.6043,400,0.4764,0.3550,0.6043
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","ckpb6svm",400,0.6954,0.6904,0.7160,400,0.6954,0.6904,0.7160
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=1 · reverse KL","Sum (scale = none)","wormvd42",400,0.4031,0.3935,0.5144,400,0.4031,0.3935,0.5144
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","7rd3jzcz",400,0.5202,0.4928,0.5563,400,0.5202,0.4928,0.5563
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q2_reward_scale_tur001_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","Sum (scale = none)","wormvd42",400,0.5023,0.5074,0.6208,400,0.5023,0.5074,0.6208
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","7rd3jzcz",400,0.5300,0.6094,0.6926,400,0.5300,0.6094,0.6926
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q2_reward_scale_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q2_reward_scale_tur001_by_domain.png","val/material","α=1 · reverse KL","Sum (scale = none)","wormvd42",400,0.2086,0.3379,0.5244,400,0.2086,0.3379,0.5244
+"q2_reward_scale_tur001_by_domain.png","val/material","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","7rd3jzcz",400,0.6326,0.5934,0.6925,400,0.6326,0.5934,0.6925
+"q2_reward_scale_tur001_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q2_reward_scale_tur001_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q2_reward_scale_tur001_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q2_reward_scale_tur001_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=1 · reverse KL","Sum (scale = none)","wormvd42",400,0.2083,0.4130,0.6383,400,0.2083,0.4130,0.6383
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","7rd3jzcz",400,0.5501,0.5976,0.6711,400,0.5501,0.5976,0.6711
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q2_reward_scale_tur001_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q2_reward_scale_tur001.png","val","α=0 · forward KL","Sum (scale = none)","0o6f01pm",400,0.6434,0.5909,0.6630,400,0.6434,0.5909,0.6630
+"q2_reward_scale_tur001.png","val","α=0 · forward KL","Mean over remaining tokens (scale = remaining)","pydodnbi",400,0.6787,0.6534,0.6862,400,0.6787,0.6534,0.6862
+"q2_reward_scale_tur001.png","val","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6527,0.6202,0.6542,240,0.6527,0.6202,0.6542
+"q2_reward_scale_tur001.png","val","α=0 · forward KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q2_reward_scale_tur001.png","val","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q2_reward_scale_tur001.png","val","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q2_reward_scale_tur001.png","val","α=0.5 · JSD","Sum (scale = none)","nubdqvie",400,0.4185,0.3736,0.4494,400,0.4185,0.3736,0.4494
+"q2_reward_scale_tur001.png","val","α=0.5 · JSD","Mean over remaining tokens (scale = remaining)","ckpb6svm",400,0.6445,0.6306,0.6536,400,0.6445,0.6306,0.6536
+"q2_reward_scale_tur001.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q2_reward_scale_tur001.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q2_reward_scale_tur001.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q2_reward_scale_tur001.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q2_reward_scale_tur001.png","val","α=1 · reverse KL","Sum (scale = none)","wormvd42",400,0.3306,0.4129,0.5089,400,0.3306,0.4129,0.5089
+"q2_reward_scale_tur001.png","val","α=1 · reverse KL","Mean over remaining tokens (scale = remaining)","7rd3jzcz",400,0.5582,0.5733,0.6284,400,0.5582,0.5733,0.6284
+"q2_reward_scale_tur001.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q2_reward_scale_tur001.png","val","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q2_reward_scale_tur001.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q2_reward_scale_tur001.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0 · forward KL","SDPO · + future returns (group LOO, mean)","0q2rz5mf",20,0.4050,0.4050,0.4050,400,0.4238,0.4682,0.5194
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0 · forward KL","SDQL · uniform target, no centring","nh85fcx4",20,0.3438,0.3438,0.3438,40,0.1753,0.1753,0.3438
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0 · forward KL","SDQL · on-policy target, no centring","x1yt14um",20,0.3106,0.3106,0.3106,20,0.3106,0.3106,0.3106
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",20,0.3506,0.3506,0.3700,240,0.4738,0.4315,0.4838
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0 · forward KL","GRPO","ifv06lhj",20,0.3025,0.3025,0.3025,180,0.3502,0.3272,0.3638
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0 · forward KL","Distil (α=1)","tppb3ufq",20,0.4400,0.4400,0.4400,380,0.4502,0.4530,0.4844
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",20,0.3631,0.3631,0.3631,380,0.5033,0.4135,0.5288
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0 · forward KL","SDPO · + future returns (group LOO, mean)","0q2rz5mf",20,0.6292,0.6292,0.6292,400,0.7430,0.7171,0.7449
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0 · forward KL","SDQL · uniform target, no centring","nh85fcx4",20,0.3960,0.3960,0.3960,40,0.2020,0.2020,0.3960
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0 · forward KL","SDQL · on-policy target, no centring","x1yt14um",20,0.4225,0.4225,0.4225,20,0.4225,0.4225,0.4225
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",20,0.5833,0.5833,0.6350,240,0.7446,0.7063,0.7481
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0 · forward KL","GRPO","ifv06lhj",20,0.5037,0.5037,0.5037,180,0.6831,0.6272,0.6954
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0 · forward KL","Distil (α=1)","tppb3ufq",20,0.6234,0.6234,0.6234,380,0.7577,0.7352,0.7714
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",20,0.6048,0.6048,0.6048,380,0.4263,0.5644,0.6731
+"q3_sdql_no_centering_by_domain.png","val/material","α=0 · forward KL","SDPO · + future returns (group LOO, mean)","0q2rz5mf",20,0.6380,0.6380,0.6380,400,0.6591,0.6718,0.6928
+"q3_sdql_no_centering_by_domain.png","val/material","α=0 · forward KL","SDQL · uniform target, no centring","nh85fcx4",20,0.5424,0.5424,0.5424,40,0.2799,0.2799,0.5424
+"q3_sdql_no_centering_by_domain.png","val/material","α=0 · forward KL","SDQL · on-policy target, no centring","x1yt14um",20,0.5762,0.5762,0.5762,20,0.5762,0.5762,0.5762
+"q3_sdql_no_centering_by_domain.png","val/material","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",20,0.6529,0.6529,0.6825,240,0.6857,0.6765,0.7076
+"q3_sdql_no_centering_by_domain.png","val/material","α=0 · forward KL","GRPO","ifv06lhj",20,0.6688,0.6688,0.6688,180,0.7478,0.7194,0.7493
+"q3_sdql_no_centering_by_domain.png","val/material","α=0 · forward KL","Distil (α=1)","tppb3ufq",20,0.6778,0.6778,0.6778,380,0.7164,0.7153,0.7356
+"q3_sdql_no_centering_by_domain.png","val/material","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",20,0.6133,0.6133,0.6133,380,0.5035,0.6359,0.6952
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0 · forward KL","SDPO · + future returns (group LOO, mean)","0q2rz5mf",20,0.6508,0.6508,0.6508,400,0.5944,0.6455,0.6984
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0 · forward KL","SDQL · uniform target, no centring","nh85fcx4",20,0.4266,0.4266,0.4266,40,0.2176,0.2176,0.4266
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0 · forward KL","SDQL · on-policy target, no centring","x1yt14um",20,0.5414,0.5414,0.5414,20,0.5414,0.5414,0.5414
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",20,0.6281,0.6281,0.6309,240,0.7069,0.6662,0.7195
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0 · forward KL","GRPO","ifv06lhj",20,0.6598,0.6598,0.6598,180,0.7055,0.6885,0.7070
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0 · forward KL","Distil (α=1)","tppb3ufq",20,0.6402,0.6402,0.6402,380,0.7557,0.7248,0.7672
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",20,0.6223,0.6223,0.6223,380,0.5457,0.5832,0.6687
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0.5 · JSD","SDPO · + future returns (group LOO, mean)","7dpnqgxy",400,0.4508,0.4605,0.5194,400,0.4508,0.4605,0.5194
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0.5 · JSD","SDQL · uniform target, no centring","33b8ef1m",400,0.4654,0.4006,0.5044,400,0.4654,0.4006,0.5044
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0.5 · JSD","SDQL · on-policy target, no centring","myb1g10y",400,0.5092,0.4376,0.5250,400,0.5092,0.4376,0.5250
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q3_sdql_no_centering_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO · + future returns (group LOO, mean)","7dpnqgxy",400,0.7619,0.7175,0.7714,400,0.7619,0.7175,0.7714
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0.5 · JSD","SDQL · uniform target, no centring","33b8ef1m",400,0.6815,0.6350,0.6897,400,0.6815,0.6350,0.6897
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0.5 · JSD","SDQL · on-policy target, no centring","myb1g10y",400,0.6592,0.6356,0.6868,400,0.6592,0.6356,0.6868
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q3_sdql_no_centering_by_domain.png","val/material","α=0.5 · JSD","SDPO · + future returns (group LOO, mean)","7dpnqgxy",400,0.6885,0.6919,0.7373,400,0.6885,0.6919,0.7373
+"q3_sdql_no_centering_by_domain.png","val/material","α=0.5 · JSD","SDQL · uniform target, no centring","33b8ef1m",400,0.6135,0.6654,0.7149,400,0.6135,0.6654,0.7149
+"q3_sdql_no_centering_by_domain.png","val/material","α=0.5 · JSD","SDQL · on-policy target, no centring","myb1g10y",400,0.6720,0.6821,0.7236,400,0.6720,0.6821,0.7236
+"q3_sdql_no_centering_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q3_sdql_no_centering_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q3_sdql_no_centering_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q3_sdql_no_centering_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0.5 · JSD","SDPO · + future returns (group LOO, mean)","7dpnqgxy",400,0.6434,0.6503,0.6793,400,0.6434,0.6503,0.6793
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0.5 · JSD","SDQL · uniform target, no centring","33b8ef1m",400,0.4568,0.5909,0.6684,400,0.4568,0.5909,0.6684
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0.5 · JSD","SDQL · on-policy target, no centring","myb1g10y",400,0.5141,0.6000,0.6758,400,0.5141,0.6000,0.6758
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q3_sdql_no_centering_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q3_sdql_no_centering_by_domain.png","val/biology","α=1 · reverse KL","SDPO · + future returns (group LOO, mean)","mnpamrjs",380,0.3879,0.3822,0.4800,400,0.3800,0.3821,0.4800
+"q3_sdql_no_centering_by_domain.png","val/biology","α=1 · reverse KL","SDQL · uniform target, no centring","s0zyvxdm",380,0.3979,0.3825,0.4275,380,0.3979,0.3825,0.4275
+"q3_sdql_no_centering_by_domain.png","val/biology","α=1 · reverse KL","SDQL · on-policy target, no centring","k41rpp2s",380,0.4133,0.3797,0.4400,400,0.4233,0.3812,0.4400
+"q3_sdql_no_centering_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q3_sdql_no_centering_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",380,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q3_sdql_no_centering_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q3_sdql_no_centering_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO · + future returns (group LOO, mean)","mnpamrjs",380,0.3557,0.4458,0.6329,400,0.3666,0.4407,0.6329
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=1 · reverse KL","SDQL · uniform target, no centring","s0zyvxdm",380,0.6678,0.6186,0.6807,380,0.6678,0.6186,0.6807
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=1 · reverse KL","SDQL · on-policy target, no centring","k41rpp2s",380,0.4967,0.5575,0.6451,400,0.4763,0.5534,0.6451
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",380,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q3_sdql_no_centering_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q3_sdql_no_centering_by_domain.png","val/material","α=1 · reverse KL","SDPO · + future returns (group LOO, mean)","mnpamrjs",380,0.4560,0.5345,0.6918,400,0.4401,0.5262,0.6918
+"q3_sdql_no_centering_by_domain.png","val/material","α=1 · reverse KL","SDQL · uniform target, no centring","s0zyvxdm",380,0.6518,0.6335,0.6638,380,0.6518,0.6335,0.6638
+"q3_sdql_no_centering_by_domain.png","val/material","α=1 · reverse KL","SDQL · on-policy target, no centring","k41rpp2s",380,0.5147,0.6172,0.7166,400,0.5094,0.6109,0.7166
+"q3_sdql_no_centering_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q3_sdql_no_centering_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",380,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q3_sdql_no_centering_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q3_sdql_no_centering_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q3_sdql_no_centering_by_domain.png","val/physics","α=1 · reverse KL","SDPO · + future returns (group LOO, mean)","mnpamrjs",380,0.4500,0.4631,0.6730,400,0.4521,0.4628,0.6730
+"q3_sdql_no_centering_by_domain.png","val/physics","α=1 · reverse KL","SDQL · uniform target, no centring","s0zyvxdm",380,0.3768,0.5905,0.6742,380,0.3768,0.5905,0.6742
+"q3_sdql_no_centering_by_domain.png","val/physics","α=1 · reverse KL","SDQL · on-policy target, no centring","k41rpp2s",380,0.4053,0.5324,0.6395,400,0.4699,0.5308,0.6395
+"q3_sdql_no_centering_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q3_sdql_no_centering_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",380,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q3_sdql_no_centering_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q3_sdql_no_centering_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q3_sdql_no_centering.png","val","α=0 · forward KL","SDPO · + future returns (group LOO, mean)","0q2rz5mf",20,0.5807,0.5807,0.5807,400,0.6050,0.6256,0.6552
+"q3_sdql_no_centering.png","val","α=0 · forward KL","SDQL · uniform target, no centring","nh85fcx4",20,0.4272,0.4272,0.4272,40,0.2187,0.2187,0.4272
+"q3_sdql_no_centering.png","val","α=0 · forward KL","SDQL · on-policy target, no centring","x1yt14um",20,0.4627,0.4627,0.4627,20,0.4627,0.4627,0.4627
+"q3_sdql_no_centering.png","val","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",20,0.5537,0.5537,0.5796,240,0.6527,0.6202,0.6542
+"q3_sdql_no_centering.png","val","α=0 · forward KL","GRPO","ifv06lhj",20,0.5337,0.5337,0.5337,180,0.6216,0.5906,0.6279
+"q3_sdql_no_centering.png","val","α=0 · forward KL","Distil (α=1)","tppb3ufq",20,0.5954,0.5954,0.5954,380,0.6700,0.6571,0.6825
+"q3_sdql_no_centering.png","val","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",20,0.5509,0.5509,0.5509,380,0.4947,0.5492,0.6013
+"q3_sdql_no_centering.png","val","α=0.5 · JSD","SDPO · + future returns (group LOO, mean)","7dpnqgxy",400,0.6361,0.6301,0.6521,400,0.6361,0.6301,0.6521
+"q3_sdql_no_centering.png","val","α=0.5 · JSD","SDQL · uniform target, no centring","33b8ef1m",400,0.5543,0.5730,0.6121,400,0.5543,0.5730,0.6121
+"q3_sdql_no_centering.png","val","α=0.5 · JSD","SDQL · on-policy target, no centring","myb1g10y",400,0.5886,0.5888,0.6331,400,0.5886,0.5888,0.6331
+"q3_sdql_no_centering.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q3_sdql_no_centering.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q3_sdql_no_centering.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q3_sdql_no_centering.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q3_sdql_no_centering.png","val","α=1 · reverse KL","SDPO · + future returns (group LOO, mean)","mnpamrjs",380,0.4124,0.4564,0.6056,400,0.4097,0.4529,0.6056
+"q3_sdql_no_centering.png","val","α=1 · reverse KL","SDQL · uniform target, no centring","s0zyvxdm",380,0.5236,0.5563,0.5925,380,0.5236,0.5563,0.5925
+"q3_sdql_no_centering.png","val","α=1 · reverse KL","SDQL · on-policy target, no centring","k41rpp2s",380,0.4575,0.5217,0.5903,400,0.4697,0.5191,0.5903
+"q3_sdql_no_centering.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q3_sdql_no_centering.png","val","α=1 · reverse KL","GRPO","ifv06lhj",380,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q3_sdql_no_centering.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q3_sdql_no_centering.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q4_sdql_centering_val.png","val","uniform target | α=0.5 · JSD","With reward centring (per-prompt LOO)","t8qss8xb",400,0.5580,0.5780,0.6305,400,0.5580,0.5780,0.6305
+"q4_sdql_centering_val.png","val","uniform target | α=0.5 · JSD","Without reward centring","xwmz3igm",400,0.5914,0.5905,0.6412,400,0.5914,0.5905,0.6412
+"q4_sdql_centering_val.png","val","uniform target | α=1 · reverse KL","With reward centring (per-prompt LOO)","7ztqehbg",400,0.4352,0.5439,0.6119,400,0.4352,0.5439,0.6119
+"q4_sdql_centering_val.png","val","uniform target | α=1 · reverse KL","Without reward centring","t0vtrfiu",400,0.4948,0.5370,0.5856,400,0.4948,0.5370,0.5856
+"q4_sdql_centering_val.png","val","on-policy target | α=0.5 · JSD","With reward centring (per-prompt LOO)","y8eq5q0o",400,0.6075,0.5936,0.6249,400,0.6075,0.5936,0.6249
+"q4_sdql_centering_val.png","val","on-policy target | α=0.5 · JSD","Without reward centring","3a50a9ot",400,0.5965,0.5867,0.6268,400,0.5965,0.5867,0.6268
+"q4_sdql_centering_val.png","val","on-policy target | α=1 · reverse KL","With reward centring (per-prompt LOO)","y9ddre11",400,0.4454,0.5181,0.5673,400,0.4454,0.5181,0.5673
+"q4_sdql_centering_val.png","val","on-policy target | α=1 · reverse KL","Without reward centring","zm03pq9q",400,0.4807,0.5233,0.5707,400,0.4807,0.5233,0.5707
+"q4_sdql_centering_val.png","val","λ-return, λ=0.9 | α=0.5 · JSD","Without reward centring","l60ea65a",400,0.5757,0.5724,0.6077,400,0.5757,0.5724,0.6077
+"q4_sdql_centering_val.png","val","λ-return, λ=0.9 | α=1 · reverse KL","With reward centring (per-prompt LOO)","msbl1x1p",400,0.4451,0.4586,0.5416,400,0.4451,0.4586,0.5416
+"q4_sdql_centering_val.png","val","λ-return, λ=0.9 | α=1 · reverse KL","Without reward centring","ezh5bdi7",400,0.3984,0.4471,0.5336,400,0.3984,0.4471,0.5336
+"q4_sdql_centering_val.png","val","λ-return, λ=1.0 | α=0.5 · JSD","With reward centring (per-prompt LOO)","uf1ioy57",380,0.4808,0.4881,0.5163,380,0.4808,0.4881,0.5163
+"q4_sdql_centering_val.png","val","λ-return, λ=1.0 | α=0.5 · JSD","Without reward centring","14qw269p",380,0.4802,0.4839,0.5255,400,0.4800,0.4835,0.5255
+"q4_sdql_centering_val.png","val","λ-return, λ=1.0 | α=1 · reverse KL","With reward centring (per-prompt LOO)","zwkexy5h",160,0.0000,0.1013,0.4244,160,0.0000,0.1013,0.4244
+"q4_sdql_centering_val.png","val","λ-return, λ=1.0 | α=1 · reverse KL","Without reward centring","597ib0aq",160,0.4561,0.3876,0.4753,400,0.4867,0.4368,0.5015
+"q4_sdql_centering_val_biology.png","val/biology","uniform target | α=0.5 · JSD","With reward centring (per-prompt LOO)","t8qss8xb",400,0.4490,0.4135,0.4894,400,0.4490,0.4135,0.4894
+"q4_sdql_centering_val_biology.png","val/biology","uniform target | α=0.5 · JSD","Without reward centring","xwmz3igm",400,0.5008,0.4398,0.5194,400,0.5008,0.4398,0.5194
+"q4_sdql_centering_val_biology.png","val/biology","uniform target | α=1 · reverse KL","With reward centring (per-prompt LOO)","7ztqehbg",400,0.3731,0.3773,0.4519,400,0.3731,0.3773,0.4519
+"q4_sdql_centering_val_biology.png","val/biology","uniform target | α=1 · reverse KL","Without reward centring","t0vtrfiu",400,0.3819,0.3851,0.4594,400,0.3819,0.3851,0.4594
+"q4_sdql_centering_val_biology.png","val/biology","on-policy target | α=0.5 · JSD","With reward centring (per-prompt LOO)","y8eq5q0o",400,0.5419,0.4329,0.5519,400,0.5419,0.4329,0.5519
+"q4_sdql_centering_val_biology.png","val/biology","on-policy target | α=0.5 · JSD","Without reward centring","3a50a9ot",400,0.5331,0.4376,0.5544,400,0.5331,0.4376,0.5544
+"q4_sdql_centering_val_biology.png","val/biology","on-policy target | α=1 · reverse KL","With reward centring (per-prompt LOO)","y9ddre11",400,0.3615,0.3587,0.3931,400,0.3615,0.3587,0.3931
+"q4_sdql_centering_val_biology.png","val/biology","on-policy target | α=1 · reverse KL","Without reward centring","zm03pq9q",400,0.3367,0.3524,0.4600,400,0.3367,0.3524,0.4600
+"q4_sdql_centering_val_biology.png","val/biology","λ-return, λ=0.9 | α=0.5 · JSD","Without reward centring","l60ea65a",400,0.4702,0.4052,0.4856,400,0.4702,0.4052,0.4856
+"q4_sdql_centering_val_biology.png","val/biology","λ-return, λ=0.9 | α=1 · reverse KL","With reward centring (per-prompt LOO)","msbl1x1p",400,0.4035,0.3663,0.4200,400,0.4035,0.3663,0.4200
+"q4_sdql_centering_val_biology.png","val/biology","λ-return, λ=0.9 | α=1 · reverse KL","Without reward centring","ezh5bdi7",400,0.4233,0.3936,0.4313,400,0.4233,0.3936,0.4313
+"q4_sdql_centering_val_biology.png","val/biology","λ-return, λ=1.0 | α=0.5 · JSD","With reward centring (per-prompt LOO)","uf1ioy57",380,0.3025,0.3277,0.4119,380,0.3025,0.3277,0.4119
+"q4_sdql_centering_val_biology.png","val/biology","λ-return, λ=1.0 | α=0.5 · JSD","Without reward centring","14qw269p",380,0.2569,0.2803,0.3144,400,0.2596,0.2794,0.3144
+"q4_sdql_centering_val_biology.png","val/biology","λ-return, λ=1.0 | α=1 · reverse KL","With reward centring (per-prompt LOO)","zwkexy5h",160,0.0000,0.0514,0.2625,160,0.0000,0.0514,0.2625
+"q4_sdql_centering_val_biology.png","val/biology","λ-return, λ=1.0 | α=1 · reverse KL","Without reward centring","597ib0aq",160,0.2967,0.2683,0.3200,400,0.3900,0.3346,0.4100
+"q4_sdql_centering_val_chemistry.png","val/chemistry","uniform target | α=0.5 · JSD","With reward centring (per-prompt LOO)","t8qss8xb",400,0.6667,0.6308,0.6871,400,0.6667,0.6308,0.6871
+"q4_sdql_centering_val_chemistry.png","val/chemistry","uniform target | α=0.5 · JSD","Without reward centring","xwmz3igm",400,0.6904,0.6364,0.7007,400,0.6904,0.6364,0.7007
+"q4_sdql_centering_val_chemistry.png","val/chemistry","uniform target | α=1 · reverse KL","With reward centring (per-prompt LOO)","7ztqehbg",400,0.6165,0.6190,0.6804,400,0.6165,0.6190,0.6804
+"q4_sdql_centering_val_chemistry.png","val/chemistry","uniform target | α=1 · reverse KL","Without reward centring","t0vtrfiu",400,0.6637,0.6104,0.6772,400,0.6637,0.6104,0.6772
+"q4_sdql_centering_val_chemistry.png","val/chemistry","on-policy target | α=0.5 · JSD","With reward centring (per-prompt LOO)","y8eq5q0o",400,0.6791,0.6387,0.6866,400,0.6791,0.6387,0.6866
+"q4_sdql_centering_val_chemistry.png","val/chemistry","on-policy target | α=0.5 · JSD","Without reward centring","3a50a9ot",400,0.6639,0.6282,0.6753,400,0.6639,0.6282,0.6753
+"q4_sdql_centering_val_chemistry.png","val/chemistry","on-policy target | α=1 · reverse KL","With reward centring (per-prompt LOO)","y9ddre11",400,0.5035,0.5717,0.6504,400,0.5035,0.5717,0.6504
+"q4_sdql_centering_val_chemistry.png","val/chemistry","on-policy target | α=1 · reverse KL","Without reward centring","zm03pq9q",400,0.6670,0.6152,0.6917,400,0.6670,0.6152,0.6917
+"q4_sdql_centering_val_chemistry.png","val/chemistry","λ-return, λ=0.9 | α=0.5 · JSD","Without reward centring","l60ea65a",400,0.6308,0.6057,0.6485,400,0.6308,0.6057,0.6485
+"q4_sdql_centering_val_chemistry.png","val/chemistry","λ-return, λ=0.9 | α=1 · reverse KL","With reward centring (per-prompt LOO)","msbl1x1p",400,0.4769,0.4805,0.5452,400,0.4769,0.4805,0.5452
+"q4_sdql_centering_val_chemistry.png","val/chemistry","λ-return, λ=0.9 | α=1 · reverse KL","Without reward centring","ezh5bdi7",400,0.4746,0.4684,0.5289,400,0.4746,0.4684,0.5289
+"q4_sdql_centering_val_chemistry.png","val/chemistry","λ-return, λ=1.0 | α=0.5 · JSD","With reward centring (per-prompt LOO)","uf1ioy57",380,0.4483,0.4302,0.4723,380,0.4483,0.4302,0.4723
+"q4_sdql_centering_val_chemistry.png","val/chemistry","λ-return, λ=1.0 | α=0.5 · JSD","Without reward centring","14qw269p",380,0.4594,0.4481,0.4856,400,0.4581,0.4485,0.4856
+"q4_sdql_centering_val_chemistry.png","val/chemistry","λ-return, λ=1.0 | α=1 · reverse KL","With reward centring (per-prompt LOO)","zwkexy5h",160,0.0000,0.1183,0.4872,160,0.0000,0.1183,0.4872
+"q4_sdql_centering_val_chemistry.png","val/chemistry","λ-return, λ=1.0 | α=1 · reverse KL","Without reward centring","597ib0aq",160,0.5309,0.4373,0.5429,400,0.5627,0.4758,0.5881
+"q4_sdql_centering_val_material.png","val/material","uniform target | α=0.5 · JSD","With reward centring (per-prompt LOO)","t8qss8xb",400,0.6300,0.6690,0.7330,400,0.6300,0.6690,0.7330
+"q4_sdql_centering_val_material.png","val/material","uniform target | α=0.5 · JSD","Without reward centring","xwmz3igm",400,0.6713,0.6831,0.7366,400,0.6713,0.6831,0.7366
+"q4_sdql_centering_val_material.png","val/material","uniform target | α=1 · reverse KL","With reward centring (per-prompt LOO)","7ztqehbg",400,0.5335,0.6323,0.6858,400,0.5335,0.6323,0.6858
+"q4_sdql_centering_val_material.png","val/material","uniform target | α=1 · reverse KL","Without reward centring","t0vtrfiu",400,0.6174,0.6464,0.6912,400,0.6174,0.6464,0.6912
+"q4_sdql_centering_val_material.png","val/material","on-policy target | α=0.5 · JSD","With reward centring (per-prompt LOO)","y8eq5q0o",400,0.6908,0.6976,0.7426,400,0.6908,0.6976,0.7426
+"q4_sdql_centering_val_material.png","val/material","on-policy target | α=0.5 · JSD","Without reward centring","3a50a9ot",400,0.6651,0.6852,0.7426,400,0.6651,0.6852,0.7426
+"q4_sdql_centering_val_material.png","val/material","on-policy target | α=1 · reverse KL","With reward centring (per-prompt LOO)","y9ddre11",400,0.4735,0.5861,0.6410,400,0.4735,0.5861,0.6410
+"q4_sdql_centering_val_material.png","val/material","on-policy target | α=1 · reverse KL","Without reward centring","zm03pq9q",400,0.6332,0.6348,0.6788,400,0.6332,0.6348,0.6788
+"q4_sdql_centering_val_material.png","val/material","λ-return, λ=0.9 | α=0.5 · JSD","Without reward centring","l60ea65a",400,0.6677,0.6681,0.7032,400,0.6677,0.6681,0.7032
+"q4_sdql_centering_val_material.png","val/material","λ-return, λ=0.9 | α=1 · reverse KL","With reward centring (per-prompt LOO)","msbl1x1p",400,0.3965,0.4809,0.6414,400,0.3965,0.4809,0.6414
+"q4_sdql_centering_val_material.png","val/material","λ-return, λ=0.9 | α=1 · reverse KL","Without reward centring","ezh5bdi7",400,0.4938,0.5380,0.6491,400,0.4938,0.5380,0.6491
+"q4_sdql_centering_val_material.png","val/material","λ-return, λ=1.0 | α=0.5 · JSD","With reward centring (per-prompt LOO)","uf1ioy57",380,0.5819,0.5892,0.6521,380,0.5819,0.5892,0.6521
+"q4_sdql_centering_val_material.png","val/material","λ-return, λ=1.0 | α=0.5 · JSD","Without reward centring","14qw269p",380,0.6015,0.6017,0.6534,400,0.6020,0.6018,0.6534
+"q4_sdql_centering_val_material.png","val/material","λ-return, λ=1.0 | α=1 · reverse KL","With reward centring (per-prompt LOO)","zwkexy5h",160,0.0000,0.1304,0.5104,160,0.0000,0.1304,0.5104
+"q4_sdql_centering_val_material.png","val/material","λ-return, λ=1.0 | α=1 · reverse KL","Without reward centring","597ib0aq",160,0.5264,0.4581,0.5668,400,0.5401,0.5057,0.5772
+"q4_sdql_centering_val_physics.png","val/physics","uniform target | α=0.5 · JSD","With reward centring (per-prompt LOO)","t8qss8xb",400,0.4862,0.5988,0.6652,400,0.4862,0.5988,0.6652
+"q4_sdql_centering_val_physics.png","val/physics","uniform target | α=0.5 · JSD","Without reward centring","xwmz3igm",400,0.5031,0.6027,0.6703,400,0.5031,0.6027,0.6703
+"q4_sdql_centering_val_physics.png","val/physics","uniform target | α=1 · reverse KL","With reward centring (per-prompt LOO)","7ztqehbg",400,0.2176,0.5470,0.6965,400,0.2176,0.5470,0.6965
+"q4_sdql_centering_val_physics.png","val/physics","uniform target | α=1 · reverse KL","Without reward centring","t0vtrfiu",400,0.3161,0.5063,0.6668,400,0.3161,0.5063,0.6668
+"q4_sdql_centering_val_physics.png","val/physics","on-policy target | α=0.5 · JSD","With reward centring (per-prompt LOO)","y8eq5q0o",400,0.5184,0.6053,0.6773,400,0.5184,0.6053,0.6773
+"q4_sdql_centering_val_physics.png","val/physics","on-policy target | α=0.5 · JSD","Without reward centring","3a50a9ot",400,0.5240,0.5957,0.6543,400,0.5240,0.5957,0.6543
+"q4_sdql_centering_val_physics.png","val/physics","on-policy target | α=1 · reverse KL","With reward centring (per-prompt LOO)","y9ddre11",400,0.4432,0.5560,0.6801,400,0.4432,0.5560,0.6801
+"q4_sdql_centering_val_physics.png","val/physics","on-policy target | α=1 · reverse KL","Without reward centring","zm03pq9q",400,0.2861,0.4907,0.6449,400,0.2861,0.4907,0.6449
+"q4_sdql_centering_val_physics.png","val/physics","λ-return, λ=0.9 | α=0.5 · JSD","Without reward centring","l60ea65a",400,0.5340,0.6104,0.6641,400,0.5340,0.6104,0.6641
+"q4_sdql_centering_val_physics.png","val/physics","λ-return, λ=0.9 | α=1 · reverse KL","With reward centring (per-prompt LOO)","msbl1x1p",400,0.5035,0.5068,0.6316,400,0.5035,0.5068,0.6316
+"q4_sdql_centering_val_physics.png","val/physics","λ-return, λ=0.9 | α=1 · reverse KL","Without reward centring","ezh5bdi7",400,0.2021,0.3883,0.6383,400,0.2021,0.3883,0.6383
+"q4_sdql_centering_val_physics.png","val/physics","λ-return, λ=1.0 | α=0.5 · JSD","With reward centring (per-prompt LOO)","uf1ioy57",380,0.5904,0.6052,0.6340,380,0.5904,0.6052,0.6340
+"q4_sdql_centering_val_physics.png","val/physics","λ-return, λ=1.0 | α=0.5 · JSD","Without reward centring","14qw269p",380,0.6030,0.6052,0.6488,400,0.6001,0.6045,0.6488
+"q4_sdql_centering_val_physics.png","val/physics","λ-return, λ=1.0 | α=1 · reverse KL","With reward centring (per-prompt LOO)","zwkexy5h",160,0.0000,0.1049,0.5199,160,0.0000,0.1049,0.5199
+"q4_sdql_centering_val_physics.png","val/physics","λ-return, λ=1.0 | α=1 · reverse KL","Without reward centring","597ib0aq",160,0.4706,0.3866,0.5172,400,0.4542,0.4312,0.5172
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=0.5 · JSD","Uniform target","33b8ef1m",400,0.4654,0.4006,0.5044,400,0.4654,0.4006,0.5044
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=0.5 · JSD","On-policy target","myb1g10y",400,0.5092,0.4376,0.5250,400,0.5092,0.4376,0.5250
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=0.5 · JSD","On-policy λ-return, λ=0.9","l60ea65a",400,0.4702,0.4052,0.4856,400,0.4702,0.4052,0.4856
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=0.5 · JSD","On-policy λ-return, λ=1.0","14qw269p",400,0.2596,0.2794,0.3144,400,0.2596,0.2794,0.3144
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=0.5 · JSD","Uniform target","33b8ef1m",400,0.6815,0.6350,0.6897,400,0.6815,0.6350,0.6897
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=0.5 · JSD","On-policy target","myb1g10y",400,0.6592,0.6356,0.6868,400,0.6592,0.6356,0.6868
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=0.5 · JSD","On-policy λ-return, λ=0.9","l60ea65a",400,0.6308,0.6057,0.6485,400,0.6308,0.6057,0.6485
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=0.5 · JSD","On-policy λ-return, λ=1.0","14qw269p",400,0.4581,0.4485,0.4856,400,0.4581,0.4485,0.4856
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=0.5 · JSD","Uniform target","33b8ef1m",400,0.6135,0.6654,0.7149,400,0.6135,0.6654,0.7149
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=0.5 · JSD","On-policy target","myb1g10y",400,0.6720,0.6821,0.7236,400,0.6720,0.6821,0.7236
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=0.5 · JSD","On-policy λ-return, λ=0.9","l60ea65a",400,0.6677,0.6681,0.7032,400,0.6677,0.6681,0.7032
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=0.5 · JSD","On-policy λ-return, λ=1.0","14qw269p",400,0.6020,0.6018,0.6534,400,0.6020,0.6018,0.6534
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=0.5 · JSD","Uniform target","33b8ef1m",400,0.4568,0.5909,0.6684,400,0.4568,0.5909,0.6684
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=0.5 · JSD","On-policy target","myb1g10y",400,0.5141,0.6000,0.6758,400,0.5141,0.6000,0.6758
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=0.5 · JSD","On-policy λ-return, λ=0.9","l60ea65a",400,0.5340,0.6104,0.6641,400,0.5340,0.6104,0.6641
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=0.5 · JSD","On-policy λ-return, λ=1.0","14qw269p",400,0.6001,0.6045,0.6488,400,0.6001,0.6045,0.6488
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=1 · reverse KL","Uniform target","s0zyvxdm",380,0.3979,0.3825,0.4275,380,0.3979,0.3825,0.4275
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=1 · reverse KL","On-policy target","k41rpp2s",380,0.4133,0.3797,0.4400,400,0.4233,0.3812,0.4400
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=1 · reverse KL","On-policy λ-return, λ=0.9","ezh5bdi7",380,0.4233,0.3922,0.4313,400,0.4233,0.3936,0.4313
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=1 · reverse KL","On-policy λ-return, λ=1.0","597ib0aq",380,0.3933,0.3312,0.4100,400,0.3900,0.3346,0.4100
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",380,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q5_sdql_lambda_returns_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=1 · reverse KL","Uniform target","s0zyvxdm",380,0.6678,0.6186,0.6807,380,0.6678,0.6186,0.6807
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=1 · reverse KL","On-policy target","k41rpp2s",380,0.4967,0.5575,0.6451,400,0.4763,0.5534,0.6451
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=1 · reverse KL","On-policy λ-return, λ=0.9","ezh5bdi7",380,0.4697,0.4678,0.5289,400,0.4746,0.4684,0.5289
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=1 · reverse KL","On-policy λ-return, λ=1.0","597ib0aq",380,0.5302,0.4699,0.5738,400,0.5627,0.4758,0.5881
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",380,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q5_sdql_lambda_returns_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=1 · reverse KL","Uniform target","s0zyvxdm",380,0.6518,0.6335,0.6638,380,0.6518,0.6335,0.6638
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=1 · reverse KL","On-policy target","k41rpp2s",380,0.5147,0.6172,0.7166,400,0.5094,0.6109,0.7166
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=1 · reverse KL","On-policy λ-return, λ=0.9","ezh5bdi7",380,0.4793,0.5396,0.6491,400,0.4938,0.5380,0.6491
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=1 · reverse KL","On-policy λ-return, λ=1.0","597ib0aq",380,0.5223,0.5028,0.5772,400,0.5401,0.5057,0.5772
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",380,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q5_sdql_lambda_returns_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=1 · reverse KL","Uniform target","s0zyvxdm",380,0.3768,0.5905,0.6742,380,0.3768,0.5905,0.6742
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=1 · reverse KL","On-policy target","k41rpp2s",380,0.4053,0.5324,0.6395,400,0.4699,0.5308,0.6395
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=1 · reverse KL","On-policy λ-return, λ=0.9","ezh5bdi7",380,0.2063,0.3989,0.6383,400,0.2021,0.3883,0.6383
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=1 · reverse KL","On-policy λ-return, λ=1.0","597ib0aq",380,0.4543,0.4299,0.5172,400,0.4542,0.4312,0.5172
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",380,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q5_sdql_lambda_returns_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q5_sdql_lambda_returns.png","val","α=0.5 · JSD","Uniform target","33b8ef1m",400,0.5543,0.5730,0.6121,400,0.5543,0.5730,0.6121
+"q5_sdql_lambda_returns.png","val","α=0.5 · JSD","On-policy target","myb1g10y",400,0.5886,0.5888,0.6331,400,0.5886,0.5888,0.6331
+"q5_sdql_lambda_returns.png","val","α=0.5 · JSD","On-policy λ-return, λ=0.9","l60ea65a",400,0.5757,0.5724,0.6077,400,0.5757,0.5724,0.6077
+"q5_sdql_lambda_returns.png","val","α=0.5 · JSD","On-policy λ-return, λ=1.0","14qw269p",400,0.4800,0.4835,0.5255,400,0.4800,0.4835,0.5255
+"q5_sdql_lambda_returns.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q5_sdql_lambda_returns.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q5_sdql_lambda_returns.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q5_sdql_lambda_returns.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q5_sdql_lambda_returns.png","val","α=1 · reverse KL","Uniform target","s0zyvxdm",380,0.5236,0.5563,0.5925,380,0.5236,0.5563,0.5925
+"q5_sdql_lambda_returns.png","val","α=1 · reverse KL","On-policy target","k41rpp2s",380,0.4575,0.5217,0.5903,400,0.4697,0.5191,0.5903
+"q5_sdql_lambda_returns.png","val","α=1 · reverse KL","On-policy λ-return, λ=0.9","ezh5bdi7",380,0.3947,0.4496,0.5336,400,0.3984,0.4471,0.5336
+"q5_sdql_lambda_returns.png","val","α=1 · reverse KL","On-policy λ-return, λ=1.0","597ib0aq",380,0.4750,0.4334,0.4877,400,0.4867,0.4368,0.5015
+"q5_sdql_lambda_returns.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",380,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q5_sdql_lambda_returns.png","val","α=1 · reverse KL","GRPO","ifv06lhj",380,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q5_sdql_lambda_returns.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",380,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q5_sdql_lambda_returns.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",380,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0 · forward KL","Group LOO · teacher EMA 0.05","0q2rz5mf",400,0.4238,0.4682,0.5194,400,0.4238,0.4682,0.5194
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0 · forward KL","Group LOO · teacher EMA 0.01","pydodnbi",400,0.4677,0.4517,0.5075,400,0.4677,0.4517,0.5075
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0 · forward KL","Batch LOO · teacher EMA 0.05","zku4zbt2",400,0.4479,0.4503,0.5038,400,0.4479,0.4503,0.5038
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0 · forward KL","Batch LOO · teacher EMA 0.01","34tib0zu",400,0.4600,0.4420,0.4763,400,0.4600,0.4420,0.4763
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.4738,0.4315,0.4838,240,0.4738,0.4315,0.4838
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0 · forward KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0 · forward KL","Group LOO · teacher EMA 0.05","0q2rz5mf",400,0.7430,0.7171,0.7449,400,0.7430,0.7171,0.7449
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0 · forward KL","Group LOO · teacher EMA 0.01","pydodnbi",400,0.7604,0.7287,0.7650,400,0.7604,0.7287,0.7650
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0 · forward KL","Batch LOO · teacher EMA 0.05","zku4zbt2",400,0.6404,0.7016,0.7493,400,0.6404,0.7016,0.7493
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0 · forward KL","Batch LOO · teacher EMA 0.01","34tib0zu",400,0.7533,0.7274,0.7632,400,0.7533,0.7274,0.7632
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7446,0.7063,0.7481,240,0.7446,0.7063,0.7481
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0 · forward KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0 · forward KL","Group LOO · teacher EMA 0.05","0q2rz5mf",400,0.6591,0.6718,0.6928,400,0.6591,0.6718,0.6928
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0 · forward KL","Group LOO · teacher EMA 0.01","pydodnbi",400,0.7380,0.7210,0.7467,400,0.7380,0.7210,0.7467
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0 · forward KL","Batch LOO · teacher EMA 0.05","zku4zbt2",400,0.5974,0.6291,0.6918,400,0.5974,0.6291,0.6918
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0 · forward KL","Batch LOO · teacher EMA 0.01","34tib0zu",400,0.7321,0.7147,0.7413,400,0.7321,0.7147,0.7413
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6857,0.6765,0.7076,240,0.6857,0.6765,0.7076
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0 · forward KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0 · forward KL","Group LOO · teacher EMA 0.05","0q2rz5mf",400,0.5944,0.6455,0.6984,400,0.5944,0.6455,0.6984
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0 · forward KL","Group LOO · teacher EMA 0.01","pydodnbi",400,0.7487,0.7123,0.7562,400,0.7487,0.7123,0.7562
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0 · forward KL","Batch LOO · teacher EMA 0.05","zku4zbt2",400,0.6186,0.6561,0.6961,400,0.6186,0.6561,0.6961
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0 · forward KL","Batch LOO · teacher EMA 0.01","34tib0zu",400,0.7624,0.7158,0.7746,400,0.7624,0.7158,0.7746
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7069,0.6662,0.7195,240,0.7069,0.6662,0.7195
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0 · forward KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0.5 · JSD","Group LOO · teacher EMA 0.05","7dpnqgxy",400,0.4508,0.4605,0.5194,400,0.4508,0.4605,0.5194
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0.5 · JSD","Group LOO · teacher EMA 0.01","ckpb6svm",400,0.4127,0.4087,0.4450,400,0.4127,0.4087,0.4450
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0.5 · JSD","Batch LOO · teacher EMA 0.05","26z83fva",400,0.4327,0.4669,0.5500,400,0.4327,0.4669,0.5500
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0.5 · JSD","Batch LOO · teacher EMA 0.01","jntmxkfg",400,0.5450,0.5238,0.5637,400,0.5450,0.5238,0.5637
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0.5 · JSD","Group LOO · teacher EMA 0.05","7dpnqgxy",400,0.7619,0.7175,0.7714,400,0.7619,0.7175,0.7714
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0.5 · JSD","Group LOO · teacher EMA 0.01","ckpb6svm",400,0.7601,0.7226,0.7723,400,0.7601,0.7226,0.7723
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0.5 · JSD","Batch LOO · teacher EMA 0.05","26z83fva",400,0.7218,0.7092,0.7409,400,0.7218,0.7092,0.7409
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0.5 · JSD","Batch LOO · teacher EMA 0.01","jntmxkfg",400,0.7420,0.7255,0.7484,400,0.7420,0.7255,0.7484
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0.5 · JSD","Group LOO · teacher EMA 0.05","7dpnqgxy",400,0.6885,0.6919,0.7373,400,0.6885,0.6919,0.7373
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0.5 · JSD","Group LOO · teacher EMA 0.01","ckpb6svm",400,0.7099,0.7007,0.7353,400,0.7099,0.7007,0.7353
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0.5 · JSD","Batch LOO · teacher EMA 0.05","26z83fva",400,0.6829,0.6899,0.7079,400,0.6829,0.6899,0.7079
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0.5 · JSD","Batch LOO · teacher EMA 0.01","jntmxkfg",400,0.7175,0.6985,0.7306,400,0.7175,0.6985,0.7306
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0.5 · JSD","Group LOO · teacher EMA 0.05","7dpnqgxy",400,0.6434,0.6503,0.6793,400,0.6434,0.6503,0.6793
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0.5 · JSD","Group LOO · teacher EMA 0.01","ckpb6svm",400,0.6954,0.6904,0.7160,400,0.6954,0.6904,0.7160
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0.5 · JSD","Batch LOO · teacher EMA 0.05","26z83fva",400,0.6350,0.6642,0.6984,400,0.6350,0.6642,0.6984
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0.5 · JSD","Batch LOO · teacher EMA 0.01","jntmxkfg",400,0.6996,0.6990,0.7258,400,0.6996,0.6990,0.7258
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=1 · reverse KL","Group LOO · teacher EMA 0.05","mnpamrjs",400,0.3800,0.3821,0.4800,400,0.3800,0.3821,0.4800
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=1 · reverse KL","Group LOO · teacher EMA 0.01","7rd3jzcz",400,0.5202,0.4928,0.5563,400,0.5202,0.4928,0.5563
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=1 · reverse KL","Batch LOO · teacher EMA 0.05","u6e8sst7",400,0.2192,0.3194,0.4050,400,0.2192,0.3194,0.4050
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=1 · reverse KL","Batch LOO · teacher EMA 0.01","dce2eanv",400,0.3058,0.3292,0.3944,400,0.3058,0.3292,0.3944
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q6a_teacher_rate_future_returns_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=1 · reverse KL","Group LOO · teacher EMA 0.05","mnpamrjs",400,0.3666,0.4407,0.6329,400,0.3666,0.4407,0.6329
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=1 · reverse KL","Group LOO · teacher EMA 0.01","7rd3jzcz",400,0.5300,0.6094,0.6926,400,0.5300,0.6094,0.6926
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=1 · reverse KL","Batch LOO · teacher EMA 0.05","u6e8sst7",400,0.3899,0.4945,0.6592,400,0.3899,0.4945,0.6592
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=1 · reverse KL","Batch LOO · teacher EMA 0.01","dce2eanv",400,0.6409,0.6577,0.6915,400,0.6409,0.6577,0.6915
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q6a_teacher_rate_future_returns_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=1 · reverse KL","Group LOO · teacher EMA 0.05","mnpamrjs",400,0.4401,0.5262,0.6918,400,0.4401,0.5262,0.6918
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=1 · reverse KL","Group LOO · teacher EMA 0.01","7rd3jzcz",400,0.6326,0.5934,0.6925,400,0.6326,0.5934,0.6925
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=1 · reverse KL","Batch LOO · teacher EMA 0.05","u6e8sst7",400,0.2943,0.4154,0.6795,400,0.2943,0.4154,0.6795
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=1 · reverse KL","Batch LOO · teacher EMA 0.01","dce2eanv",400,0.3777,0.4787,0.6855,400,0.3777,0.4787,0.6855
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q6a_teacher_rate_future_returns_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=1 · reverse KL","Group LOO · teacher EMA 0.05","mnpamrjs",400,0.4521,0.4628,0.6730,400,0.4521,0.4628,0.6730
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=1 · reverse KL","Group LOO · teacher EMA 0.01","7rd3jzcz",400,0.5501,0.5976,0.6711,400,0.5501,0.5976,0.6711
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=1 · reverse KL","Batch LOO · teacher EMA 0.05","u6e8sst7",400,0.1917,0.3315,0.6359,400,0.1917,0.3315,0.6359
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=1 · reverse KL","Batch LOO · teacher EMA 0.01","dce2eanv",400,0.5352,0.5644,0.6590,400,0.5352,0.5644,0.6590
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q6a_teacher_rate_future_returns_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q6a_teacher_rate_future_returns.png","val","α=0 · forward KL","Group LOO · teacher EMA 0.05","0q2rz5mf",400,0.6050,0.6256,0.6552,400,0.6050,0.6256,0.6552
+"q6a_teacher_rate_future_returns.png","val","α=0 · forward KL","Group LOO · teacher EMA 0.01","pydodnbi",400,0.6787,0.6534,0.6862,400,0.6787,0.6534,0.6862
+"q6a_teacher_rate_future_returns.png","val","α=0 · forward KL","Batch LOO · teacher EMA 0.05","zku4zbt2",400,0.5761,0.6093,0.6391,400,0.5761,0.6093,0.6391
+"q6a_teacher_rate_future_returns.png","val","α=0 · forward KL","Batch LOO · teacher EMA 0.01","34tib0zu",400,0.6769,0.6500,0.6793,400,0.6769,0.6500,0.6793
+"q6a_teacher_rate_future_returns.png","val","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6527,0.6202,0.6542,240,0.6527,0.6202,0.6542
+"q6a_teacher_rate_future_returns.png","val","α=0 · forward KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q6a_teacher_rate_future_returns.png","val","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q6a_teacher_rate_future_returns.png","val","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q6a_teacher_rate_future_returns.png","val","α=0.5 · JSD","Group LOO · teacher EMA 0.05","7dpnqgxy",400,0.6361,0.6301,0.6521,400,0.6361,0.6301,0.6521
+"q6a_teacher_rate_future_returns.png","val","α=0.5 · JSD","Group LOO · teacher EMA 0.01","ckpb6svm",400,0.6445,0.6306,0.6536,400,0.6445,0.6306,0.6536
+"q6a_teacher_rate_future_returns.png","val","α=0.5 · JSD","Batch LOO · teacher EMA 0.05","26z83fva",400,0.6181,0.6326,0.6523,400,0.6181,0.6326,0.6523
+"q6a_teacher_rate_future_returns.png","val","α=0.5 · JSD","Batch LOO · teacher EMA 0.01","jntmxkfg",400,0.6760,0.6617,0.6798,400,0.6760,0.6617,0.6798
+"q6a_teacher_rate_future_returns.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q6a_teacher_rate_future_returns.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q6a_teacher_rate_future_returns.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q6a_teacher_rate_future_returns.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q6a_teacher_rate_future_returns.png","val","α=1 · reverse KL","Group LOO · teacher EMA 0.05","mnpamrjs",400,0.4097,0.4529,0.6056,400,0.4097,0.4529,0.6056
+"q6a_teacher_rate_future_returns.png","val","α=1 · reverse KL","Group LOO · teacher EMA 0.01","7rd3jzcz",400,0.5582,0.5733,0.6284,400,0.5582,0.5733,0.6284
+"q6a_teacher_rate_future_returns.png","val","α=1 · reverse KL","Batch LOO · teacher EMA 0.05","u6e8sst7",400,0.2738,0.3902,0.5870,400,0.2738,0.3902,0.5870
+"q6a_teacher_rate_future_returns.png","val","α=1 · reverse KL","Batch LOO · teacher EMA 0.01","dce2eanv",400,0.4649,0.5075,0.5811,400,0.4649,0.5075,0.5811
+"q6a_teacher_rate_future_returns.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q6a_teacher_rate_future_returns.png","val","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q6a_teacher_rate_future_returns.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q6a_teacher_rate_future_returns.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=0.5 · JSD","Teacher EMA 0 (frozen)","12ocxwrk",400,0.3562,0.3402,0.3769,400,0.3562,0.3402,0.3769
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=0.5 · JSD","Teacher EMA 0.01","7jm6nqe7",400,0.4071,0.3637,0.4125,400,0.4071,0.3637,0.4125
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=0.5 · JSD","Teacher EMA 0.05","1m6vtuxy",400,0.5148,0.4287,0.5225,400,0.5148,0.4287,0.5225
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=0.5 · JSD","Teacher EMA 0 (frozen)","12ocxwrk",400,0.6617,0.6034,0.6649,400,0.6617,0.6034,0.6649
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=0.5 · JSD","Teacher EMA 0.01","7jm6nqe7",400,0.6958,0.6285,0.6975,400,0.6958,0.6285,0.6975
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=0.5 · JSD","Teacher EMA 0.05","1m6vtuxy",400,0.6622,0.6394,0.6890,400,0.6622,0.6394,0.6890
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=0.5 · JSD","Teacher EMA 0 (frozen)","12ocxwrk",400,0.7014,0.6840,0.7109,400,0.7014,0.6840,0.7109
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=0.5 · JSD","Teacher EMA 0.01","7jm6nqe7",400,0.7112,0.6897,0.7229,400,0.7112,0.6897,0.7229
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=0.5 · JSD","Teacher EMA 0.05","1m6vtuxy",400,0.7078,0.7021,0.7447,400,0.7078,0.7021,0.7447
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=0.5 · JSD","Teacher EMA 0 (frozen)","12ocxwrk",400,0.6701,0.6570,0.6738,400,0.6701,0.6570,0.6738
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=0.5 · JSD","Teacher EMA 0.01","7jm6nqe7",400,0.6703,0.6678,0.6930,400,0.6703,0.6678,0.6930
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=0.5 · JSD","Teacher EMA 0.05","1m6vtuxy",400,0.4987,0.6064,0.6820,400,0.4987,0.6064,0.6820
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=1 · reverse KL","Teacher EMA 0 (frozen)","pquoaf1g",400,0.4362,0.3820,0.4475,400,0.4362,0.3820,0.4475
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=1 · reverse KL","Teacher EMA 0.01","xzn0voxu",400,0.4042,0.3768,0.4206,400,0.4042,0.3768,0.4206
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=1 · reverse KL","Teacher EMA 0.05","klxawodx",400,0.4296,0.3743,0.4344,400,0.4296,0.3743,0.4344
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q6b_teacher_rate_sdql_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=1 · reverse KL","Teacher EMA 0 (frozen)","pquoaf1g",400,0.6388,0.5859,0.6473,400,0.6388,0.5859,0.6473
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=1 · reverse KL","Teacher EMA 0.01","xzn0voxu",400,0.6946,0.6350,0.6997,400,0.6946,0.6350,0.6997
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=1 · reverse KL","Teacher EMA 0.05","klxawodx",400,0.5764,0.6011,0.6615,400,0.5764,0.6011,0.6615
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q6b_teacher_rate_sdql_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=1 · reverse KL","Teacher EMA 0 (frozen)","pquoaf1g",400,0.7022,0.6962,0.7253,400,0.7022,0.6962,0.7253
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=1 · reverse KL","Teacher EMA 0.01","xzn0voxu",400,0.5595,0.6583,0.7012,400,0.5595,0.6583,0.7012
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=1 · reverse KL","Teacher EMA 0.05","klxawodx",400,0.6518,0.6501,0.7002,400,0.6518,0.6501,0.7002
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q6b_teacher_rate_sdql_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=1 · reverse KL","Teacher EMA 0 (frozen)","pquoaf1g",400,0.6594,0.6546,0.6684,400,0.6594,0.6546,0.6684
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=1 · reverse KL","Teacher EMA 0.01","xzn0voxu",400,0.6495,0.6475,0.6602,400,0.6495,0.6475,0.6602
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=1 · reverse KL","Teacher EMA 0.05","klxawodx",400,0.3833,0.5736,0.6656,400,0.3833,0.5736,0.6656
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q6b_teacher_rate_sdql_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q6b_teacher_rate_sdql.png","val","α=0.5 · JSD","Teacher EMA 0 (frozen)","12ocxwrk",400,0.5974,0.5711,0.6021,400,0.5974,0.5711,0.6021
+"q6b_teacher_rate_sdql.png","val","α=0.5 · JSD","Teacher EMA 0.01","7jm6nqe7",400,0.6211,0.5874,0.6261,400,0.6211,0.5874,0.6261
+"q6b_teacher_rate_sdql.png","val","α=0.5 · JSD","Teacher EMA 0.05","1m6vtuxy",400,0.5959,0.5941,0.6367,400,0.5959,0.5941,0.6367
+"q6b_teacher_rate_sdql.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q6b_teacher_rate_sdql.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q6b_teacher_rate_sdql.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q6b_teacher_rate_sdql.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q6b_teacher_rate_sdql.png","val","α=1 · reverse KL","Teacher EMA 0 (frozen)","pquoaf1g",400,0.6092,0.5797,0.6170,400,0.6092,0.5797,0.6170
+"q6b_teacher_rate_sdql.png","val","α=1 · reverse KL","Teacher EMA 0.01","xzn0voxu",400,0.5769,0.5794,0.6149,400,0.5769,0.5794,0.6149
+"q6b_teacher_rate_sdql.png","val","α=1 · reverse KL","Teacher EMA 0.05","klxawodx",400,0.5103,0.5498,0.5944,400,0.5103,0.5498,0.5944
+"q6b_teacher_rate_sdql.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q6b_teacher_rate_sdql.png","val","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q6b_teacher_rate_sdql.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q6b_teacher_rate_sdql.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=0.5 · JSD","Mini-batch 32 (1 update / step)","7jm6nqe7",400,0.4071,0.3637,0.4125,400,0.4071,0.3637,0.4125
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","ooqw4j1s",400,0.4562,0.4037,0.4706,400,0.4562,0.4037,0.4706
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","9ntvz0tx",400,0.4727,0.4143,0.4981,400,0.4727,0.4143,0.4981
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","Mini-batch 32 (1 update / step)","7jm6nqe7",400,0.6958,0.6285,0.6975,400,0.6958,0.6285,0.6975
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","ooqw4j1s",400,0.6948,0.6448,0.7018,400,0.6948,0.6448,0.7018
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","9ntvz0tx",400,0.6990,0.6658,0.7134,400,0.6990,0.6658,0.7134
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=0.5 · JSD","Mini-batch 32 (1 update / step)","7jm6nqe7",400,0.7112,0.6897,0.7229,400,0.7112,0.6897,0.7229
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","ooqw4j1s",400,0.7191,0.7011,0.7333,400,0.7191,0.7011,0.7333
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","9ntvz0tx",400,0.6876,0.6922,0.7363,400,0.6876,0.6922,0.7363
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=0.5 · JSD","Mini-batch 32 (1 update / step)","7jm6nqe7",400,0.6703,0.6678,0.6930,400,0.6703,0.6678,0.6930
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","ooqw4j1s",400,0.6728,0.6598,0.6777,400,0.6728,0.6598,0.6777
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","9ntvz0tx",400,0.6667,0.6707,0.6937,400,0.6667,0.6707,0.6937
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=1 · reverse KL","Mini-batch 32 (1 update / step)","xzn0voxu",400,0.4042,0.3768,0.4206,400,0.4042,0.3768,0.4206
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","wbl6mkjj",400,0.4660,0.4230,0.4906,400,0.4660,0.4230,0.4906
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","uj948anc",400,0.4813,0.4303,0.5019,400,0.4813,0.4303,0.5019
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q7_sdql_minibatch_tur001_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","Mini-batch 32 (1 update / step)","xzn0voxu",400,0.6946,0.6350,0.6997,400,0.6946,0.6350,0.6997
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","wbl6mkjj",400,0.7026,0.6526,0.7132,400,0.7026,0.6526,0.7132
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","uj948anc",400,0.6919,0.6575,0.7094,400,0.6919,0.6575,0.7094
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q7_sdql_minibatch_tur001_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=1 · reverse KL","Mini-batch 32 (1 update / step)","xzn0voxu",400,0.5595,0.6583,0.7012,400,0.5595,0.6583,0.7012
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","wbl6mkjj",400,0.6740,0.6890,0.7139,400,0.6740,0.6890,0.7139
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","uj948anc",400,0.6356,0.6612,0.7229,400,0.6356,0.6612,0.7229
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q7_sdql_minibatch_tur001_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=1 · reverse KL","Mini-batch 32 (1 update / step)","xzn0voxu",400,0.6495,0.6475,0.6602,400,0.6495,0.6475,0.6602
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","wbl6mkjj",400,0.6361,0.6475,0.6648,400,0.6361,0.6475,0.6648
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","uj948anc",400,0.5801,0.6379,0.6777,400,0.5801,0.6379,0.6777
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q7_sdql_minibatch_tur001_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q7_sdql_minibatch_tur001.png","val","α=0.5 · JSD","Mini-batch 32 (1 update / step)","7jm6nqe7",400,0.6211,0.5874,0.6261,400,0.6211,0.5874,0.6261
+"q7_sdql_minibatch_tur001.png","val","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","ooqw4j1s",400,0.6358,0.6023,0.6418,400,0.6358,0.6023,0.6418
+"q7_sdql_minibatch_tur001.png","val","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","9ntvz0tx",400,0.6315,0.6108,0.6395,400,0.6315,0.6108,0.6395
+"q7_sdql_minibatch_tur001.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q7_sdql_minibatch_tur001.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q7_sdql_minibatch_tur001.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q7_sdql_minibatch_tur001.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q7_sdql_minibatch_tur001.png","val","α=1 · reverse KL","Mini-batch 32 (1 update / step)","xzn0voxu",400,0.5769,0.5794,0.6149,400,0.5769,0.5794,0.6149
+"q7_sdql_minibatch_tur001.png","val","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","wbl6mkjj",400,0.6197,0.6030,0.6337,400,0.6197,0.6030,0.6337
+"q7_sdql_minibatch_tur001.png","val","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","uj948anc",400,0.5972,0.5967,0.6278,400,0.5972,0.5967,0.6278
+"q7_sdql_minibatch_tur001.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q7_sdql_minibatch_tur001.png","val","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q7_sdql_minibatch_tur001.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q7_sdql_minibatch_tur001.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=0.5 · JSD","Mini-batch 32 (1 update / step)","12ocxwrk",400,0.3562,0.3402,0.3769,400,0.3562,0.3402,0.3769
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","q9zov1au",400,0.3885,0.3701,0.4094,400,0.3885,0.3701,0.4094
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","z8610td1",400,0.4287,0.3665,0.4612,400,0.4287,0.3665,0.4612
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=0.5 · JSD","Mini-batch 32 (1 update / step)","12ocxwrk",400,0.6617,0.6034,0.6649,400,0.6617,0.6034,0.6649
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","q9zov1au",400,0.6700,0.6246,0.6749,400,0.6700,0.6246,0.6749
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","z8610td1",400,0.6790,0.6418,0.6862,400,0.6790,0.6418,0.6862
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=0.5 · JSD","Mini-batch 32 (1 update / step)","12ocxwrk",400,0.7014,0.6840,0.7109,400,0.7014,0.6840,0.7109
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","q9zov1au",400,0.7074,0.6989,0.7246,400,0.7074,0.6989,0.7246
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","z8610td1",400,0.6688,0.6790,0.7122,400,0.6688,0.6790,0.7122
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=0.5 · JSD","Mini-batch 32 (1 update / step)","12ocxwrk",400,0.6701,0.6570,0.6738,400,0.6701,0.6570,0.6738
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","q9zov1au",400,0.6620,0.6629,0.6848,400,0.6620,0.6629,0.6848
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","z8610td1",400,0.6849,0.6675,0.6977,400,0.6849,0.6675,0.6977
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=1 · reverse KL","Mini-batch 32 (1 update / step)","pquoaf1g",400,0.4362,0.3820,0.4475,400,0.4362,0.3820,0.4475
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","5mz5a4fb",400,0.3852,0.3608,0.3975,400,0.3852,0.3608,0.3975
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","39ws2bjy",400,0.3754,0.3680,0.4069,400,0.3754,0.3680,0.4069
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q7_sdql_minibatch_tur0_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=1 · reverse KL","Mini-batch 32 (1 update / step)","pquoaf1g",400,0.6388,0.5859,0.6473,400,0.6388,0.5859,0.6473
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","5mz5a4fb",400,0.6581,0.6213,0.6646,400,0.6581,0.6213,0.6646
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","39ws2bjy",400,0.6639,0.6322,0.6741,400,0.6639,0.6322,0.6741
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q7_sdql_minibatch_tur0_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=1 · reverse KL","Mini-batch 32 (1 update / step)","pquoaf1g",400,0.7022,0.6962,0.7253,400,0.7022,0.6962,0.7253
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","5mz5a4fb",400,0.6787,0.6920,0.7216,400,0.6787,0.6920,0.7216
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","39ws2bjy",400,0.6942,0.6968,0.7426,400,0.6942,0.6968,0.7426
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q7_sdql_minibatch_tur0_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=1 · reverse KL","Mini-batch 32 (1 update / step)","pquoaf1g",400,0.6594,0.6546,0.6684,400,0.6594,0.6546,0.6684
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","5mz5a4fb",400,0.6574,0.6514,0.6723,400,0.6574,0.6514,0.6723
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","39ws2bjy",400,0.6646,0.6550,0.6719,400,0.6646,0.6550,0.6719
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q7_sdql_minibatch_tur0_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q7_sdql_minibatch_tur0.png","val","α=0.5 · JSD","Mini-batch 32 (1 update / step)","12ocxwrk",400,0.5974,0.5711,0.6021,400,0.5974,0.5711,0.6021
+"q7_sdql_minibatch_tur0.png","val","α=0.5 · JSD","Mini-batch 16 (2 updates / step)","q9zov1au",400,0.6070,0.5891,0.6183,400,0.6070,0.5891,0.6183
+"q7_sdql_minibatch_tur0.png","val","α=0.5 · JSD","Mini-batch 8 (4 updates / step)","z8610td1",400,0.6154,0.5887,0.6239,400,0.6154,0.5887,0.6239
+"q7_sdql_minibatch_tur0.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q7_sdql_minibatch_tur0.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q7_sdql_minibatch_tur0.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q7_sdql_minibatch_tur0.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q7_sdql_minibatch_tur0.png","val","α=1 · reverse KL","Mini-batch 32 (1 update / step)","pquoaf1g",400,0.6092,0.5797,0.6170,400,0.6092,0.5797,0.6170
+"q7_sdql_minibatch_tur0.png","val","α=1 · reverse KL","Mini-batch 16 (2 updates / step)","5mz5a4fb",400,0.5949,0.5814,0.6000,400,0.5949,0.5814,0.6000
+"q7_sdql_minibatch_tur0.png","val","α=1 · reverse KL","Mini-batch 8 (4 updates / step)","39ws2bjy",400,0.5995,0.5880,0.6080,400,0.5995,0.5880,0.6080
+"q7_sdql_minibatch_tur0.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q7_sdql_minibatch_tur0.png","val","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q7_sdql_minibatch_tur0.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q7_sdql_minibatch_tur0.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q0_overview_by_domain.png","val/biology","α=0 · forward KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","pydodnbi",400,0.4677,0.4517,0.5075,400,0.4677,0.4517,0.5075
+"q0_overview_by_domain.png","val/biology","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.4738,0.4315,0.4838,240,0.4738,0.4315,0.4838
+"q0_overview_by_domain.png","val/biology","α=0 · forward KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q0_overview_by_domain.png","val/biology","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q0_overview_by_domain.png","val/biology","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q0_overview_by_domain.png","val/chemistry","α=0 · forward KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","pydodnbi",400,0.7604,0.7287,0.7650,400,0.7604,0.7287,0.7650
+"q0_overview_by_domain.png","val/chemistry","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7446,0.7063,0.7481,240,0.7446,0.7063,0.7481
+"q0_overview_by_domain.png","val/chemistry","α=0 · forward KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q0_overview_by_domain.png","val/chemistry","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q0_overview_by_domain.png","val/chemistry","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q0_overview_by_domain.png","val/material","α=0 · forward KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","pydodnbi",400,0.7380,0.7210,0.7467,400,0.7380,0.7210,0.7467
+"q0_overview_by_domain.png","val/material","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6857,0.6765,0.7076,240,0.6857,0.6765,0.7076
+"q0_overview_by_domain.png","val/material","α=0 · forward KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q0_overview_by_domain.png","val/material","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q0_overview_by_domain.png","val/material","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q0_overview_by_domain.png","val/physics","α=0 · forward KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","pydodnbi",400,0.7487,0.7123,0.7562,400,0.7487,0.7123,0.7562
+"q0_overview_by_domain.png","val/physics","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.7069,0.6662,0.7195,240,0.7069,0.6662,0.7195
+"q0_overview_by_domain.png","val/physics","α=0 · forward KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q0_overview_by_domain.png","val/physics","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q0_overview_by_domain.png","val/physics","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q0_overview_by_domain.png","val/biology","α=0.5 · JSD","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","jntmxkfg",400,0.5450,0.5238,0.5637,400,0.5450,0.5238,0.5637
+"q0_overview_by_domain.png","val/biology","α=0.5 · JSD","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","1m6vtuxy",400,0.5148,0.4287,0.5225,400,0.5148,0.4287,0.5225
+"q0_overview_by_domain.png","val/biology","α=0.5 · JSD","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","9ntvz0tx",400,0.4727,0.4143,0.4981,400,0.4727,0.4143,0.4981
+"q0_overview_by_domain.png","val/biology","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.5100,0.5019,0.5531,340,0.5100,0.5019,0.5531
+"q0_overview_by_domain.png","val/biology","α=0.5 · JSD","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q0_overview_by_domain.png","val/biology","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q0_overview_by_domain.png","val/biology","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q0_overview_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","jntmxkfg",400,0.7420,0.7255,0.7484,400,0.7420,0.7255,0.7484
+"q0_overview_by_domain.png","val/chemistry","α=0.5 · JSD","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","1m6vtuxy",400,0.6622,0.6394,0.6890,400,0.6622,0.6394,0.6890
+"q0_overview_by_domain.png","val/chemistry","α=0.5 · JSD","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","9ntvz0tx",400,0.6990,0.6658,0.7134,400,0.6990,0.6658,0.7134
+"q0_overview_by_domain.png","val/chemistry","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.7491,0.7060,0.7591,340,0.7491,0.7060,0.7591
+"q0_overview_by_domain.png","val/chemistry","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q0_overview_by_domain.png","val/chemistry","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q0_overview_by_domain.png","val/chemistry","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q0_overview_by_domain.png","val/material","α=0.5 · JSD","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","jntmxkfg",400,0.7175,0.6985,0.7306,400,0.7175,0.6985,0.7306
+"q0_overview_by_domain.png","val/material","α=0.5 · JSD","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","1m6vtuxy",400,0.7078,0.7021,0.7447,400,0.7078,0.7021,0.7447
+"q0_overview_by_domain.png","val/material","α=0.5 · JSD","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","9ntvz0tx",400,0.6876,0.6922,0.7363,400,0.6876,0.6922,0.7363
+"q0_overview_by_domain.png","val/material","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6195,0.6743,0.7323,340,0.6195,0.6743,0.7323
+"q0_overview_by_domain.png","val/material","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q0_overview_by_domain.png","val/material","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q0_overview_by_domain.png","val/material","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q0_overview_by_domain.png","val/physics","α=0.5 · JSD","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","jntmxkfg",400,0.6996,0.6990,0.7258,400,0.6996,0.6990,0.7258
+"q0_overview_by_domain.png","val/physics","α=0.5 · JSD","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","1m6vtuxy",400,0.4987,0.6064,0.6820,400,0.4987,0.6064,0.6820
+"q0_overview_by_domain.png","val/physics","α=0.5 · JSD","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","9ntvz0tx",400,0.6667,0.6707,0.6937,400,0.6667,0.6707,0.6937
+"q0_overview_by_domain.png","val/physics","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6654,0.6587,0.6816,340,0.6654,0.6587,0.6816
+"q0_overview_by_domain.png","val/physics","α=0.5 · JSD","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q0_overview_by_domain.png","val/physics","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q0_overview_by_domain.png","val/physics","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q0_overview_by_domain.png","val/biology","α=1 · reverse KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","7rd3jzcz",400,0.5202,0.4928,0.5563,400,0.5202,0.4928,0.5563
+"q0_overview_by_domain.png","val/biology","α=1 · reverse KL","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","xzn0voxu",400,0.4042,0.3768,0.4206,400,0.4042,0.3768,0.4206
+"q0_overview_by_domain.png","val/biology","α=1 · reverse KL","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","wbl6mkjj",400,0.4660,0.4230,0.4906,400,0.4660,0.4230,0.4906
+"q0_overview_by_domain.png","val/biology","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4100,0.3939,0.4744,150,0.4100,0.3939,0.4744
+"q0_overview_by_domain.png","val/biology","α=1 · reverse KL","GRPO","ifv06lhj",400,0.3502,0.3272,0.3638,180,0.3502,0.3272,0.3638
+"q0_overview_by_domain.png","val/biology","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.4502,0.4530,0.4844,380,0.4502,0.4530,0.4844
+"q0_overview_by_domain.png","val/biology","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5033,0.4135,0.5288,380,0.5033,0.4135,0.5288
+"q0_overview_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","7rd3jzcz",400,0.5300,0.6094,0.6926,400,0.5300,0.6094,0.6926
+"q0_overview_by_domain.png","val/chemistry","α=1 · reverse KL","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","xzn0voxu",400,0.6946,0.6350,0.6997,400,0.6946,0.6350,0.6997
+"q0_overview_by_domain.png","val/chemistry","α=1 · reverse KL","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","wbl6mkjj",400,0.7026,0.6526,0.7132,400,0.7026,0.6526,0.7132
+"q0_overview_by_domain.png","val/chemistry","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5324,0.6109,0.6814,150,0.5324,0.6109,0.6814
+"q0_overview_by_domain.png","val/chemistry","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6831,0.6272,0.6954,180,0.6831,0.6272,0.6954
+"q0_overview_by_domain.png","val/chemistry","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7577,0.7352,0.7714,380,0.7577,0.7352,0.7714
+"q0_overview_by_domain.png","val/chemistry","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4263,0.5644,0.6731,380,0.4263,0.5644,0.6731
+"q0_overview_by_domain.png","val/material","α=1 · reverse KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","7rd3jzcz",400,0.6326,0.5934,0.6925,400,0.6326,0.5934,0.6925
+"q0_overview_by_domain.png","val/material","α=1 · reverse KL","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","xzn0voxu",400,0.5595,0.6583,0.7012,400,0.5595,0.6583,0.7012
+"q0_overview_by_domain.png","val/material","α=1 · reverse KL","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","wbl6mkjj",400,0.6740,0.6890,0.7139,400,0.6740,0.6890,0.7139
+"q0_overview_by_domain.png","val/material","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4129,0.5483,0.6741,150,0.4129,0.5483,0.6741
+"q0_overview_by_domain.png","val/material","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7478,0.7194,0.7493,180,0.7478,0.7194,0.7493
+"q0_overview_by_domain.png","val/material","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7164,0.7153,0.7356,380,0.7164,0.7153,0.7356
+"q0_overview_by_domain.png","val/material","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5035,0.6359,0.6952,380,0.5035,0.6359,0.6952
+"q0_overview_by_domain.png","val/physics","α=1 · reverse KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","7rd3jzcz",400,0.5501,0.5976,0.6711,400,0.5501,0.5976,0.6711
+"q0_overview_by_domain.png","val/physics","α=1 · reverse KL","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","xzn0voxu",400,0.6495,0.6475,0.6602,400,0.6495,0.6475,0.6602
+"q0_overview_by_domain.png","val/physics","α=1 · reverse KL","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","wbl6mkjj",400,0.6361,0.6475,0.6648,400,0.6361,0.6475,0.6648
+"q0_overview_by_domain.png","val/physics","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.5257,0.5699,0.6766,150,0.5257,0.5699,0.6766
+"q0_overview_by_domain.png","val/physics","α=1 · reverse KL","GRPO","ifv06lhj",400,0.7055,0.6885,0.7070,180,0.7055,0.6885,0.7070
+"q0_overview_by_domain.png","val/physics","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.7557,0.7248,0.7672,380,0.7557,0.7248,0.7672
+"q0_overview_by_domain.png","val/physics","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.5457,0.5832,0.6687,380,0.5457,0.5832,0.6687
+"q0_overview.png","val","α=0 · forward KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","pydodnbi",400,0.6787,0.6534,0.6862,400,0.6787,0.6534,0.6862
+"q0_overview.png","val","α=0 · forward KL","SDPO base (stepwise only)","8ovi1uq2",400,0.6527,0.6202,0.6542,240,0.6527,0.6202,0.6542
+"q0_overview.png","val","α=0 · forward KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q0_overview.png","val","α=0 · forward KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q0_overview.png","val","α=0 · forward KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q0_overview.png","val","α=0.5 · JSD","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","jntmxkfg",400,0.6760,0.6617,0.6798,400,0.6760,0.6617,0.6798
+"q0_overview.png","val","α=0.5 · JSD","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","1m6vtuxy",400,0.5959,0.5941,0.6367,400,0.5959,0.5941,0.6367
+"q0_overview.png","val","α=0.5 · JSD","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","9ntvz0tx",400,0.6315,0.6108,0.6395,400,0.6315,0.6108,0.6395
+"q0_overview.png","val","α=0.5 · JSD","SDPO base (stepwise only)","54eer5m8",400,0.6360,0.6352,0.6561,340,0.6360,0.6352,0.6561
+"q0_overview.png","val","α=0.5 · JSD","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q0_overview.png","val","α=0.5 · JSD","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q0_overview.png","val","α=0.5 · JSD","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
+"q0_overview.png","val","α=1 · reverse KL","SDPO + future returns (best: EMA 0.01; group at α=0,1, batch at α=0.5)","7rd3jzcz",400,0.5582,0.5733,0.6284,400,0.5582,0.5733,0.6284
+"q0_overview.png","val","α=1 · reverse KL","SDQL mbs32 (best: on-policy + centring; EMA 0.05 at α=0.5, 0.01 at α=1)","xzn0voxu",400,0.5769,0.5794,0.6149,400,0.5769,0.5794,0.6149
+"q0_overview.png","val","α=1 · reverse KL","SDQL mbs 8/16 (best: on-policy + centring, EMA 0.01; mbs8 at α=0.5, mbs16 at α=1)","wbl6mkjj",400,0.6197,0.6030,0.6337,400,0.6197,0.6030,0.6337
+"q0_overview.png","val","α=1 · reverse KL","SDPO base (stepwise only)","1jqglo3j",400,0.4702,0.5308,0.6223,150,0.4702,0.5308,0.6223
+"q0_overview.png","val","α=1 · reverse KL","GRPO","ifv06lhj",400,0.6216,0.5906,0.6279,180,0.6216,0.5906,0.6279
+"q0_overview.png","val","α=1 · reverse KL","Distil (α=1)","tppb3ufq",400,0.6700,0.6571,0.6825,380,0.6700,0.6571,0.6825
+"q0_overview.png","val","α=1 · reverse KL","ROVER (mbs16)","yoccbm7n",400,0.4947,0.5492,0.6013,380,0.4947,0.5492,0.6013
