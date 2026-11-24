@@ -876,13 +876,19 @@ class DataParallelPPOActor(BasePPOActor):
                             calculate_entropy=calculate_entropy,
                             return_all_logps=return_all_logps,
                             distill_topk=distill_topk,
+                            topk_indices=old_topk_indices,
                         )
                         log_prob = outputs["log_probs"]
                         entropy = outputs["entropys"] if calculate_entropy else None
                         student_all_logps = outputs.get("all_logps") if return_all_logps else None
                         student_topk_logps = outputs.get("topk_logps") if distill_topk else None
-                        student_topk_indices = outputs.get("topk_indices") if distill_topk else None
-
+                        # Shared top-k support: the rollout policy's stored indices when available
+                        # (sdql/rover), otherwise the student's own top-k (sdpo/distil).
+                        student_topk_indices = (
+                            old_topk_indices
+                            if old_topk_indices is not None
+                            else (outputs.get("topk_indices") if distill_topk else None)
+                        )
                         # for fully_async_policy
                         if hasattr(self.config, "use_rollout_log_probs") and self.config.use_rollout_log_probs:
                             old_log_prob = model_inputs["old_log_probs"]
@@ -916,7 +922,7 @@ class DataParallelPPOActor(BasePPOActor):
                                     calculate_entropy=False,
                                     return_all_logps=return_all_logps,
                                     distill_topk=distill_topk,
-                                    topk_indices=student_topk_indices,
+                                    topk_indices=old_topk_indices,
                                     module=teacher_model,
                                 )
                             teacher_log_prob = teacher_outputs["log_probs"]
@@ -935,12 +941,12 @@ class DataParallelPPOActor(BasePPOActor):
                                 )
                             if (
                                 distill_topk
-                                and student_topk_indices is not None
+                                and old_topk_indices is not None
                                 and old_topk_log_probs is None
                                 and old_all_log_probs_for_loss is not None
                             ):
                                 # Gather old-policy logits on the same top-k support used by student/teacher.
-                                gather_index = student_topk_indices
+                                gather_index = old_topk_indices
                                 if gather_index.dtype != torch.long:
                                     gather_index = gather_index.long()
                                 old_topk_log_probs = torch.gather(
@@ -959,7 +965,7 @@ class DataParallelPPOActor(BasePPOActor):
                                 student_all_log_probs=student_all_logps,
                                 teacher_all_log_probs=teacher_all_logps,
                                 sampled_token_ids=model_inputs["responses"],
-                                student_topk_indices=student_topk_indices,
+                                student_topk_indices=old_topk_indices,
                                 student_topk_log_probs=student_topk_logps,
                                 teacher_topk_log_probs=teacher_topk_logps,
                                 old_topk_log_probs=old_topk_log_probs,
